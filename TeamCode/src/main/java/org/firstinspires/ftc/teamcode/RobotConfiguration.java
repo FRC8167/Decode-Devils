@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
+import org.firstinspires.ftc.teamcode.SubSystems.Intake;
 import org.firstinspires.ftc.teamcode.SubSystems.MecanumDriveSingleton;
 
 import java.util.List;
@@ -32,6 +33,7 @@ public abstract class RobotConfiguration extends LinearOpMode {
 
     /*----------- Define all Module Classes (SubSystems) ------------*/
     protected MecanumDriveSingleton drive;
+    static protected Intake intake;
 
 
     /*---------------------- Vision Objects -------------------------*/
@@ -56,13 +58,16 @@ public abstract class RobotConfiguration extends LinearOpMode {
         }
 
         /* ******************* Define Hardware Map Here ******************** */
-        DcMotorEx driveMotorLF = hardwareMap.get(DcMotorEx.class, "Motor Name");
-        DcMotorEx driveMotorLR = hardwareMap.get(DcMotorEx.class, "Motor Name");
-        DcMotorEx driveMotorRF = hardwareMap.get(DcMotorEx.class, "Motor Name");
-        DcMotorEx driveMotorRR = hardwareMap.get(DcMotorEx.class, "Motor Name");
+        DcMotorEx driveMotorLF = hardwareMap.get(DcMotorEx.class, "LeftFront");
+        DcMotorEx driveMotorLR = hardwareMap.get(DcMotorEx.class, "LeftRear");
+        DcMotorEx driveMotorRF = hardwareMap.get(DcMotorEx.class, "RightFront");
+        DcMotorEx driveMotorRR = hardwareMap.get(DcMotorEx.class, "RightRear");
+
+        DcMotorEx intakeMotor = hardwareMap.get(DcMotorEx.class,"Intake");
 
         /* Create an object of every module/subsystem needed for both autonomous and teleOp modes. */
         drive = MecanumDriveSingleton.getInstance(driveMotorLF, driveMotorLR, driveMotorRF, driveMotorRR);
+        intake = new Intake(intakeMotor);
 
     }
 
