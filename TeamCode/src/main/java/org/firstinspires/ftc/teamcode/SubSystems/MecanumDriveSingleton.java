@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 public class MecanumDriveSingleton {
 
-    private final DcMotorEx front_left_Drive, back_left_drive, front_right_drive, back_right_drive;
+    private final DcMotorEx front_left_drive, back_left_drive, front_right_drive, back_right_drive;
     private double drive, strafe, turn;
     boolean degradedMode;
     double degradedMultiplier = 0.45;
@@ -14,13 +14,13 @@ public class MecanumDriveSingleton {
 
 
     private MecanumDriveSingleton(DcMotorEx leftFront, DcMotorEx leftRear, DcMotorEx rightFront, DcMotorEx rightRear) {
-        this.front_left_Drive  = leftFront;
+        this.front_left_drive = leftFront;
         this.back_left_drive   = leftRear;
         this.front_right_drive = rightFront;
         this.back_right_drive  = rightRear;
 
         /* Assign Motor Directions */
-        this.front_left_Drive.setDirection(DcMotorEx.Direction.REVERSE);
+        this.front_left_drive.setDirection(DcMotorEx.Direction.REVERSE);
         this.front_right_drive.setDirection(DcMotorEx.Direction.FORWARD);
         this.back_left_drive.setDirection(DcMotorEx.Direction.REVERSE);
         this.back_right_drive.setDirection(DcMotorEx.Direction.FORWARD);
@@ -73,7 +73,7 @@ public class MecanumDriveSingleton {
      * @param rrPower right rear motor power
      */
     private void setMotorPower(double lfPower,double rfPower, double lrPower, double rrPower) {
-        front_left_Drive.setPower(lfPower);
+        front_left_drive.setPower(lfPower);
         front_right_drive.setPower(rfPower);
         back_left_drive.setPower(lrPower);
         back_right_drive.setPower(rrPower);
@@ -93,11 +93,11 @@ public class MecanumDriveSingleton {
     public double getDriveCmd() { return drive;  }
     public double getTurnCmd()  { return turn;   }
     public double getStrafe()   { return strafe; }
-    public double getLFpos()    { return front_left_Drive.getCurrentPosition(); }
+    public double getLFpos()    { return front_left_drive.getCurrentPosition(); }
     public double geLRpos()     { return back_left_drive.getCurrentPosition(); }
     public double geRFpos()     { return front_right_drive.getCurrentPosition(); }
     public double geRRpos()     { return back_right_drive.getCurrentPosition(); }
-    public double getLFpower()  { return front_left_Drive.getPower(); }
+    public double getLFpower()  { return front_left_drive.getPower(); }
     public double getLRpower()  { return back_left_drive.getPower(); }
     public double getRFpower()  { return front_right_drive.getPower(); }
     public double getRRpower()  { return back_right_drive.getPower(); }
