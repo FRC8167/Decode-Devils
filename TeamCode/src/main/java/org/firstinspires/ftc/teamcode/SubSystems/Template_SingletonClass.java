@@ -4,7 +4,7 @@ public class Template_SingletonClass {
 
     /** Class Variable Go Here **/
 
-    // Static variable to hold a single_instance of type Singleton
+    // Static variable to hold a single_instance of type Singleton.
     private static Template_SingletonClass single_instance = null;
 
     // Constructor
