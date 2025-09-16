@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
@@ -22,9 +21,10 @@ public class MainTeleOp extends RobotConfiguration {
             } else {
                 intake.setMotorPower(0.0); // stops the intake
             }
-            telemetry.addData("Red%", test_color.getNormalizedColors().red*100);
-            telemetry.addData("Green%", test_color.getNormalizedColors().green*100);
-            telemetry.addData("Blue%", test_color.getNormalizedColors().blue*100);
+            telemetry.addData("Color: ", colorDetection.getColor());
+            telemetry.addData("H: ", colorDetection.getColorHSV()[0]);
+            telemetry.addData("S: ", colorDetection.getColorHSV()[1]);
+            telemetry.addData("V: ", colorDetection.getColorHSV()[2]);
             telemetry.update();
         }
     }

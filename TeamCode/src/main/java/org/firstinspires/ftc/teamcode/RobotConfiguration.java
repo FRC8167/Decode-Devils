@@ -4,10 +4,10 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.I2cAddr;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
+import org.firstinspires.ftc.teamcode.SubSystems.ColorDetection;
 import org.firstinspires.ftc.teamcode.SubSystems.Intake;
 import org.firstinspires.ftc.teamcode.SubSystems.MecanumDriveSingleton;
 
@@ -37,7 +37,7 @@ public abstract class RobotConfiguration extends LinearOpMode {
     /*----------- Define all Module Classes (SubSystems) ------------*/
     protected MecanumDriveSingleton drive;
     static protected Intake intake;
-    NormalizedColorSensor test_color;
+    ColorDetection colorDetection;
 
 
     /*---------------------- Vision Objects -------------------------*/
@@ -70,11 +70,12 @@ public abstract class RobotConfiguration extends LinearOpMode {
         DcMotorEx intakeMotor = hardwareMap.get(DcMotorEx.class, "Intake");
 
 
-        test_color = hardwareMap.get(NormalizedColorSensor.class, "ColorSensor");
+        NormalizedColorSensor colorSensor = hardwareMap.get(NormalizedColorSensor.class, "colorSensor");
 
         /* Create an object of every module/subsystem needed for both autonomous and teleOp modes. */
 //        drive = MecanumDriveSingleton.getInstance(driveMotorLF, driveMotorLR, driveMotorRF, driveMotorRR);
         intake = new Intake(intakeMotor);
+        colorDetection = new ColorDetection(colorSensor);
 
     }
 
