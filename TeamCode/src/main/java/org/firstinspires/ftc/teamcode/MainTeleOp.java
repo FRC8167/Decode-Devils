@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
-
 //@Disabled
 @TeleOp(name="MainTeleOp", group="Competition")
 public class MainTeleOp extends RobotConfiguration {
@@ -17,10 +15,8 @@ public class MainTeleOp extends RobotConfiguration {
 
         while (opModeIsActive()) {
             if (gamepad1.a) {
-                intake.setMotorPower(TeamConstants.INTAKE_POWER);
-            } else {
-                intake.setMotorPower(0.0); // stops the intake
             }
+
             telemetry.addData("Color: ", colorDetection.getColor());
             telemetry.addData("H: ", colorDetection.getColorHSV()[0]);
             telemetry.addData("S: ", colorDetection.getColorHSV()[1]);

@@ -1,15 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
 import org.firstinspires.ftc.teamcode.SubSystems.ColorDetection;
 import org.firstinspires.ftc.teamcode.SubSystems.Intake;
 import org.firstinspires.ftc.teamcode.SubSystems.MecanumDriveSingleton;
+import org.firstinspires.ftc.teamcode.SubSystems.SpinStatesSingleton;
 
 import java.util.List;
 import java.util.Locale;
@@ -27,7 +27,7 @@ public abstract class RobotConfiguration extends LinearOpMode {
 
     /*------------ Public Class Variables - Frowned Upon ------------*/
     public enum AllianceColor { RED, BLUE }
-
+    public enum State {Green, Purple, None}
 
     /*------------- Private Class Variables - Preferred -------------*/
     static AllianceColor alliance;
@@ -37,6 +37,7 @@ public abstract class RobotConfiguration extends LinearOpMode {
     /*----------- Define all Module Classes (SubSystems) ------------*/
     protected MecanumDriveSingleton drive;
     static protected Intake intake;
+    static protected SpinStatesSingleton spinStates;
     ColorDetection colorDetection;
 
 
@@ -70,12 +71,13 @@ public abstract class RobotConfiguration extends LinearOpMode {
         DcMotorEx intakeMotor = hardwareMap.get(DcMotorEx.class, "Intake");
 
 
-        NormalizedColorSensor colorSensor = hardwareMap.get(NormalizedColorSensor.class, "colorSensor");
+        RevColorSensorV3 colorSensor = hardwareMap.get(RevColorSensorV3.class, "colorSensor");
 
         /* Create an object of every module/subsystem needed for both autonomous and teleOp modes. */
 //        drive = MecanumDriveSingleton.getInstance(driveMotorLF, driveMotorLR, driveMotorRF, driveMotorRR);
         intake = new Intake(intakeMotor);
         colorDetection = new ColorDetection(colorSensor);
+        spinStates = SpinStatesSingleton.getInstance();
 
     }
 
