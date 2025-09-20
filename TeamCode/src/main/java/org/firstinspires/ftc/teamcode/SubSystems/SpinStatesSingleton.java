@@ -1,8 +1,9 @@
 package org.firstinspires.ftc.teamcode.SubSystems;
 
-import org.firstinspires.ftc.teamcode.RobotConfiguration.State;
 
-public class SpinStatesSingleton {
+import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
+
+public class SpinStatesSingleton implements TeamConstants {
     State slot0;
     State slot1;
     State slot2;

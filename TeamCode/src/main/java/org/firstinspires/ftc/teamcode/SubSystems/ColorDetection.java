@@ -31,7 +31,10 @@ public class ColorDetection implements TeamConstants {
     public String getColor() {
         update();
         if (saturation < 0.8){
-            return "Invalid Color";
+            if (saturation == 0 && hue == 0 && value == 0)
+                return "Error";
+            else
+                return "Invalid Color";
         }
         else if (70 < hue && hue < 160){
             return "Green";
@@ -40,6 +43,15 @@ public class ColorDetection implements TeamConstants {
         }
         else {
             return "Other";
+        }
+    }
+
+    public State getState() {
+        switch (getColor()) {
+            case "Error": return State.None;
+            case "Green": return State.Green;
+            case "Purple": return State.Purple;
+            default: return State.Unknown;
         }
     }
 

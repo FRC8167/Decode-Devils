@@ -4,12 +4,15 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
+import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 import org.firstinspires.ftc.teamcode.SubSystems.ColorDetection;
 import org.firstinspires.ftc.teamcode.SubSystems.Intake;
 import org.firstinspires.ftc.teamcode.SubSystems.MecanumDriveSingleton;
 import org.firstinspires.ftc.teamcode.SubSystems.SpinStatesSingleton;
+import org.firstinspires.ftc.teamcode.SubSystems.Spindexer;
 
 import java.util.List;
 import java.util.Locale;
@@ -27,7 +30,7 @@ public abstract class RobotConfiguration extends LinearOpMode {
 
     /*------------ Public Class Variables - Frowned Upon ------------*/
     public enum AllianceColor { RED, BLUE }
-    public enum State {Green, Purple, None}
+
 
     /*------------- Private Class Variables - Preferred -------------*/
     static AllianceColor alliance;
@@ -37,8 +40,9 @@ public abstract class RobotConfiguration extends LinearOpMode {
     /*----------- Define all Module Classes (SubSystems) ------------*/
     protected MecanumDriveSingleton drive;
     static protected Intake intake;
-    static protected SpinStatesSingleton spinStates;
-    ColorDetection colorDetection;
+    public static SpinStatesSingleton spinStates;
+    public static ColorDetection colorDetection;
+    static protected Spindexer spindexer;
 
 
     /*---------------------- Vision Objects -------------------------*/
@@ -54,7 +58,7 @@ public abstract class RobotConfiguration extends LinearOpMode {
      *
      * @throws InterruptedException
      */
-    public void initializeRobot() throws InterruptedException {
+    public void initializeRobot(boolean moveServos) throws InterruptedException {
 
         /* Find all Control Hubs and Set Sensor Bulk Read Mode to AUTO */
         ctrlHubs = hardwareMap.getAll(LynxModule.class);
@@ -72,12 +76,14 @@ public abstract class RobotConfiguration extends LinearOpMode {
 
 
         RevColorSensorV3 colorSensor = hardwareMap.get(RevColorSensorV3.class, "colorSensor");
+        Servo spinServo = hardwareMap.get(Servo.class, "spinServo");
 
         /* Create an object of every module/subsystem needed for both autonomous and teleOp modes. */
 //        drive = MecanumDriveSingleton.getInstance(driveMotorLF, driveMotorLR, driveMotorRF, driveMotorRR);
         intake = new Intake(intakeMotor);
         colorDetection = new ColorDetection(colorSensor);
         spinStates = SpinStatesSingleton.getInstance();
+        spindexer = new Spindexer(spinServo, TeamConstants.SPINDEXER_INIT_POS, TeamConstants.SPINDEXER_MIN, TeamConstants.SPINDEXER_MAX, moveServos);
 
     }
 

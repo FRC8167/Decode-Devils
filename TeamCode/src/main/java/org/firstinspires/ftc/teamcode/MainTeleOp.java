@@ -9,7 +9,7 @@ public class MainTeleOp extends RobotConfiguration {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        initializeRobot();
+        initializeRobot(true);
 
         waitForStart();
 

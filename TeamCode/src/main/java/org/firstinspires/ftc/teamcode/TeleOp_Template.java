@@ -10,12 +10,12 @@ public class TeleOp_Template extends RobotConfiguration {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        initializeRobot();
-
-        waitForStart();
-
-        while (opModeIsActive()) {
-
-        }
+//        initializeRobot();
+//
+//        waitForStart();
+//
+//        while (opModeIsActive()) {
+//
+//        }
     }
 }

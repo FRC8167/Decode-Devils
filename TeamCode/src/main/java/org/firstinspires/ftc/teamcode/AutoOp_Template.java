@@ -11,9 +11,9 @@ public class AutoOp_Template extends RobotConfiguration {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        initializeRobot();
-
-        waitForStart();
+//        initializeRobot();
+//
+//        waitForStart();
 
 //        while (opModeIsActive()) {
 //        }
