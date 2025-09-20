@@ -6,28 +6,30 @@ import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 
 public class Spinner extends Servo1D implements TeamConstants {
 
-    int activeSlotDrop; //
-    int activeSlotSensor; // assumes color sensor is opposite to drop
+
     double currentAngleNormalized; //(0-360)
     double previousAngleNormalized;
 
     public Spinner(Servo servo, double initPos, double min, double max, boolean moveOnInit) {
         super(servo, initPos, min, max, moveOnInit);
-        activeSlotDrop = -1;
-        activeSlotSensor = -1;
+        currentAngleNormalized = 0;
     }
 
-    protected void setCenteredPositionDegrees(double degrees) {
-        if (getCenteredPositionDegrees() + degrees <= SPINDEXER_RANGE/2 && getCenteredPositionDegrees() + degrees >= -SPINDEXER_RANGE/2)
-            setPosition((degrees+0.5*SPINDEXER_RANGE)/SPINDEXER_RANGE);
+    public void setCenteredPositionDegrees(double degrees) {
+        if (((0.5 * SPINDEXER_RANGE + degrees) / SPINDEXER_RANGE) <= 1 && ((0.5 * SPINDEXER_RANGE + degrees) / SPINDEXER_RANGE) >= 0) {
+            setPosition((0.5 * SPINDEXER_RANGE + degrees) / SPINDEXER_RANGE);
+            currentAngleNormalized = degrees;
+        }
         // 0 degrees is center position -900,900, center position is none over trapdoor with slots 0,1,2 clockwise
     }
 
     public double getCenteredPositionDegrees() {
-        return servoPos()*SPINDEXER_RANGE-0.5*SPINDEXER_RANGE;
+        return currentAngleNormalized;
     }
 
     public void rotateBy(double degrees) {
         setCenteredPositionDegrees(getCenteredPositionDegrees()+degrees);
     }
+
+
 }

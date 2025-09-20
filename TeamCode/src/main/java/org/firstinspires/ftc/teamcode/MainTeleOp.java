@@ -14,17 +14,29 @@ public class MainTeleOp extends RobotConfiguration {
         waitForStart();
 
         while (opModeIsActive()) {
-            if (gamepad1.right_bumper) {
+            if (gamepad1.rightBumperWasPressed()) {
                 spindexer.rotateBy(120);
             }
-            else if (gamepad1.left_bumper) {
+            else if (gamepad1.leftBumperWasPressed()) {
                 spindexer.rotateBy(-120);
             }
-            else if (gamepad1.dpad_right) {
+            else if (gamepad1.dpadRightWasPressed()) {
                 spindexer.rotateBy(60);
+//                spindexer.setCenteredPositionDegrees(500);
+//                spindexer.setPosition(1);
             }
-            else if (gamepad1.dpad_left) {
+            else if (gamepad1.dpadLeftWasPressed()) {
                 spindexer.rotateBy(-60);
+//                spindexer.setCenteredPositionDegrees(-500);
+//                spindexer.setPosition(0);
+            } else if (gamepad1.dpadDownWasPressed()) {
+                spindexer.setCenteredPositionDegrees(0);
+            } else if (gamepad1.xWasPressed()) {
+                spindexer.rotateSlotToSensor(0);
+            } else if (gamepad1.yWasPressed()) {
+                spindexer.rotateSlotToSensor(1);
+            } else if (gamepad1.bWasPressed()) {
+                spindexer.rotateSlotToSensor(2);
             }
 
             telemetry.addData("Color: ", colorDetection.getColor());
@@ -32,6 +44,9 @@ public class MainTeleOp extends RobotConfiguration {
             telemetry.addData("S: ", colorDetection.getColorHSV()[1]);
             telemetry.addData("V: ", colorDetection.getColorHSV()[2]);
             telemetry.addData("CenterPos: ", spindexer.getCenteredPositionDegrees());
+            telemetry.addData("RawPos: ", spindexer.getPosition());
+            telemetry.addData("ActiveDrop: ", spindexer.getActiveSlotDrop());
+            telemetry.addData("ActiveSensor: ", spindexer.getActiveSlotSensor());
             telemetry.update();
         }
     }

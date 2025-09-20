@@ -9,5 +9,5 @@ public interface TeamConstants {
     double SPINDEXER_MIN = 0.0;
     double SPINDEXER_MAX = 1.0;
     double SPINDEXER_INIT_POS = 0.5;
-    double SPINDEXER_RANGE = 1800; //degrees
+    double SPINDEXER_RANGE = 1620.0; //degrees, should be 1800
 }

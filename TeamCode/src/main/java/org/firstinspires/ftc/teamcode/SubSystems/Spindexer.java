@@ -23,7 +23,7 @@ public class Spindexer implements TeamConstants {
         update();
     }
 
-    protected void setCenteredPositionDegrees(double degrees) {
+    public void setCenteredPositionDegrees(double degrees) {
         spinner.setCenteredPositionDegrees(degrees);
         update();
     }
@@ -36,14 +36,22 @@ public class Spindexer implements TeamConstants {
         spinner.rotateBy(degrees);
     }
 
+    public double getPosition() {
+        return spinner.servoPos();
+    }
+//
+//    public void setPosition(double pos) {
+//        spinner.setPosition(pos);
+//    }
+
 
     public void rotateSlotToDrop(int slot) {
         update();
         double targetAngle;
         switch (slot) {
-            case 0: targetAngle = 60; break;
+            case 0: targetAngle = 300; break;
             case 1: targetAngle = 180; break;
-            case 2: targetAngle = 300; break;
+            case 2: targetAngle = 60; break;
             default: targetAngle = spinner.getCenteredPositionDegrees(); // No change if invalid slot
         }
         // Calculate the shortest path to the target angle
@@ -60,9 +68,9 @@ public class Spindexer implements TeamConstants {
         update();
         double targetAngle;
         switch (slot) {
-            case 0: targetAngle = 240; break;
+            case 0: targetAngle = 120; break;
             case 1: targetAngle = 0; break;
-            case 2: targetAngle = 120; break;
+            case 2: targetAngle = 240; break;
             default: targetAngle = spinner.getCenteredPositionDegrees(); // No change if invalid slot
         }
         // Calculate the shortest path to the target angle
@@ -78,20 +86,29 @@ public class Spindexer implements TeamConstants {
     public void update() {
         currentAngleNormalized = ((spinner.getCenteredPositionDegrees()%360+360)%360);
         switch ((int) currentAngleNormalized) {
-            case 60: activeSlotDrop = 0; break;
+            case 300: activeSlotDrop = 0; break;
             case 180: activeSlotDrop = 1; break;
-            case 300: activeSlotDrop = 2; break;
+            case 60: activeSlotDrop = 2; break;
             default: activeSlotDrop = -1; break;
         }
         switch ((int) currentAngleNormalized) {
+            case 120: activeSlotSensor = 0; break;
             case 0: activeSlotSensor = 1; break;
-            case 120: activeSlotSensor = 2; break;
-            case 240: activeSlotSensor = 0; break;
+            case 240: activeSlotSensor = 2; break;
             default: activeSlotSensor = -1; break;
         }
 
     }
 
+    public int getActiveSlotDrop() {
+        update();
+        return activeSlotDrop;
+    }
+
+    public int getActiveSlotSensor() {
+        update();
+        return activeSlotSensor;
+    }
 
     public void detectColor() { // TODO: Mount color sensor to spindexer & confirm positioning
         update();
