@@ -39,6 +39,12 @@ public class MainTeleOp extends RobotConfiguration {
                 spindexer.rotateSlotToSensor(2);
             }
 
+            if (gamepad1.leftStickButtonWasPressed()) {
+                spindexer.detectColor();
+            } else if (gamepad1.rightStickButtonWasPressed()) {
+                spindexer.drop();
+            }
+
             telemetry.addData("Color: ", colorDetection.getColor());
             telemetry.addData("H: ", colorDetection.getColorHSV()[0]);
             telemetry.addData("S: ", colorDetection.getColorHSV()[1]);
@@ -47,6 +53,9 @@ public class MainTeleOp extends RobotConfiguration {
             telemetry.addData("RawPos: ", spindexer.getPosition());
             telemetry.addData("ActiveDrop: ", spindexer.getActiveSlotDrop());
             telemetry.addData("ActiveSensor: ", spindexer.getActiveSlotSensor());
+            telemetry.addData("Slot0: ", spinStates.getSlot(0));
+            telemetry.addData("Slot1: ", spinStates.getSlot(1));
+            telemetry.addData("Slot2: ", spinStates.getSlot(2));
             telemetry.update();
         }
     }

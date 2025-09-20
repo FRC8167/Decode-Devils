@@ -30,8 +30,7 @@ public class SpinStatesSingleton implements TeamConstants {
             slot1 = state;
         } else if (index == 2) {
             slot2 = state;
-        }
-        else {
+        } else {
             throw new IllegalArgumentException("Index must be between 0-2");
         }
     }
