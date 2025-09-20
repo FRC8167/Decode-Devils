@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.Intake;
 import org.firstinspires.ftc.teamcode.SubSystems.MecanumDriveSingleton;
 import org.firstinspires.ftc.teamcode.SubSystems.SpinStatesSingleton;
 import org.firstinspires.ftc.teamcode.SubSystems.Spindexer;
+import org.firstinspires.ftc.teamcode.SubSystems.Spinner;
 
 import java.util.List;
 import java.util.Locale;
@@ -40,9 +41,11 @@ public abstract class RobotConfiguration extends LinearOpMode {
     /*----------- Define all Module Classes (SubSystems) ------------*/
     protected MecanumDriveSingleton drive;
     static protected Intake intake;
-    public static SpinStatesSingleton spinStates;
-    public static ColorDetection colorDetection;
+    static protected SpinStatesSingleton spinStates;
+    static protected ColorDetection colorDetection;
     static protected Spindexer spindexer;
+
+    static private Spinner spinner;
 
 
     /*---------------------- Vision Objects -------------------------*/
@@ -83,7 +86,9 @@ public abstract class RobotConfiguration extends LinearOpMode {
         intake = new Intake(intakeMotor);
         colorDetection = new ColorDetection(colorSensor);
         spinStates = SpinStatesSingleton.getInstance();
-        spindexer = new Spindexer(spinServo, TeamConstants.SPINDEXER_INIT_POS, TeamConstants.SPINDEXER_MIN, TeamConstants.SPINDEXER_MAX, moveServos);
+        spinner = new Spinner(spinServo, TeamConstants.SPINDEXER_INIT_POS, TeamConstants.SPINDEXER_MIN, TeamConstants.SPINDEXER_MAX, moveServos);
+
+        spindexer = new Spindexer(spinner, spinStates, colorDetection);
 
     }
 

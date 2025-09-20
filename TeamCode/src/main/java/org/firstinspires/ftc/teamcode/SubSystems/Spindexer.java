@@ -1,43 +1,42 @@
 package org.firstinspires.ftc.teamcode.SubSystems;
 
 
-import static org.firstinspires.ftc.teamcode.RobotConfiguration.colorDetection;
-import static org.firstinspires.ftc.teamcode.RobotConfiguration.spinStates;
-
-import com.qualcomm.robotcore.hardware.Servo;
-
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 
-public class Spindexer extends Servo1D implements TeamConstants {
+public class Spindexer implements TeamConstants {
 
     int activeSlotDrop; //
     int activeSlotSensor; // assumes color sensor is opposite to drop
     double currentAngleNormalized; //(0-360)
+    Spinner spinner;
+    SpinStatesSingleton spinStates;
+    ColorDetection colorDetection;
 
-    public Spindexer(Servo servo, double initPos, double min, double max, boolean moveOnInit) {
-        super(servo, initPos, min, max, moveOnInit);
+
+    public Spindexer(Spinner spinner, SpinStatesSingleton spinStates, ColorDetection colorDetection) {
+        this.spinner = spinner;
+        this.spinStates = spinStates;
+        this.colorDetection = colorDetection;
         activeSlotDrop = -1;
         activeSlotSensor = -1;
         currentAngleNormalized = 0;
+        update();
     }
 
-    public void setCenteredPositionDegrees(double degrees) {
-        setPosition((degrees+0.5*SPINDEXER_RANGE)/SPINDEXER_RANGE);
+    protected void setCenteredPositionDegrees(double degrees) {
+        spinner.setCenteredPositionDegrees(degrees);
         update();
-        // 0 degrees is center position -900,900, center position is none over trapdoor with slots 0,1,2 clockwise
     }
 
     public double getCenteredPositionDegrees() {
-        return servoPos()*SPINDEXER_RANGE-0.5*SPINDEXER_RANGE;
+        return spinner.getCenteredPositionDegrees();
     }
 
     public void rotateBy(double degrees) {
-        setCenteredPositionDegrees(getCenteredPositionDegrees()+degrees);
+        spinner.rotateBy(degrees);
+        update();
     }
 
-    public void moveToCenter() {
-        setPosition(0.5);
-    }
 
     public void rotateSlotToDrop(int slot) {
         update();
@@ -46,7 +45,7 @@ public class Spindexer extends Servo1D implements TeamConstants {
             case 0: targetAngle = 60; break;
             case 1: targetAngle = 180; break;
             case 2: targetAngle = 300; break;
-            default: targetAngle = getCenteredPositionDegrees(); // No change if invalid slot
+            default: targetAngle = spinner.getCenteredPositionDegrees(); // No change if invalid slot
         }
         // Calculate the shortest path to the target angle
         double delta = ((targetAngle - currentAngleNormalized + 540) % 360) - 180; // Calculate shortest path (-180 to 180)
@@ -54,7 +53,7 @@ public class Spindexer extends Servo1D implements TeamConstants {
             delta -= 360;
         else if (currentAngleNormalized + delta < -SPINDEXER_RANGE/2)
             delta += 360;
-        rotateBy(delta);
+        spinner.rotateBy(delta);
         update();
     }
 
@@ -65,7 +64,7 @@ public class Spindexer extends Servo1D implements TeamConstants {
             case 0: targetAngle = 240; break;
             case 1: targetAngle = 0; break;
             case 2: targetAngle = 120; break;
-            default: targetAngle = getCenteredPositionDegrees(); // No change if invalid slot
+            default: targetAngle = spinner.getCenteredPositionDegrees(); // No change if invalid slot
         }
         // Calculate the shortest path to the target angle
         double delta = ((targetAngle - currentAngleNormalized + 540) % 360) - 180; // Calculate shortest path (-180 to 180)
@@ -73,12 +72,12 @@ public class Spindexer extends Servo1D implements TeamConstants {
             delta -= 360;
         else if (currentAngleNormalized + delta < -SPINDEXER_RANGE/2)
             delta += 360;
-        rotateBy(delta);
+        spinner.rotateBy(delta);
         update();
     }
 
     public void update() {
-        currentAngleNormalized = ((getCenteredPositionDegrees()%360+360)%360);
+        currentAngleNormalized = ((spinner.getCenteredPositionDegrees()%360+360)%360);
         switch ((int) currentAngleNormalized) {
             case 60: activeSlotDrop = 0; break;
             case 180: activeSlotDrop = 1; break;
