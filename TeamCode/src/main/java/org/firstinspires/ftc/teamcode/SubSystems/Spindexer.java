@@ -50,6 +50,10 @@ public class Spindexer extends Servo1D implements TeamConstants {
         }
         // Calculate the shortest path to the target angle
         double delta = ((targetAngle - currentAngleNormalized + 540) % 360) - 180; // Calculate shortest path (-180 to 180)
+        if (currentAngleNormalized + delta > SPINDEXER_RANGE/2)
+            delta -= 360;
+        else if (currentAngleNormalized + delta < -SPINDEXER_RANGE/2)
+            delta += 360;
         rotateBy(delta);
         update();
     }
@@ -65,6 +69,10 @@ public class Spindexer extends Servo1D implements TeamConstants {
         }
         // Calculate the shortest path to the target angle
         double delta = ((targetAngle - currentAngleNormalized + 540) % 360) - 180; // Calculate shortest path (-180 to 180)
+        if (currentAngleNormalized + delta > SPINDEXER_RANGE/2)
+            delta -= 360;
+        else if (currentAngleNormalized + delta < -SPINDEXER_RANGE/2)
+            delta += 360;
         rotateBy(delta);
         update();
     }
