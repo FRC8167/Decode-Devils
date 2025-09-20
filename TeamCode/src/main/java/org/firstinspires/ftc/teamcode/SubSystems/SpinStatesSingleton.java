@@ -36,7 +36,7 @@ public class SpinStatesSingleton implements TeamConstants {
         }
     }
 
-    public State getSlot(int index, State state) {
+    public State getSlot(int index) {
         if (index == 0) {
             return slot0;
         } else if (index == 1) {
