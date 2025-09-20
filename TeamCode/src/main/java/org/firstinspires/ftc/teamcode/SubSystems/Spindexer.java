@@ -34,7 +34,6 @@ public class Spindexer implements TeamConstants {
 
     public void rotateBy(double degrees) {
         spinner.rotateBy(degrees);
-        update();
     }
 
 
