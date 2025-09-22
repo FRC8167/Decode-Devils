@@ -46,4 +46,28 @@ public class SpinStatesSingleton implements TeamConstants {
             throw new IllegalArgumentException("Index must be between 0-2");
         }
     }
+
+    public State[] getStates() {
+        return new State[] {slot0, slot1, slot2};
+    }
+
+    public int getCountOfStateInStates(State state) {
+        int count = 0;
+        for (State s : getStates()) {
+            if (s == state) count++;
+        }
+        return count;
+    }
+
+    public int[] getIndexesOfStateInStates(State state) {
+        int[] indexes = new int[getCountOfStateInStates(state)];
+        int currentIndex = 0;
+        State[] states = getStates();
+        for (int i = 0; i < states.length; i++) {
+            if (states[i] == state) {
+                indexes[currentIndex++] = i;
+            }
+        }
+        return indexes;
+    }
 }

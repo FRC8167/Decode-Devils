@@ -9,6 +9,7 @@ public class Spinner extends Servo1D implements TeamConstants {
 
     double currentAngleNormalized; //(0-360)
     double previousAngleNormalized;
+    double previousRotation;
 
     public Spinner(Servo servo, double initPos, double min, double max, boolean moveOnInit) {
         super(servo, initPos, min, max, moveOnInit);
@@ -16,10 +17,12 @@ public class Spinner extends Servo1D implements TeamConstants {
     }
 
     public void setCenteredPositionDegrees(double degrees) {
+        previousAngleNormalized = currentAngleNormalized;
         if (((0.5 * SPINDEXER_RANGE + degrees) / SPINDEXER_RANGE) <= 1 && ((0.5 * SPINDEXER_RANGE + degrees) / SPINDEXER_RANGE) >= 0) {
             setPosition((0.5 * SPINDEXER_RANGE + degrees) / SPINDEXER_RANGE);
             currentAngleNormalized = degrees;
         }
+        update();
         // 0 degrees is center position -900,900, center position is none over trapdoor with slots 0,1,2 clockwise
     }
 
@@ -29,6 +32,14 @@ public class Spinner extends Servo1D implements TeamConstants {
 
     public void rotateBy(double degrees) {
         setCenteredPositionDegrees(getCenteredPositionDegrees()+degrees);
+    }
+
+    public void update() {
+        previousRotation = currentAngleNormalized - previousAngleNormalized;
+    }
+
+    public double getPreviousRotation() {
+        return previousRotation;
     }
 
 
