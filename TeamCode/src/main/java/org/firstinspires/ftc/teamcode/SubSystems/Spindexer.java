@@ -129,7 +129,7 @@ public class Spindexer implements TeamConstants {
                     }
                 }
                 if (found && secondFound) {
-                    if (spinner.getPreviousRotation() > 0) {
+                    if (spinner.getPreviousRotation() >= 0) {
                         if (activeSlotDrop != -1) {
                             rotation = 120;
 //                            setIndex = (activeSlotDrop-1+3)%3;

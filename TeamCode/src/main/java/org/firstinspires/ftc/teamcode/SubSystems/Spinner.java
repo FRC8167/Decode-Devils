@@ -14,6 +14,9 @@ public class Spinner extends Servo1D implements TeamConstants {
     public Spinner(Servo servo, double initPos, double min, double max, boolean moveOnInit) {
         super(servo, initPos, min, max, moveOnInit);
         currentAngleNormalized = 0;
+        previousAngleNormalized = 0;
+        previousRotation = 0;
+        update();
     }
 
     public void setCenteredPositionDegrees(double degrees) {
