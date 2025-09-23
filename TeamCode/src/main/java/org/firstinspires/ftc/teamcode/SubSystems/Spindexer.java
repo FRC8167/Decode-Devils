@@ -205,8 +205,10 @@ public class Spindexer implements TeamConstants {
 
     public void detectColor() { // TODO: Mount color sensor to spindexer & confirm positioning
         update();
+        State state = spinStates.getSlot(activeSlotSensor);
         if (activeSlotSensor != -1)
-            spinStates.setSlot(activeSlotSensor, colorDetection.getState());
+            if (state == State.None || state == State.Unknown)
+                spinStates.setSlot(activeSlotSensor, colorDetection.getState());
     }
 
     public void drop() { // assumes successful drop TODO: Add actual drop function w/ linear servo

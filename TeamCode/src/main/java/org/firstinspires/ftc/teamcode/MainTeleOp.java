@@ -2,9 +2,11 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
+
 //@Disabled
 @TeleOp(name="MainTeleOp", group="Competition")
-public class MainTeleOp extends RobotConfiguration {
+public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -32,14 +34,17 @@ public class MainTeleOp extends RobotConfiguration {
             } else if (gamepad1.dpadDownWasPressed()) {
                 spindexer.setCenteredPositionDegrees(0);
             } else if (gamepad1.xWasPressed()) {
-                spindexer.rotateSlotToSensor(0);
-            } else if (gamepad1.yWasPressed()) {
-                spindexer.rotateSlotToSensor(1);
-            } else if (gamepad1.bWasPressed()) {
-                spindexer.rotateSlotToSensor(2);
+//                spindexer.rotateSlotToSensor(0);
+                spindexer.rotateStateToDrop(State.Purple);
+//            } else if (gamepad1.yWasPressed()) {
+//                spindexer.rotateSlotToSensor(1);
+//            } else if (gamepad1.bWasPressed()) {
+//                spindexer.rotateSlotToSensor(2);
+            } else if (gamepad1.aWasPressed()) {
+                spindexer.rotateStateToDrop(State.Green);
             }
 
-            if (gamepad1.leftStickButtonWasPressed()) {
+            if (gamepad1.left_stick_button) {
                 spindexer.detectColor();
             } else if (gamepad1.rightStickButtonWasPressed()) {
                 spindexer.drop();
