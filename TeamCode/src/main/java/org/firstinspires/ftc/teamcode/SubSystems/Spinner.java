@@ -21,8 +21,8 @@ public class Spinner extends Servo1D implements TeamConstants {
 
     public void setCenteredPositionDegrees(double degrees) {
         previousAngleNormalized = currentAngleNormalized;
-        if (((0.5 * SPINDEXER_RANGE + degrees) / SPINDEXER_RANGE) <= 1 && ((0.5 * SPINDEXER_RANGE + degrees) / SPINDEXER_RANGE) >= 0) {
-            setPosition((0.5 * SPINDEXER_RANGE + degrees) / SPINDEXER_RANGE);
+        if (((0.5 * SPINNER_RANGE + degrees) / SPINNER_RANGE) <= 1 && ((0.5 * SPINNER_RANGE + degrees) / SPINNER_RANGE) >= 0) {
+            setPosition((0.5 * SPINNER_RANGE + degrees) / SPINNER_RANGE);
             currentAngleNormalized = degrees;
         }
         update();

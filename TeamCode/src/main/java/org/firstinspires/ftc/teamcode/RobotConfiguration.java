@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 import org.firstinspires.ftc.teamcode.SubSystems.ColorDetection;
+import org.firstinspires.ftc.teamcode.SubSystems.Dropper;
 import org.firstinspires.ftc.teamcode.SubSystems.Intake;
 import org.firstinspires.ftc.teamcode.SubSystems.MecanumDriveSingleton;
 import org.firstinspires.ftc.teamcode.SubSystems.SpinStatesSingleton;
@@ -27,7 +28,7 @@ import java.util.Locale;
  * LinearOpMode framework as this class itself extends the LinearOpMode class.
  */
 
-public abstract class RobotConfiguration extends LinearOpMode {
+public abstract class RobotConfiguration extends LinearOpMode implements TeamConstants{
 
     /*------------ Public Class Variables - Frowned Upon ------------*/
     public enum AllianceColor { RED, BLUE }
@@ -46,6 +47,7 @@ public abstract class RobotConfiguration extends LinearOpMode {
     static protected Spindexer spindexer;
 
     static private Spinner spinner;
+    static private Dropper dropper;
 
 
     /*---------------------- Vision Objects -------------------------*/
@@ -80,15 +82,17 @@ public abstract class RobotConfiguration extends LinearOpMode {
 
         RevColorSensorV3 colorSensor = hardwareMap.get(RevColorSensorV3.class, "colorSensor");
         Servo spinServo = hardwareMap.get(Servo.class, "spinServo");
+        Servo dropServo = hardwareMap.get(Servo.class, "dropServo");
 
         /* Create an object of every module/subsystem needed for both autonomous and teleOp modes. */
 //        drive = MecanumDriveSingleton.getInstance(driveMotorLF, driveMotorLR, driveMotorRF, driveMotorRR);
         intake = new Intake(intakeMotor);
         colorDetection = new ColorDetection(colorSensor);
         spinStates = SpinStatesSingleton.getInstance();
-        spinner = new Spinner(spinServo, TeamConstants.SPINDEXER_INIT_POS, TeamConstants.SPINDEXER_MIN, TeamConstants.SPINDEXER_MAX, moveServos);
+        spinner = new Spinner(spinServo, SPINNER_INIT_POS, SPINNER_MIN, SPINNER_MAX, moveServos);
+        dropper = new Dropper(dropServo, DROPPER_INIT_POS, DROPPER_MIN, DROPPER_MAX, moveServos);
 
-        spindexer = new Spindexer(spinner, spinStates, colorDetection);
+        spindexer = new Spindexer(spinner, dropper, spinStates, colorDetection);
 
     }
 

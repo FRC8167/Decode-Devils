@@ -62,6 +62,8 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
             telemetry.addData("Slot1: ", spinStates.getSlot(1));
             telemetry.addData("Slot2: ", spinStates.getSlot(2));
             telemetry.update();
+
+            spindexer.periodic();
         }
     }
 }

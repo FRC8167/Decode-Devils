@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.SubSystems;
 
 
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
+import org.firstinspires.ftc.teamcode.Cogintilities.Timer;
 
 import java.util.Arrays;
 
@@ -12,19 +13,25 @@ public class Spindexer implements TeamConstants {
     int activeSlotSensor;// assumes color sensor is opposite to drop
     double fractionalSlotDrop;
     double currentAngleNormalized; //(0-360)
+    boolean isOpen;
     Spinner spinner;
+    Dropper dropper;
+    Timer dropTimer;
     SpinStatesSingleton spinStates;
     ColorDetection colorDetection;
 
 
-    public Spindexer(Spinner spinner, SpinStatesSingleton spinStates, ColorDetection colorDetection) {
+    public Spindexer(Spinner spinner, Dropper dropper, SpinStatesSingleton spinStates, ColorDetection colorDetection) {
         this.spinner = spinner;
+        this.dropper = dropper;
         this.spinStates = spinStates;
         this.colorDetection = colorDetection;
         activeSlotDrop = -1;
         activeSlotSensor = -1;
         fractionalSlotDrop = -1;
         currentAngleNormalized = 0;
+        isOpen = false;
+        dropTimer = new Timer();
         update();
     }
 
@@ -62,9 +69,9 @@ public class Spindexer implements TeamConstants {
         }
         // Calculate the shortest path to the target angle
         double delta = ((targetAngle - currentAngleNormalized + 540) % 360) - 180; // Calculate shortest path (-180 to 180)
-        if (currentAngleNormalized + delta > SPINDEXER_RANGE/2)
+        if (currentAngleNormalized + delta > SPINNER_RANGE /2)
             delta -= 360;
-        else if (currentAngleNormalized + delta < -SPINDEXER_RANGE/2)
+        else if (currentAngleNormalized + delta < -SPINNER_RANGE /2)
             delta += 360;
         spinner.rotateBy(delta);
         update();
@@ -81,9 +88,9 @@ public class Spindexer implements TeamConstants {
         }
         // Calculate the shortest path to the target angle
         double delta = ((targetAngle - currentAngleNormalized + 540) % 360) - 180; // Calculate shortest path (-180 to 180)
-        if (currentAngleNormalized + delta > SPINDEXER_RANGE/2)
+        if (currentAngleNormalized + delta > SPINNER_RANGE /2)
             delta -= 360;
-        else if (currentAngleNormalized + delta < -SPINDEXER_RANGE/2)
+        else if (currentAngleNormalized + delta < -SPINNER_RANGE /2)
             delta += 360;
         spinner.rotateBy(delta);
         update();
@@ -186,6 +193,11 @@ public class Spindexer implements TeamConstants {
             default: activeSlotSensor = -1; break;
         }
 
+        if (dropTimer.isDone()) {
+            isOpen = false;
+            dropper.close();
+        }
+
     }
 
     public int getActiveSlotDrop() {
@@ -211,10 +223,17 @@ public class Spindexer implements TeamConstants {
                 spinStates.setSlot(activeSlotSensor, colorDetection.getState());
     }
 
-    public void drop() { // assumes successful drop TODO: Add actual drop function w/ linear servo
+    public void drop() { // assumes successful drop
         update();
-        if (activeSlotDrop != -1)
+        if (activeSlotDrop != -1) {
             spinStates.setSlot(activeSlotDrop, State.None);
+            isOpen = true;
+            dropTimer = new Timer(DROP_TIMER); // how many teleop loops until door closes (arbitrary value)
+        }
+    }
+
+    public void periodic() { // must be called during TeleOp for timer to function
+        update();
     }
 
 
