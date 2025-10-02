@@ -53,9 +53,9 @@ public class Spindexer implements TeamConstants {
         return spinner.servoPos();
     }
 //
-//    public void setPosition(double pos) {
-//        spinner.setPosition(pos);
-//    }
+    public void setDropperPosition(double pos) {
+        dropper.setPosition(pos);
+    }
 
 
     public void rotateSlotToDrop(int slot) {
@@ -111,7 +111,7 @@ public class Spindexer implements TeamConstants {
             }
             else {
                 for (int i = 0; i < indexes.length; i++) {
-                    double targetSlotValue = (double)indexes[i]; // The actual slot number (0, 1, or 2)
+                    double targetSlotValue = indexes[i]; // The actual slot number (0, 1, or 2)
 
                     double forwardSlotDist = (targetSlotValue - fractionalSlotDrop + 3.0) % 3.0;
                     // Ensure forwardSlotDist is always in [0, 3)
@@ -235,9 +235,5 @@ public class Spindexer implements TeamConstants {
     public void periodic() { // must be called during TeleOp for timer to function
         update();
     }
-
-
-
-
 
 }
