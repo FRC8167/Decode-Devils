@@ -35,4 +35,8 @@ public class Servo1D implements TeamConstants {
         return servo.getPosition();
     }
 
+    public void setPulseRange(int customMinPulse, int customMaxPulse) {
+        servo.scaleRange(Range.scale(customMinPulse, 500, 2500, 0, 1), Range.scale(customMaxPulse, 500, 2500, 0, 1));
+    }
+
 }

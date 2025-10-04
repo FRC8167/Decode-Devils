@@ -46,7 +46,7 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 
             if (gamepad1.left_stick_button) {
                 spindexer.detectColor();
-            } else if (gamepad1.rightStickButtonWasPressed()) {
+            } else if (gamepad1.right_stick_button) {
                 spindexer.drop();
             }
 
@@ -67,6 +67,8 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
             telemetry.addData("Slot0: ", spinStates.getSlot(0));
             telemetry.addData("Slot1: ", spinStates.getSlot(1));
             telemetry.addData("Slot2: ", spinStates.getSlot(2));
+            telemetry.addData("Timer: ", spindexer.getRemainingTime());
+            telemetry.addData("DropPos: ", spindexer.getDropperPos());
             telemetry.update();
 
             spindexer.periodic();

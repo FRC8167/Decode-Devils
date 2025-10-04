@@ -19,7 +19,7 @@ public class Timer {
     }
 
     public double getRemainingTime() {
-        return Math.min(0, (initialTime + duration) - System.currentTimeMillis());
+        return Math.max(0, (initialTime + duration) - System.currentTimeMillis());
     }
 
     public double getElapsedTime() {

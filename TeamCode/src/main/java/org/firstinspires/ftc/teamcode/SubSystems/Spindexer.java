@@ -223,13 +223,32 @@ public class Spindexer implements TeamConstants {
                 spinStates.setSlot(activeSlotSensor, colorDetection.getState());
     }
 
+    public void dropTimed() { // assumes successful drop
+        update();
+        if (activeSlotDrop != -1) {
+            spinStates.setSlot(activeSlotDrop, State.None);
+            isOpen = true;
+            dropper.open();
+            dropTimer = new Timer(DROP_TIMER); // how long until door closes (arbitrary value)
+        }
+    }
+
     public void drop() { // assumes successful drop
         update();
         if (activeSlotDrop != -1) {
             spinStates.setSlot(activeSlotDrop, State.None);
             isOpen = true;
-            dropTimer = new Timer(DROP_TIMER); // how many teleop loops until door closes (arbitrary value)
+            dropper.open();
+            dropTimer = new Timer(0.1);
         }
+    }
+
+    public double getRemainingTime() {
+        return dropTimer.getRemainingTime();
+    }
+
+    public double getDropperPos() {
+        return dropper.servoPos();
     }
 
     public void periodic() { // must be called during TeleOp for timer to function

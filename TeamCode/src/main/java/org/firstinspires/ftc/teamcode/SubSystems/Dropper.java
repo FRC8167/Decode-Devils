@@ -10,6 +10,7 @@ public class Dropper extends Servo1D implements TeamConstants {
 
     public Dropper(Servo servo, double initPos, double min, double max, boolean moveOnInit) {
         super(servo, initPos, min, max, moveOnInit);
+        servo.scaleRange(DROPPER_SERVO_RANGE[0], DROPPER_SERVO_RANGE[1]);
         currentExtensionMillimeters = servoPos() * DROPPER_RANGE;
         update();
 
