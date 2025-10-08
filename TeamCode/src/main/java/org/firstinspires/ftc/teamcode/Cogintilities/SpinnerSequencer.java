@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Cogintilities;
 
+import androidx.annotation.NonNull;
+
 import org.firstinspires.ftc.teamcode.SubSystems.SpinStatesSingleton;
 import org.firstinspires.ftc.teamcode.SubSystems.Spindexer;
 
@@ -19,7 +21,7 @@ public class SpinnerSequencer implements TeamConstants {
         timer = new TimedTimer(SEQUENCER_TIMER);
     }
 
-    public void runStates(State... states) {
+    public void runStates(@NonNull State... states) {
         this.states = states;
         numStates = states.length;
         timer.reset();
