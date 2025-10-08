@@ -35,25 +35,19 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
                 spindexer.setCenteredPositionDegrees(0);
             } else if (gamepad1.xWasPressed()) {
 //                spindexer.rotateSlotToSensor(0);
-                spindexer.rotateStateToDrop(State.Purple);
+                spindexer.rotateStateToDrop(State.PURPLE);
 //            } else if (gamepad1.yWasPressed()) {
 //                spindexer.rotateSlotToSensor(1);
 //            } else if (gamepad1.bWasPressed()) {
 //                spindexer.rotateSlotToSensor(2);
             } else if (gamepad1.aWasPressed()) {
-                spindexer.rotateStateToDrop(State.Green);
+                spindexer.rotateStateToDrop(State.GREEN);
             }
 
             if (gamepad1.left_stick_button) {
                 spindexer.detectColor();
             } else if (gamepad1.right_stick_button) {
                 spindexer.drop();
-            }
-
-            if (gamepad2.a) {
-                spindexer.setDropperPosition(0);
-            } else if (gamepad2.b) {
-                spindexer.setDropperPosition(1);
             }
 
             telemetry.addData("Color: ", colorDetection.getColor());

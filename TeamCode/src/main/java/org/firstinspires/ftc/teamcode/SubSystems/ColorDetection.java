@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.SubSystems;
 import android.graphics.Color;
 
 import com.qualcomm.hardware.rev.RevColorSensorV3;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 
@@ -46,10 +45,10 @@ public class ColorDetection implements TeamConstants {
 
     public State getState() {
         switch (getColor()) {
-            case "Error": return State.None;
-            case "Green": return State.Green;
-            case "Purple": return State.Purple;
-            default: return State.Unknown;
+            case "Error": return State.NONE;
+            case "Green": return State.GREEN;
+            case "Purple": return State.PURPLE;
+            default: return State.UNKNOWN;
         }
     }
 

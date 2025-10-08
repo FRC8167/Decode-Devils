@@ -2,8 +2,9 @@ package org.firstinspires.ftc.teamcode.SubSystems;
 
 
 
+import org.firstinspires.ftc.teamcode.Cogintilities.SpinnerSequencer;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
-import org.firstinspires.ftc.teamcode.Cogintilities.Timer;
+import org.firstinspires.ftc.teamcode.Cogintilities.TimedTimer;
 
 import java.util.Arrays;
 
@@ -16,9 +17,11 @@ public class Spindexer implements TeamConstants {
     boolean isOpen;
     Spinner spinner;
     Dropper dropper;
-    Timer dropTimer;
+    TimedTimer dropTimer;
     SpinStatesSingleton spinStates;
     ColorDetection colorDetection;
+
+    SpinnerSequencer spinnerSequencer;
 
 
     public Spindexer(Spinner spinner, Dropper dropper, SpinStatesSingleton spinStates, ColorDetection colorDetection) {
@@ -31,11 +34,13 @@ public class Spindexer implements TeamConstants {
         fractionalSlotDrop = -1;
         currentAngleNormalized = 0;
         isOpen = false;
-        dropTimer = new Timer();
+        dropTimer = new TimedTimer();
+        spinnerSequencer = new SpinnerSequencer(this, spinStates);
         update();
     }
 
     public void setCenteredPositionDegrees(double degrees) {
+        spinnerSequencer.stop();
         spinner.setCenteredPositionDegrees(degrees);
         update();
     }
@@ -45,6 +50,7 @@ public class Spindexer implements TeamConstants {
     }
 
     public void rotateBy(double degrees) {
+        spinnerSequencer.stop();
         spinner.rotateBy(degrees);
         update();
     }
@@ -53,10 +59,9 @@ public class Spindexer implements TeamConstants {
         return spinner.servoPos();
     }
 //
-    public void setDropperPosition(double pos) {
-        dropper.setPosition(pos);
-    }
-
+//    public void setDropperPosition(double pos) {
+//        dropper.setPosition(pos);
+//    }
 
     public void rotateSlotToDrop(int slot) {
         update();
@@ -73,8 +78,12 @@ public class Spindexer implements TeamConstants {
             delta -= 360;
         else if (currentAngleNormalized + delta < -SPINNER_RANGE /2)
             delta += 360;
-        spinner.rotateBy(delta);
+        rotateBy(delta);
         update();
+    }
+
+    public void sequence(State... states) {
+        spinnerSequencer.runStates(states);
     }
 
     public void rotateSlotToSensor(int slot) {
@@ -92,7 +101,7 @@ public class Spindexer implements TeamConstants {
             delta -= 360;
         else if (currentAngleNormalized + delta < -SPINNER_RANGE /2)
             delta += 360;
-        spinner.rotateBy(delta);
+        rotateBy(delta);
         update();
     }
 
@@ -179,6 +188,7 @@ public class Spindexer implements TeamConstants {
     }
 
     public void update() {
+        spinnerSequencer.update();
         currentAngleNormalized = ((spinner.getCenteredPositionDegrees()%360+360)%360);
         switch ((int) currentAngleNormalized) {
             case 300: activeSlotDrop = 0; fractionalSlotDrop = 0; break;
@@ -219,32 +229,36 @@ public class Spindexer implements TeamConstants {
         update();
         State state = spinStates.getSlot(activeSlotSensor);
         if (activeSlotSensor != -1)
-            if (state == State.None || state == State.Unknown)
+            if (state == State.NONE || state == State.UNKNOWN)
                 spinStates.setSlot(activeSlotSensor, colorDetection.getState());
     }
 
     public void dropTimed() { // assumes successful drop
         update();
         if (activeSlotDrop != -1) {
-            spinStates.setSlot(activeSlotDrop, State.None);
+            spinStates.setSlot(activeSlotDrop, State.NONE);
             isOpen = true;
             dropper.open();
-            dropTimer = new Timer(DROP_TIMER); // how long until door closes (arbitrary value)
+            dropTimer = new TimedTimer(DROP_TIMER); // how long until door closes (arbitrary value)
         }
     }
 
     public void drop() { // assumes successful drop
         update();
         if (activeSlotDrop != -1) {
-            spinStates.setSlot(activeSlotDrop, State.None);
+            spinStates.setSlot(activeSlotDrop, State.NONE);
             isOpen = true;
             dropper.open();
-            dropTimer = new Timer(0.1);
+            dropTimer = new TimedTimer(0.1);
         }
     }
 
     public double getRemainingTime() {
         return dropTimer.getRemainingTime();
+    }
+
+    public boolean isOpen() {
+        return isOpen;
     }
 
     public double getDropperPos() {

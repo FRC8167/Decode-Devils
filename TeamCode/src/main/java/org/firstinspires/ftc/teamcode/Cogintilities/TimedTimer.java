@@ -1,17 +1,21 @@
 package org.firstinspires.ftc.teamcode.Cogintilities;
 
-public class Timer {
-    double initialTime;
-    double duration;
+public class TimedTimer {
+    private double initialTime;
+    private final double duration;
 
-    public Timer(double timeInSeconds) {
+    public TimedTimer(double timeInSeconds) {
         initialTime = System.currentTimeMillis();
         duration = timeInSeconds*1000;
     }
 
-    public Timer() {
+    public TimedTimer() {
         initialTime = System.currentTimeMillis();
         duration = 0;
+    }
+
+    public void reset() {
+        initialTime = System.currentTimeMillis();
     }
 
     public boolean isDone() {

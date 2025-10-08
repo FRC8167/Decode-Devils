@@ -11,9 +11,9 @@ public class SpinStatesSingleton implements TeamConstants {
     private static SpinStatesSingleton single_instance = null;
 
     public SpinStatesSingleton() {
-        slot0 = State.None;
-        slot1 = State.None;
-        slot2 = State.None;
+        slot0 = State.NONE;
+        slot1 = State.NONE;
+        slot2 = State.NONE;
     }
 
     public static synchronized SpinStatesSingleton getInstance()
@@ -57,6 +57,13 @@ public class SpinStatesSingleton implements TeamConstants {
             if (s == state) count++;
         }
         return count;
+    }
+
+    public boolean isStateInStates(State state) {
+        for (State s : getStates()) {
+            if (s == state) return true;
+        }
+        return false;
     }
 
     public int[] getIndexesOfStateInStates(State state) {
