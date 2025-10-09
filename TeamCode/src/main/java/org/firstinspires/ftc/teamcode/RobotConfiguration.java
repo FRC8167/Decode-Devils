@@ -34,6 +34,9 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
     /*------------ Public Class Variables - Frowned Upon ------------*/
     public enum AllianceColor { RED, BLUE }
 
+    public State[] ArtifactSequence = null;
+    public String ArtifactSequenceString = "";
+
 
     /*------------- Private Class Variables - Preferred -------------*/
     static AllianceColor alliance;
@@ -46,6 +49,7 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
     static protected SpinStatesSingleton spinStates;
     static protected ColorDetection colorDetection;
     static protected Spindexer spindexer;
+    static protected SpinnerSequencer spinnerSequencer;
 
     static private Spinner spinner;
     static private Dropper dropper;
@@ -93,6 +97,7 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
         spinner = new Spinner(spinServo, SPINNER_INIT_POS, SPINNER_MIN, SPINNER_MAX, moveServos);
         dropper = new Dropper(dropServo, DROPPER_INIT_POS, DROPPER_MIN, DROPPER_MAX, moveServos);
         spindexer = new Spindexer(spinner, dropper, spinStates, colorDetection);
+        spinnerSequencer = new SpinnerSequencer(spindexer, spinStates);
 
     }
 

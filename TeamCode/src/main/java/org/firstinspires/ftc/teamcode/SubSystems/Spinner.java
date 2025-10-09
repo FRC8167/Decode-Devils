@@ -37,6 +37,11 @@ public class Spinner extends Servo1D implements TeamConstants {
         setCenteredPositionDegrees(getCenteredPositionDegrees()+degrees);
     }
 
+    public void continueRotatingBy(double degrees) {
+        if (previousRotation >= 0) rotateBy(degrees);
+        else rotateBy(-degrees);
+    }
+
     public void update() {
         previousRotation = currentAngleNormalized - previousAngleNormalized;
     }

@@ -13,7 +13,7 @@ public interface TeamConstants {
     double SPINNER_MIN = 0.0;
     double SPINNER_MAX = 1.0;
     double SPINNER_INIT_POS = 0.5;
-    double SPINNER_RANGE = 1620.0; //degrees, should be 1800 (1642.5 calculated using 600-2400 servo)
+    double SPINNER_RANGE = 1620.0; //degrees, 1620.0 estimated should be 1800 (1642.5 calculated using 600-2400 servo)
 
     double DROPPER_MIN = 0;
     double DROPPER_MAX = 1;
@@ -27,5 +27,8 @@ public interface TeamConstants {
     // 0.03/0.16,0.97/0.83 (measured) (valid/value before move)
 
     double DROP_TIMER = 1; // time dropper stays open in seconds
-    double SEQUENCER_TIMER = 1; // time until next state ran in seconds
+    double SEQUENCER_TIMER = 0.8; // time until next state ran in seconds
+    double SEQUENCER_TIMER_INITIAL = 1.2;
+    double SEQUENCER_TIMER_WIGGLE = 0.2;
+    double SEQUENCER_WIGGLE_DEGREES = 15;
 }

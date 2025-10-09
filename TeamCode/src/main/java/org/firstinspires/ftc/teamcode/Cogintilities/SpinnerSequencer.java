@@ -10,7 +10,8 @@ public class SpinnerSequencer implements TeamConstants {
     private State[] states;
     private int numStates;
     private int nextState = 0;
-    private boolean done = false;
+    private boolean done = true;
+    private boolean wiggleActive = false;
 
     TimedTimer timer;
     SpinStatesSingleton spinStates;
@@ -18,15 +19,15 @@ public class SpinnerSequencer implements TeamConstants {
     public SpinnerSequencer(Spindexer spindexer, SpinStatesSingleton spinStates) {
         this.spindexer = spindexer;
         this.spinStates = spinStates;
-        timer = new TimedTimer(SEQUENCER_TIMER);
+        timer = new TimedTimer();
     }
 
     public void runStates(@NonNull State... states) {
         this.states = states;
         numStates = states.length;
-        timer.reset();
         nextState = 0;
         done = false;
+        wiggleActive = false;
         testStates();
         update();
     }
@@ -43,14 +44,29 @@ public class SpinnerSequencer implements TeamConstants {
         if (!done) {
             spindexer.drop();
             if (timer.isDone()) {
-                spindexer.rotateStateToDrop(states[nextState]);
-                nextState++;
-                timer.reset();
+                if (nextState >= numStates) {
+                    done = true;
+                    wiggleActive = true;
+                    spindexer.continueRotatingBy(SEQUENCER_WIGGLE_DEGREES);
+                    timer = new TimedTimer(SEQUENCER_TIMER_WIGGLE);
+
+
+                }
+                else {
+                    spindexer.rotateStateToDrop(states[nextState]);
+                    nextState++;
+                    if (nextState == 1) timer = new TimedTimer(SEQUENCER_TIMER_INITIAL);
+                    else timer = new TimedTimer(SEQUENCER_TIMER);
+
+                }
             }
 
-            if (nextState >= numStates) {
-                done = true;
-            }
+
+        }
+
+        if (wiggleActive && timer.isDone()) {
+            spindexer.continueRotatingBy(-10);
+            wiggleActive = false;
         }
 
     }

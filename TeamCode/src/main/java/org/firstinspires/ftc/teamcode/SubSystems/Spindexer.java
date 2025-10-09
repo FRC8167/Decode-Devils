@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.SubSystems;
 
 
 
-import org.firstinspires.ftc.teamcode.Cogintilities.SpinnerSequencer;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 import org.firstinspires.ftc.teamcode.Cogintilities.TimedTimer;
 
@@ -21,8 +20,6 @@ public class Spindexer implements TeamConstants {
     SpinStatesSingleton spinStates;
     ColorDetection colorDetection;
 
-    SpinnerSequencer spinnerSequencer;
-
 
     public Spindexer(Spinner spinner, Dropper dropper, SpinStatesSingleton spinStates, ColorDetection colorDetection) {
         this.spinner = spinner;
@@ -35,12 +32,10 @@ public class Spindexer implements TeamConstants {
         currentAngleNormalized = 0;
         isOpen = false;
         dropTimer = new TimedTimer();
-        spinnerSequencer = new SpinnerSequencer(this, spinStates);
         update();
     }
 
     public void setCenteredPositionDegrees(double degrees) {
-        spinnerSequencer.stop();
         spinner.setCenteredPositionDegrees(degrees);
         update();
     }
@@ -50,8 +45,12 @@ public class Spindexer implements TeamConstants {
     }
 
     public void rotateBy(double degrees) {
-        spinnerSequencer.stop();
         spinner.rotateBy(degrees);
+        update();
+    }
+
+    public void continueRotatingBy(double degrees) {
+        spinner.continueRotatingBy(degrees);
         update();
     }
 
@@ -67,39 +66,50 @@ public class Spindexer implements TeamConstants {
         update();
         double targetAngle;
         switch (slot) {
-            case 0: targetAngle = 300; break;
-            case 1: targetAngle = 180; break;
-            case 2: targetAngle = 60; break;
-            default: targetAngle = spinner.getCenteredPositionDegrees(); // No change if invalid slot
+            case 0:
+                targetAngle = 300;
+                break;
+            case 1:
+                targetAngle = 180;
+                break;
+            case 2:
+                targetAngle = 60;
+                break;
+            default:
+                targetAngle = spinner.getCenteredPositionDegrees(); // No change if invalid slot
         }
         // Calculate the shortest path to the target angle
         double delta = ((targetAngle - currentAngleNormalized + 540) % 360) - 180; // Calculate shortest path (-180 to 180)
-        if (currentAngleNormalized + delta > SPINNER_RANGE /2)
+        if (currentAngleNormalized + delta > SPINNER_RANGE / 2)
             delta -= 360;
-        else if (currentAngleNormalized + delta < -SPINNER_RANGE /2)
+        else if (currentAngleNormalized + delta < -SPINNER_RANGE / 2)
             delta += 360;
         rotateBy(delta);
         update();
     }
 
-    public void sequence(State... states) {
-        spinnerSequencer.runStates(states);
-    }
 
     public void rotateSlotToSensor(int slot) {
         update();
         double targetAngle;
         switch (slot) {
-            case 0: targetAngle = 120; break;
-            case 1: targetAngle = 0; break;
-            case 2: targetAngle = 240; break;
-            default: targetAngle = spinner.getCenteredPositionDegrees(); // No change if invalid slot
+            case 0:
+                targetAngle = 120;
+                break;
+            case 1:
+                targetAngle = 0;
+                break;
+            case 2:
+                targetAngle = 240;
+                break;
+            default:
+                targetAngle = spinner.getCenteredPositionDegrees(); // No change if invalid slot
         }
         // Calculate the shortest path to the target angle
         double delta = ((targetAngle - currentAngleNormalized + 540) % 360) - 180; // Calculate shortest path (-180 to 180)
-        if (currentAngleNormalized + delta > SPINNER_RANGE /2)
+        if (currentAngleNormalized + delta > SPINNER_RANGE / 2)
             delta -= 360;
-        else if (currentAngleNormalized + delta < -SPINNER_RANGE /2)
+        else if (currentAngleNormalized + delta < -SPINNER_RANGE / 2)
             delta += 360;
         rotateBy(delta);
         update();
@@ -117,8 +127,7 @@ public class Spindexer implements TeamConstants {
         if (indexes.length > 0) {
             if (indexes.length == 1) {
                 rotateSlotToDrop(indexes[0]);
-            }
-            else {
+            } else {
                 for (int i = 0; i < indexes.length; i++) {
                     double targetSlotValue = indexes[i]; // The actual slot number (0, 1, or 2)
 
@@ -149,23 +158,19 @@ public class Spindexer implements TeamConstants {
                         if (activeSlotDrop != -1) {
                             rotation = 120;
 //                            setIndex = (activeSlotDrop-1+3)%3;
-                        }
-                        else {
+                        } else {
                             rotation = 60;
 //                            setIndex = Math.toIntExact(Math.round(fractionalSlotDrop - 0.5));
                         }
-                    }
-                    else if (spinner.getPreviousRotation() < 0) {
+                    } else if (spinner.getPreviousRotation() < 0) {
                         if (activeSlotDrop != -1) {
                             rotation = -120;
 //                            setIndex = (activeSlotDrop+1)%3;
-                        }
-                        else {
+                        } else {
                             rotation = -60;
 //                            setIndex = Math.toIntExact(Math.round(fractionalSlotDrop + 0.5))%3;
                         }
-                    }
-                    else {
+                    } else {
                         throw new IllegalStateException("IDK, something went horribly wrong. Pls Fix");
                     }
                     rotateBy(rotation);
@@ -173,12 +178,9 @@ public class Spindexer implements TeamConstants {
                     if (activeSlotDrop != foundIndex && activeSlotDrop != secondFoundIndex) {
                         throw new IllegalStateException("IDK, something went horribly wrong. Pls Fix");
                     }
-                }
-                else if (found) {
+                } else if (found) {
                     rotateSlotToDrop(foundIndex);
-                }
-
-                else {
+                } else {
                     throw new IllegalStateException("IDK, something went horribly wrong. Pls Fix");
                 }
 
@@ -188,19 +190,40 @@ public class Spindexer implements TeamConstants {
     }
 
     public void update() {
-        spinnerSequencer.update();
-        currentAngleNormalized = ((spinner.getCenteredPositionDegrees()%360+360)%360);
+        currentAngleNormalized = ((spinner.getCenteredPositionDegrees() % 360 + 360) % 360);
         switch ((int) currentAngleNormalized) {
-            case 300: activeSlotDrop = 0; fractionalSlotDrop = 0; break;
-            case 180: activeSlotDrop = 1; fractionalSlotDrop = 1; break;
-            case 60: activeSlotDrop = 2; fractionalSlotDrop = 2; break;
-            default: activeSlotDrop = -1; break;
+            case 300:
+                activeSlotDrop = 0;
+                fractionalSlotDrop = 0;
+                break;
+            case 180:
+                activeSlotDrop = 1;
+                fractionalSlotDrop = 1;
+                break;
+            case 60:
+                activeSlotDrop = 2;
+                fractionalSlotDrop = 2;
+                break;
+            default:
+                activeSlotDrop = -1;
+                break;
         }
         switch ((int) currentAngleNormalized) {
-            case 120: activeSlotSensor = 0; fractionalSlotDrop = 1.5; break;
-            case 0: activeSlotSensor = 1; fractionalSlotDrop = 2.5; break;
-            case 240: activeSlotSensor = 2; fractionalSlotDrop = 0.5; break;
-            default: activeSlotSensor = -1; break;
+            case 120:
+                activeSlotSensor = 0;
+                fractionalSlotDrop = 1.5;
+                break;
+            case 0:
+                activeSlotSensor = 1;
+                fractionalSlotDrop = 2.5;
+                break;
+            case 240:
+                activeSlotSensor = 2;
+                fractionalSlotDrop = 0.5;
+                break;
+            default:
+                activeSlotSensor = -1;
+                break;
         }
 
         if (dropTimer.isDone()) {
@@ -227,10 +250,13 @@ public class Spindexer implements TeamConstants {
 
     public void detectColor() { // TODO: Mount color sensor to spindexer & confirm positioning
         update();
-        State state = spinStates.getSlot(activeSlotSensor);
-        if (activeSlotSensor != -1)
-            if (state == State.NONE || state == State.UNKNOWN)
-                spinStates.setSlot(activeSlotSensor, colorDetection.getState());
+        if (activeSlotSensor != -1) {
+            State state = spinStates.getSlot(activeSlotSensor);
+            State newState = colorDetection.getState();
+            if ((state == State.NONE || state == State.UNKNOWN) || (newState == State.GREEN || newState == State.PURPLE)) {
+                spinStates.setSlot(activeSlotSensor, newState);
+            }
+        }
     }
 
     public void dropTimed() { // assumes successful drop
@@ -264,6 +290,8 @@ public class Spindexer implements TeamConstants {
     public double getDropperPos() {
         return dropper.servoPos();
     }
+
+
 
     public void periodic() { // must be called during TeleOp for timer to function
         update();
