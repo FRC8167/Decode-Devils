@@ -29,7 +29,7 @@ public class ColorDetection implements TeamConstants {
 
     public String getColor() {
         update();
-        if ((saturation == 0 && hue == 0 && value == 0) || (saturation == 1 && (hue == 120 || hue == 60))) // air is 120 for some reason
+        if ((saturation == 0 && hue == 0) || (saturation == 1 && (hue == 120 || hue == 60))) // air is 120 and value !=0 for some reason
             return "Error";
         else if (saturation < 0.5)
             return "Invalid Color";

@@ -33,8 +33,23 @@ public class SpinnerSequencer implements TeamConstants {
     }
 
     public void testStates() {
+        int countPurple = 0;
+        int countGreen = 0;
+        int countNone = 0;
+        int countUnknown = 0;
         for (State state : states) {
+            if (state == State.PURPLE) countPurple++;
+            if (state == State.GREEN) countGreen++;
+            if (state == State.NONE) countNone++;
+            if (state == State.UNKNOWN) countUnknown++;
+
             if (!spinStates.isStateInStates(state)) {
+                stop();
+            }
+            if (countPurple > spinStates.getCountOfStateInStates(State.PURPLE)
+            || countGreen   > spinStates.getCountOfStateInStates(State.GREEN)
+            || countNone    > spinStates.getCountOfStateInStates(State.NONE)
+            || countUnknown > spinStates.getCountOfStateInStates(State.UNKNOWN)) {
                 stop();
             }
         }
@@ -42,9 +57,10 @@ public class SpinnerSequencer implements TeamConstants {
 
     public void update() {
         if (!done) {
-            spindexer.drop();
+            spindexer.dropWithoutStateUpdate();
             if (timer.isDone()) {
                 if (nextState >= numStates) {
+                    spindexer.stateUpdateForDrop();
                     done = true;
                     wiggleActive = true;
                     spindexer.continueRotatingBy(SEQUENCER_WIGGLE_DEGREES);
@@ -53,10 +69,14 @@ public class SpinnerSequencer implements TeamConstants {
 
                 }
                 else {
+                    if (nextState != 0) spindexer.stateUpdateForDrop();
+
                     spindexer.rotateStateToDrop(states[nextState]);
                     nextState++;
+
                     if (nextState == 1) timer = new TimedTimer(SEQUENCER_TIMER_INITIAL);
                     else timer = new TimedTimer(SEQUENCER_TIMER);
+
 
                 }
             }
@@ -65,7 +85,7 @@ public class SpinnerSequencer implements TeamConstants {
         }
 
         if (wiggleActive && timer.isDone()) {
-            spindexer.continueRotatingBy(-10);
+            spindexer.continueRotatingBy(-SEQUENCER_WIGGLE_DEGREES);
             wiggleActive = false;
         }
 

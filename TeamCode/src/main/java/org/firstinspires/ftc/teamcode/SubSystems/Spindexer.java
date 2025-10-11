@@ -279,6 +279,19 @@ public class Spindexer implements TeamConstants {
         }
     }
 
+    public void dropWithoutStateUpdate() { // assumes successful drop
+        update();
+        if (activeSlotDrop != -1) {
+            isOpen = true;
+            dropper.open();
+            dropTimer = new TimedTimer(0.1);
+        }
+    }
+
+    public void stateUpdateForDrop() {
+        if (activeSlotDrop != -1) spinStates.setSlot(activeSlotDrop, State.NONE);
+    }
+
     public double getRemainingTime() {
         return dropTimer.getRemainingTime();
     }

@@ -81,8 +81,10 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
                     ArtifactSequence = STATES_GPP;
                     ArtifactSequenceString = "GPP";
                 }
-
             }
+
+            if (spindexer.getActiveSlotDrop() != -1) lightRGB.setColorState(spinStates.getSlot(spindexer.getActiveSlotDrop()));
+            else if (spindexer.getActiveSlotSensor() != -1) lightRGB.setColorState(spinStates.getSlot(spindexer.getActiveSlotSensor()));
 
             telemetry.addData("Color: ", colorDetection.getColor());
             telemetry.addData("H: ", colorDetection.getColorHSV()[0]);

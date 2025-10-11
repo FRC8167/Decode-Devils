@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 import org.firstinspires.ftc.teamcode.SubSystems.ColorDetection;
 import org.firstinspires.ftc.teamcode.SubSystems.Dropper;
 import org.firstinspires.ftc.teamcode.SubSystems.Intake;
+import org.firstinspires.ftc.teamcode.SubSystems.LightRGB;
 import org.firstinspires.ftc.teamcode.SubSystems.MecanumDriveSingleton;
 import org.firstinspires.ftc.teamcode.SubSystems.SpinStatesSingleton;
 import org.firstinspires.ftc.teamcode.SubSystems.Spindexer;
@@ -50,9 +51,11 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
     static protected ColorDetection colorDetection;
     static protected Spindexer spindexer;
     static protected SpinnerSequencer spinnerSequencer;
+    static protected LightRGB lightRGB;
 
     static private Spinner spinner;
     static private Dropper dropper;
+
 
 
     /*---------------------- Vision Objects -------------------------*/
@@ -88,6 +91,7 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
         RevColorSensorV3 colorSensor = hardwareMap.get(RevColorSensorV3.class, "colorSensor");
         Servo spinServo = hardwareMap.get(Servo.class, "spinServo");
         Servo dropServo = hardwareMap.get(Servo.class, "dropServo");
+        Servo servoRGB  = hardwareMap.get(Servo.class, "servoRGB");
 
         /* Create an object of every module/subsystem needed for both autonomous and teleOp modes. */
 //        drive = MecanumDriveSingleton.getInstance(driveMotorLF, driveMotorLR, driveMotorRF, driveMotorRR);
@@ -96,6 +100,7 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
         spinStates = SpinStatesSingleton.getInstance();
         spinner = new Spinner(spinServo, SPINNER_INIT_POS, SPINNER_MIN, SPINNER_MAX, moveServos);
         dropper = new Dropper(dropServo, DROPPER_INIT_POS, DROPPER_MIN, DROPPER_MAX, moveServos);
+        lightRGB = new LightRGB(servoRGB, LIGHT_INIT_POS, LIGHT_MIN, LIGHT_MAX);
         spindexer = new Spindexer(spinner, dropper, spinStates, colorDetection);
         spinnerSequencer = new SpinnerSequencer(spindexer, spinStates);
 

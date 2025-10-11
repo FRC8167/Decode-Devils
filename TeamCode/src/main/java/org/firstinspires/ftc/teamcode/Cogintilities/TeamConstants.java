@@ -26,6 +26,10 @@ public interface TeamConstants {
     // 0.25,0.75 (supposed w/ servo range error)
     // 0.03/0.16,0.97/0.83 (measured) (valid/value before move)
 
+    double LIGHT_INIT_POS = 0;
+    double LIGHT_MIN = 0;
+    double LIGHT_MAX = 1;
+
     double DROP_TIMER = 1; // time dropper stays open in seconds
     double SEQUENCER_TIMER = 0.8; // time until next state ran in seconds
     double SEQUENCER_TIMER_INITIAL = 1.2;
