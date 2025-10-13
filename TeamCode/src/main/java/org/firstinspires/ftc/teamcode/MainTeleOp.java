@@ -59,7 +59,7 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
             }
 
             if (gamepad1.backWasPressed()) {
-                if (ArtifactSequence != null) spinnerSequencer.runStates(
+                if (ArtifactSequence != null) spinnerSequencer.runStatesToDrop(
                         ArtifactSequence
                 );
             }

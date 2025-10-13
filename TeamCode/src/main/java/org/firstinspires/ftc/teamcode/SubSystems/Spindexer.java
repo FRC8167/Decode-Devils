@@ -12,6 +12,7 @@ public class Spindexer implements TeamConstants {
     int activeSlotDrop; //
     int activeSlotSensor;// assumes color sensor is opposite to drop
     double fractionalSlotDrop;
+    double fractionalSlotSensor;
     double currentAngleNormalized; //(0-360)
     boolean isOpen;
     Spinner spinner;
@@ -29,6 +30,7 @@ public class Spindexer implements TeamConstants {
         activeSlotDrop = -1;
         activeSlotSensor = -1;
         fractionalSlotDrop = -1;
+        fractionalSlotSensor = -1;
         currentAngleNormalized = 0;
         isOpen = false;
         dropTimer = new TimedTimer();
@@ -37,6 +39,11 @@ public class Spindexer implements TeamConstants {
 
     public void setCenteredPositionDegrees(double degrees) {
         spinner.setCenteredPositionDegrees(degrees);
+        update();
+    }
+
+    public void setCentered() {
+        spinner.setCenteredPositionDegrees(0);
         update();
     }
 
@@ -189,20 +196,97 @@ public class Spindexer implements TeamConstants {
 
     }
 
+    public void rotateStateToSensor(State state) { //Note: Optimized for centered (closest to normalized 0) positioning instead of continuous movement
+        update();
+        int[] indexes = spinStates.getIndexesOfStateInStates(state);
+        double[] distances = new double[indexes.length];
+        boolean found = false;
+        boolean secondFound = false;
+        int foundIndex = -1;
+        int secondFoundIndex = -1;
+        double rotation;
+        if (indexes.length > 0) {
+            if (indexes.length == 1) {
+                rotateSlotToSensor(indexes[0]);
+            } else {
+                for (int i = 0; i < indexes.length; i++) {
+                    double targetSlotValue = indexes[i]; // The actual slot number (0, 1, or 2)
+
+                    double forwardSlotDist = (targetSlotValue - fractionalSlotSensor + 3.0) % 3.0;
+                    // Ensure forwardSlotDist is always in [0, 3)
+                    if (forwardSlotDist < 0) forwardSlotDist += 3.0;
+
+
+                    double backwardSlotDist = (fractionalSlotSensor - targetSlotValue + 3.0) % 3.0;
+                    // Ensure backwardSlotDist is always in [0, 3)
+                    if (backwardSlotDist < 0) backwardSlotDist += 3.0;
+
+                    distances[i] = Math.min(forwardSlotDist, backwardSlotDist);
+                }
+                double min = Arrays.stream(distances).min().getAsDouble();
+                for (int i = 0; i < indexes.length; i++) {
+                    if (!found && distances[i] == min) {
+                        found = true;
+                        foundIndex = indexes[i];
+                    }
+                    if (found && distances[i] == min && indexes[i] != foundIndex) {
+                        secondFound = true;
+                        secondFoundIndex = indexes[i];
+                    }
+                }
+                if (found && secondFound) {
+                    if (currentAngleNormalized <= 0) {
+                        if (activeSlotSensor != -1) {
+                            rotation = 120;
+//                            setIndex = (activeSlotDrop-1+3)%3;
+                        } else {
+                            rotation = 60;
+//                            setIndex = Math.toIntExact(Math.round(fractionalSlotDrop - 0.5));
+                        }
+                    } else if (currentAngleNormalized > 0) {
+                        if (activeSlotSensor != -1) {
+                            rotation = -120;
+//                            setIndex = (activeSlotDrop+1)%3;
+                        } else {
+                            rotation = -60;
+//                            setIndex = Math.toIntExact(Math.round(fractionalSlotDrop + 0.5))%3;
+                        }
+                    } else {
+                        throw new IllegalStateException("IDK, something went horribly wrong. Pls Fix");
+                    }
+                    rotateBy(rotation);
+                    update();
+                    if (activeSlotSensor != foundIndex && activeSlotSensor != secondFoundIndex) {
+                        throw new IllegalStateException("IDK, something went horribly wrong. Pls Fix");
+                    }
+                } else if (found) {
+                    rotateSlotToSensor(foundIndex);
+                } else {
+                    throw new IllegalStateException("IDK, something went horribly wrong. Pls Fix");
+                }
+
+            }
+        }
+
+    }
+
     public void update() {
         currentAngleNormalized = ((spinner.getCenteredPositionDegrees() % 360 + 360) % 360);
         switch ((int) currentAngleNormalized) {
             case 300:
                 activeSlotDrop = 0;
                 fractionalSlotDrop = 0;
+                fractionalSlotSensor = 1.5;
                 break;
             case 180:
                 activeSlotDrop = 1;
                 fractionalSlotDrop = 1;
+                fractionalSlotSensor = 2.5;
                 break;
             case 60:
                 activeSlotDrop = 2;
                 fractionalSlotDrop = 2;
+                fractionalSlotSensor = 0.5;
                 break;
             default:
                 activeSlotDrop = -1;
@@ -211,14 +295,17 @@ public class Spindexer implements TeamConstants {
         switch ((int) currentAngleNormalized) {
             case 120:
                 activeSlotSensor = 0;
+                fractionalSlotSensor = 0;
                 fractionalSlotDrop = 1.5;
                 break;
             case 0:
                 activeSlotSensor = 1;
+                fractionalSlotSensor = 1;
                 fractionalSlotDrop = 2.5;
                 break;
             case 240:
                 activeSlotSensor = 2;
+                fractionalSlotSensor = 2;
                 fractionalSlotDrop = 0.5;
                 break;
             default:
