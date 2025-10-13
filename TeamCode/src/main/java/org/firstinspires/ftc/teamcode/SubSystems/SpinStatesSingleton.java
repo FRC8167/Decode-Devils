@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.SubSystems;
 
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 
+import java.util.Arrays;
+
 public class SpinStatesSingleton implements TeamConstants {
     State slot0;
     State slot1;
@@ -51,30 +53,36 @@ public class SpinStatesSingleton implements TeamConstants {
         return new State[] {slot0, slot1, slot2};
     }
 
-    public int getCountOfStateInStates(State state) {
+    public int getCountOfStateInStates(State state, int... excludedIndexes) {
         int count = 0;
-        for (State s : getStates()) {
-            if (s == state) count++;
+        State[] states = getStates();
+        for (int i = 0; i < states.length; i++) {
+            if (states[i] == state && isNotExcluded(i, excludedIndexes)) count++;
         }
         return count;
     }
 
-    public boolean isStateInStates(State state) {
-        for (State s : getStates()) {
-            if (s == state) return true;
+    public boolean isStateInStates(State state, int... excludedIndexes) {
+        State[] states = getStates();
+        for (int i = 0; i < states.length; i++) {
+            if (states[i] == state && isNotExcluded(i, excludedIndexes)) return true;
         }
         return false;
     }
 
-    public int[] getIndexesOfStateInStates(State state) {
-        int[] indexes = new int[getCountOfStateInStates(state)];
+    public int[] getIndexesOfStateInStates(State state, int... excludedIndexes) {
+        int[] indexes = new int[getCountOfStateInStates(state, excludedIndexes)];
         int currentIndex = 0;
         State[] states = getStates();
         for (int i = 0; i < states.length; i++) {
-            if (states[i] == state) {
+            if (states[i] == state && isNotExcluded(i, excludedIndexes)) {
                 indexes[currentIndex++] = i;
             }
         }
         return indexes;
+    }
+
+    public boolean isNotExcluded(int index, int... excludedIndexes) {
+        return Arrays.stream(excludedIndexes).noneMatch(element -> element == index);
     }
 }

@@ -5,6 +5,9 @@ import androidx.annotation.NonNull;
 import org.firstinspires.ftc.teamcode.SubSystems.SpinStatesSingleton;
 import org.firstinspires.ftc.teamcode.SubSystems.Spindexer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SpinnerSequencer implements TeamConstants {
     public enum Mode{DROP, SCAN}
 
@@ -17,9 +20,9 @@ public class SpinnerSequencer implements TeamConstants {
     private boolean wiggleActive = false;
 
     private int scanCycleAttempts = 0;
-    private int scanAttemptsSlot0 = 0;
-    private int scanAttemptsSlot1 = 0;
-    private int scanAttemptsSlot2 = 0;
+    private int[] scanAttempts = {0,0,0};
+    private boolean[] excludedIndexesBoolean = new boolean[3];
+    private int[] excludedIndexes = convertExcludedIndexes(excludedIndexesBoolean);
     private int currentScanSlot = -1;
     private int lastScanSlot = -1;
 
@@ -50,9 +53,9 @@ public class SpinnerSequencer implements TeamConstants {
         done = false;
         wiggleActive = false;
         scanCycleAttempts = 0;
-        scanAttemptsSlot0 = 0;
-        scanAttemptsSlot1 = 0;
-        scanAttemptsSlot2 = 0;
+        scanAttempts = new int[]{0, 0, 0};
+        excludedIndexesBoolean = new boolean[3];
+        excludedIndexes = convertExcludedIndexes(excludedIndexesBoolean);
         currentScanSlot = -1;
         lastScanSlot = -1;
         update();
@@ -121,35 +124,30 @@ public class SpinnerSequencer implements TeamConstants {
             case SCAN:
                 if (!done) {
                     if (timer.isDone()) {
-                        if (spinStates.isStateInStates(State.NONE) || spinStates.isStateInStates(State.UNKNOWN)) {
+                        if (spinStates.isStateInStates(State.NONE, excludedIndexes) || spinStates.isStateInStates(State.UNKNOWN, excludedIndexes)) {
                             lastScanSlot = currentScanSlot;
                             currentScanSlot = spindexer.getActiveSlotSensor();
                             State activeState;
                             if (currentScanSlot != -1) activeState = spinStates.getSlot(currentScanSlot);
                             else activeState = null;
 
-                            if ((activeState == State.NONE || activeState == State.UNKNOWN) && !wiggleActive) {
+                            if ((activeState == State.NONE || activeState == State.UNKNOWN) && !wiggleActive && spinStates.isNotExcluded(currentScanSlot, excludedIndexes)) {
                                 spindexer.detectColor();
                                 State newActiveState = spinStates.getSlot(currentScanSlot);
                                 if (newActiveState == State.NONE || newActiveState == State.UNKNOWN) {
                                     scanCycleAttempts ++;
                                     if (scanCycleAttempts >= SEQUENCER_SCAN_CYCLE_ATTEMPTS) {
-                                        switch (spindexer.getActiveSlotSensor()) {
-                                            case (0): scanAttemptsSlot0 ++;
-                                            case (1): scanAttemptsSlot1 ++;
-                                            case (2): scanAttemptsSlot2 ++;
+                                        scanAttempts[currentScanSlot]++;
+                                        for (int i = 0; i < scanAttempts.length; i++) {
+                                            if (scanAttempts[i] >= SEQUENCER_SCAN_MAX_ATTEMPTS) {
+                                                excludedIndexesBoolean[i] = true;
+                                                excludedIndexes = convertExcludedIndexes(excludedIndexesBoolean);
+                                            }
                                         }
-                                        if (scanAttemptsSlot0 >= SEQUENCER_SCAN_MAX_ATTEMPTS //TODO: In the future correct to allow others to be scanned when one fails
-                                        || scanAttemptsSlot1 >= SEQUENCER_SCAN_MAX_ATTEMPTS
-                                        || scanAttemptsSlot2 >= SEQUENCER_SCAN_MAX_ATTEMPTS) {
-                                            done = true; //Exits if any exceed limits
-                                            mode = null;
-                                        }
-                                        else {
-                                            spindexer.setCentered();
-                                            timer = new TimedTimer(SEQUENCER_TIMER_WIGGLE);
-                                            wiggleActive = true;
-                                        }
+                                         //TODO: Test if this works
+                                        spindexer.setCentered();
+                                        timer = new TimedTimer(SEQUENCER_TIMER_WIGGLE);
+                                        wiggleActive = true;
                                     }
                                 } else {
                                     scanCycleAttempts = 0;
@@ -159,10 +157,10 @@ public class SpinnerSequencer implements TeamConstants {
                                 timer = new TimedTimer(SEQUENCER_TIMER_WIGGLE_BACK);
                                 wiggleActive = false;
                             } else {
-                                if (spinStates.isStateInStates(State.NONE)) {
-                                    spindexer.rotateStateToSensor(State.NONE);
+                                if (spinStates.isStateInStates(State.NONE, excludedIndexes)) {
+                                    spindexer.rotateStateToSensor(State.NONE, excludedIndexes);
                                 } else {
-                                    spindexer.rotateStateToSensor(State.UNKNOWN);
+                                    spindexer.rotateStateToSensor(State.UNKNOWN, excludedIndexes);
                                 }
                                 timer = new TimedTimer(SEQUENCER_TIMER);
                             }
@@ -189,6 +187,18 @@ public class SpinnerSequencer implements TeamConstants {
 
     public Mode getMode() {
         return mode;
+    }
+
+    public int[] convertExcludedIndexes(@NonNull boolean... excludedIndexesBoolean) {
+        int length = excludedIndexesBoolean.length;
+        List<Integer> excludedIndexesList = new ArrayList<>();
+        for (int i = 0; i < length; i++) {
+            if (excludedIndexesBoolean[i]) {
+                excludedIndexesList.add(i);
+            }
+        }
+        return excludedIndexesList.stream().mapToInt(i -> i).toArray();
+
     }
 
 }

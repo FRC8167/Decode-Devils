@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.SubSystems;
 
 
 
+import org.firstinspires.ftc.teamcode.Cogintilities.EricsEgregiousException;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 import org.firstinspires.ftc.teamcode.Cogintilities.TimedTimer;
 
@@ -122,14 +123,15 @@ public class Spindexer implements TeamConstants {
         update();
     }
 
-    public void rotateStateToDrop(State state) {
+    public void rotateStateToDrop(State state, int... excludedIndexes) {
         update();
-        int[] indexes = spinStates.getIndexesOfStateInStates(state);
+        int[] indexes = spinStates.getIndexesOfStateInStates(state, excludedIndexes);
         double[] distances = new double[indexes.length];
         boolean found = false;
         boolean secondFound = false;
         int foundIndex = -1;
         int secondFoundIndex = -1;
+        int setIndex;
         double rotation;
         if (indexes.length > 0) {
             if (indexes.length == 1) {
@@ -163,32 +165,32 @@ public class Spindexer implements TeamConstants {
                 if (found && secondFound) {
                     if (spinner.getPreviousRotation() >= 0) {
                         if (activeSlotDrop != -1) {
-                            rotation = 120;
-//                            setIndex = (activeSlotDrop-1+3)%3;
+//                            rotation = 120;
+                            setIndex = Math.floorMod(activeSlotDrop-1, 3);
                         } else {
-                            rotation = 60;
-//                            setIndex = Math.toIntExact(Math.round(fractionalSlotDrop - 0.5));
+//                            rotation = 60;
+                            setIndex = (int) fractionalSlotDrop;
                         }
                     } else if (spinner.getPreviousRotation() < 0) {
                         if (activeSlotDrop != -1) {
-                            rotation = -120;
-//                            setIndex = (activeSlotDrop+1)%3;
+//                            rotation = -120;
+                            setIndex = Math.floorMod(activeSlotDrop+1, 3);
                         } else {
-                            rotation = -60;
-//                            setIndex = Math.toIntExact(Math.round(fractionalSlotDrop + 0.5))%3;
+//                            rotation = -60;
+                            setIndex = Math.floorMod((int) fractionalSlotDrop+1, 3);
                         }
                     } else {
-                        throw new IllegalStateException("IDK, something went horribly wrong. Pls Fix");
+                        throw new EricsEgregiousException("IDK, something went horribly wrong. Pls Fix");
                     }
-                    rotateBy(rotation);
-                    update();
+//                    rotateBy(rotation);
+                    rotateSlotToDrop(setIndex);
                     if (activeSlotDrop != foundIndex && activeSlotDrop != secondFoundIndex) {
-                        throw new IllegalStateException("IDK, something went horribly wrong. Pls Fix");
+                        throw new EricsEgregiousException("IDK, something went horribly wrong. Pls Fix");
                     }
                 } else if (found) {
                     rotateSlotToDrop(foundIndex);
                 } else {
-                    throw new IllegalStateException("IDK, something went horribly wrong. Pls Fix");
+                    throw new EricsEgregiousException("IDK, something went horribly wrong. Pls Fix");
                 }
 
             }
@@ -196,14 +198,15 @@ public class Spindexer implements TeamConstants {
 
     }
 
-    public void rotateStateToSensor(State state) { //Note: Optimized for centered (closest to normalized 0) positioning instead of continuous movement
+    public void rotateStateToSensor(State state, int... excludedIndexes) { //Note: Optimized for centered (closest to normalized 0) positioning instead of continuous movement
         update();
-        int[] indexes = spinStates.getIndexesOfStateInStates(state);
+        int[] indexes = spinStates.getIndexesOfStateInStates(state, excludedIndexes);
         double[] distances = new double[indexes.length];
         boolean found = false;
         boolean secondFound = false;
         int foundIndex = -1;
         int secondFoundIndex = -1;
+        int setIndex;
         double rotation;
         if (indexes.length > 0) {
             if (indexes.length == 1) {
@@ -236,33 +239,33 @@ public class Spindexer implements TeamConstants {
                 }
                 if (found && secondFound) {
                     if (currentAngleNormalized <= 0) {
-                        if (activeSlotSensor != -1) {
-                            rotation = 120;
-//                            setIndex = (activeSlotDrop-1+3)%3;
+                        if (activeSlotDrop != -1) {
+//                            rotation = 120;
+                            setIndex = Math.floorMod(activeSlotDrop-1, 3);
                         } else {
-                            rotation = 60;
-//                            setIndex = Math.toIntExact(Math.round(fractionalSlotDrop - 0.5));
+//                            rotation = 60;
+                            setIndex = (int) fractionalSlotDrop;
                         }
                     } else if (currentAngleNormalized > 0) {
-                        if (activeSlotSensor != -1) {
-                            rotation = -120;
-//                            setIndex = (activeSlotDrop+1)%3;
+                        if (activeSlotDrop != -1) {
+//                            rotation = -120;
+                            setIndex = Math.floorMod(activeSlotDrop+1, 3);
                         } else {
-                            rotation = -60;
-//                            setIndex = Math.toIntExact(Math.round(fractionalSlotDrop + 0.5))%3;
+//                            rotation = -60;
+                            setIndex = Math.floorMod((int) fractionalSlotDrop+1, 3);
                         }
                     } else {
-                        throw new IllegalStateException("IDK, something went horribly wrong. Pls Fix");
+                        throw new EricsEgregiousException("IDK, something went horribly wrong. Pls Fix");
                     }
-                    rotateBy(rotation);
-                    update();
+//                    rotateBy(rotation);
+                    rotateSlotToDrop(setIndex);
                     if (activeSlotSensor != foundIndex && activeSlotSensor != secondFoundIndex) {
-                        throw new IllegalStateException("IDK, something went horribly wrong. Pls Fix");
+                        throw new EricsEgregiousException("IDK, something went horribly wrong. Pls Fix");
                     }
                 } else if (found) {
                     rotateSlotToSensor(foundIndex);
                 } else {
-                    throw new IllegalStateException("IDK, something went horribly wrong. Pls Fix");
+                    throw new EricsEgregiousException("IDK, something went horribly wrong. Pls Fix");
                 }
 
             }
