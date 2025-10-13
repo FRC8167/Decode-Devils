@@ -139,7 +139,7 @@ public class SpinnerSequencer implements TeamConstants {
                                             case (1): scanAttemptsSlot1 ++;
                                             case (2): scanAttemptsSlot2 ++;
                                         }
-                                        if (scanAttemptsSlot0 >= SEQUENCER_SCAN_MAX_ATTEMPTS
+                                        if (scanAttemptsSlot0 >= SEQUENCER_SCAN_MAX_ATTEMPTS //TODO: In the future correct to allow others to be scanned when one fails
                                         || scanAttemptsSlot1 >= SEQUENCER_SCAN_MAX_ATTEMPTS
                                         || scanAttemptsSlot2 >= SEQUENCER_SCAN_MAX_ATTEMPTS) {
                                             done = true; //Exits if any exceed limits
