@@ -62,6 +62,16 @@ public class Spindexer implements TeamConstants {
         update();
     }
 
+    public void rotateTowardsCenteredBy(double degrees) {
+        double currentAngle = getCenteredPositionDegrees();
+        if (currentAngle > 0)
+            rotateBy(-degrees);
+        else if (currentAngle < 0)
+            rotateBy(degrees);
+        else continueRotatingBy(degrees);
+        update();
+    }
+
     public double getPosition() {
         return spinner.servoPos();
     }

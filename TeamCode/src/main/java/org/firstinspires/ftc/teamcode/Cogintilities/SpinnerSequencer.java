@@ -145,7 +145,8 @@ public class SpinnerSequencer implements TeamConstants {
                                             }
                                         }
                                          //TODO: Test if this works
-                                        spindexer.setCentered();
+                                        spindexer.rotateTowardsCenteredBy(150);
+                                        //Note: Position is intentionally invalid (no indexes over drop and sensor) to throw error if code runs unexpectedly
                                         timer = new TimedTimer(SEQUENCER_TIMER_WIGGLE);
                                         wiggleActive = true;
                                     }
@@ -171,6 +172,7 @@ public class SpinnerSequencer implements TeamConstants {
 
                     }
                 }
+                if (done && wiggleActive) spindexer.rotateSlotToSensor(lastScanSlot);
                 break;
 
             }
