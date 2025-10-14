@@ -219,6 +219,7 @@ public class SpinnerSequencer implements TeamConstants {
                         } else {
                             done = true;
                             mode = Mode.NONE;
+                            timer = new TimedTimer(SEQUENCER_TIMER_WAIT);
                         }
 
                     }
