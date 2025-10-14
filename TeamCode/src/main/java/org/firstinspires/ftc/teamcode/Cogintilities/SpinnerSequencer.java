@@ -9,15 +9,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SpinnerSequencer implements TeamConstants {
-    public enum Mode{DROP, SCAN}
+    public enum Mode{DROP, SCAN, NONE}
+    public enum DualMode {INITIAL, RECENTER, FINAL, NONE}
 
     private final Spindexer spindexer;
     private final SpinStatesSingleton spinStates;
     private State[] states;
+    private State[] dualModeStates;
     private int numStates;
     private int nextState = 0;
     private boolean done = true;
     private boolean wiggleActive = false;
+    private boolean waitUntilNextIsActive = false;
 
     private int scanCycleAttempts = 0;
     private int[] scanAttempts = {0,0,0};
@@ -27,6 +30,7 @@ public class SpinnerSequencer implements TeamConstants {
     private int lastScanSlot = -1;
 
     private Mode mode;
+    private DualMode dualMode;
 
     private TimedTimer timer;
 
@@ -35,9 +39,11 @@ public class SpinnerSequencer implements TeamConstants {
         this.spindexer = spindexer;
         this.spinStates = spinStates;
         timer = new TimedTimer();
+        mode = Mode.NONE;
+        dualMode = DualMode.NONE;
     }
 
-    public void runStatesToDrop(@NonNull State... states) {
+    private void runStatesToDropInternal(@NonNull State... states) {
         mode = Mode.DROP;
         this.states = states;
         numStates = states.length;
@@ -48,10 +54,25 @@ public class SpinnerSequencer implements TeamConstants {
         update();
     }
 
-    public void scanAll() { //Assumes artifacts in all slots
+    public void runStatesToDrop(@NonNull State... states) {
+        stop();
+        runStatesToDropInternal(states);
+    }
+
+    public void runDual(@NonNull State... states) {
+        dualModeStates = states;
+        this.states = dualModeStates;
+        dualMode = DualMode.INITIAL;
+        done = true;
+        update();
+
+    }
+
+    private void runScanAllInternal() { //Assumes artifacts in all slots
         mode = Mode.SCAN;
         done = false;
         wiggleActive = false;
+        waitUntilNextIsActive = false;
         scanCycleAttempts = 0;
         scanAttempts = new int[]{0, 0, 0};
         excludedIndexesBoolean = new boolean[3];
@@ -61,7 +82,16 @@ public class SpinnerSequencer implements TeamConstants {
         update();
     }
 
+    public void runScanAll() { //Assumes artifacts in all slots
+        stop();
+        runScanAllInternal();
+    }
+
     public void testStates() {
+        if (statesAreInvalid(states)) stop();
+    }
+
+    public boolean statesAreInvalid(State[] states) {
         int countPurple = 0;
         int countGreen = 0;
         int countNone = 0;
@@ -73,18 +103,35 @@ public class SpinnerSequencer implements TeamConstants {
             if (state == State.UNKNOWN) countUnknown++;
 
             if (!spinStates.isStateInStates(state)) {
-                stop();
+                return true;
             }
             if (countPurple > spinStates.getCountOfStateInStates(State.PURPLE)
-            || countGreen   > spinStates.getCountOfStateInStates(State.GREEN)
-            || countNone    > spinStates.getCountOfStateInStates(State.NONE)
-            || countUnknown > spinStates.getCountOfStateInStates(State.UNKNOWN)) {
-                stop();
+                    || countGreen   > spinStates.getCountOfStateInStates(State.GREEN)
+                    || countNone    > spinStates.getCountOfStateInStates(State.NONE)
+                    || countUnknown > spinStates.getCountOfStateInStates(State.UNKNOWN)) {
+                return true;
             }
         }
+        return false;
     }
 
     public void update() {
+        if (done && timer.isDone()) {
+            if (dualMode == DualMode.INITIAL) {
+                if (statesAreInvalid(states)) {
+                    runScanAllInternal();
+                } else {
+                    dualMode = DualMode.RECENTER;
+                    spindexer.setCentered();
+                    timer = new TimedTimer(SEQUENCER_TIMER_RECENTER);
+                }
+            } else if (dualMode == DualMode.RECENTER) {
+                dualMode = DualMode.FINAL;
+                runStatesToDropInternal(dualModeStates);
+            } else if (dualMode == DualMode.FINAL) {
+                dualMode = DualMode.NONE;
+            }
+        }
         switch (mode) {
             case DROP:
                 if (!done) {
@@ -117,7 +164,7 @@ public class SpinnerSequencer implements TeamConstants {
                 if (wiggleActive && timer.isDone()) {
                     spindexer.continueRotatingBy(-SEQUENCER_WIGGLE_DEGREES);
                     wiggleActive = false;
-                    mode = null;
+                    mode = Mode.NONE;
                 }
                 break;
 
@@ -131,7 +178,7 @@ public class SpinnerSequencer implements TeamConstants {
                             if (currentScanSlot != -1) activeState = spinStates.getSlot(currentScanSlot);
                             else activeState = null;
 
-                            if ((activeState == State.NONE || activeState == State.UNKNOWN) && !wiggleActive && spinStates.isNotExcluded(currentScanSlot, excludedIndexes)) {
+                            if ((activeState == State.NONE || activeState == State.UNKNOWN) && !wiggleActive && !waitUntilNextIsActive && spinStates.isNotExcluded(currentScanSlot, excludedIndexes)) {
                                 spindexer.detectColor();
                                 State newActiveState = spinStates.getSlot(currentScanSlot);
                                 if (newActiveState == State.NONE || newActiveState == State.UNKNOWN) {
@@ -157,17 +204,21 @@ public class SpinnerSequencer implements TeamConstants {
                                 spindexer.rotateSlotToSensor(lastScanSlot);
                                 timer = new TimedTimer(SEQUENCER_TIMER_WIGGLE_BACK);
                                 wiggleActive = false;
-                            } else {
+                            } else if (waitUntilNextIsActive) {
+                                waitUntilNextIsActive = false;
                                 if (spinStates.isStateInStates(State.NONE, excludedIndexes)) {
                                     spindexer.rotateStateToSensor(State.NONE, excludedIndexes);
                                 } else {
                                     spindexer.rotateStateToSensor(State.UNKNOWN, excludedIndexes);
                                 }
                                 timer = new TimedTimer(SEQUENCER_TIMER);
+                            } else {
+                                waitUntilNextIsActive = true;
+                                timer = new TimedTimer(SEQUENCER_TIMER_WAIT);
                             }
                         } else {
                             done = true;
-                            mode = null;
+                            mode = Mode.NONE;
                         }
 
                     }
@@ -181,6 +232,8 @@ public class SpinnerSequencer implements TeamConstants {
 
     public void stop() {
         done = true;
+        mode = Mode.NONE;
+        dualMode = DualMode.NONE;
     }
 
     public boolean isDone() {

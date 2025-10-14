@@ -249,33 +249,33 @@ public class Spindexer implements TeamConstants {
                 }
                 if (found && secondFound) {
                     if (currentAngleNormalized <= 0) {
-                        if (activeSlotDrop != -1) {
+                        if (activeSlotSensor != -1) {
 //                            rotation = 120;
-                            setIndex = Math.floorMod(activeSlotDrop-1, 3);
+                            setIndex = Math.floorMod(activeSlotSensor-1, 3);
                         } else {
 //                            rotation = 60;
-                            setIndex = (int) fractionalSlotDrop;
+                            setIndex = (int) fractionalSlotSensor;
                         }
                     } else if (currentAngleNormalized > 0) {
-                        if (activeSlotDrop != -1) {
+                        if (activeSlotSensor != -1) {
 //                            rotation = -120;
-                            setIndex = Math.floorMod(activeSlotDrop+1, 3);
+                            setIndex = Math.floorMod(activeSlotSensor+1, 3);
                         } else {
 //                            rotation = -60;
-                            setIndex = Math.floorMod((int) fractionalSlotDrop+1, 3);
+                            setIndex = Math.floorMod((int) fractionalSlotSensor+1, 3);
                         }
                     } else {
-                        throw new EricsEgregiousException("IDK, something went horribly wrong. Pls Fix");
+                        throw new EricsEgregiousException("currentAngleNormalized Not Valid: " + currentAngleNormalized);
                     }
 //                    rotateBy(rotation);
-                    rotateSlotToDrop(setIndex);
+                    rotateSlotToSensor(setIndex);
                     if (activeSlotSensor != foundIndex && activeSlotSensor != secondFoundIndex) {
-                        throw new EricsEgregiousException("IDK, something went horribly wrong. Pls Fix");
+                        throw new EricsEgregiousException("Moved to incorrect positon (Not one of the Founds)");
                     }
                 } else if (found) {
                     rotateSlotToSensor(foundIndex);
                 } else {
-                    throw new EricsEgregiousException("IDK, something went horribly wrong. Pls Fix");
+                    throw new EricsEgregiousException("None found (shouldn't be possible)");
                 }
 
             }

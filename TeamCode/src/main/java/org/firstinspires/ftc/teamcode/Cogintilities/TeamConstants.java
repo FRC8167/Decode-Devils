@@ -34,8 +34,10 @@ public interface TeamConstants {
 
     double SEQUENCER_TIMER = 0.8; // time until next state ran in seconds
     double SEQUENCER_TIMER_INITIAL = 1.2;
-    double SEQUENCER_TIMER_WIGGLE = 0.2; // Used for both modes
-    double SEQUENCER_TIMER_WIGGLE_BACK = 0.3; // Used for scan mode
+    double SEQUENCER_TIMER_WIGGLE = 0.4; // Used for both modes
+    double SEQUENCER_TIMER_WIGGLE_BACK = 1; // Used for scan mode
+    double SEQUENCER_TIMER_WAIT = 0.5; // Used for scan mode
+    double SEQUENCER_TIMER_RECENTER = 2; // Used for dual mode
     double SEQUENCER_WIGGLE_DEGREES = 15;
     int SEQUENCER_SCAN_CYCLE_ATTEMPTS = 15; //Attempts before adjusting
     int SEQUENCER_SCAN_MAX_ATTEMPTS = 3;

@@ -59,12 +59,17 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
             }
 
             if (gamepad1.backWasPressed()) {
-                if (ArtifactSequence != null) spinnerSequencer.runStatesToDrop(
-                        ArtifactSequence
-                );
+                if (ArtifactSequence != null) {
+//                    spinnerSequencer.runStatesToDrop(ArtifactSequence);
+                    spinnerSequencer.runDual(ArtifactSequence);
+                }
             }
 
             if (gamepad1.startWasPressed()) {
+                spinnerSequencer.runScanAll();
+            }
+
+            if (gamepad1.yWasPressed()) {
                 if (ArtifactSequence == STATES_GPP) {
                     ArtifactSequence = STATES_PGP;
                     ArtifactSequenceString = "PGP";
