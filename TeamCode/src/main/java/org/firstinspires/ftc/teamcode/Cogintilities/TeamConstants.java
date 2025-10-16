@@ -2,7 +2,26 @@ package org.firstinspires.ftc.teamcode.Cogintilities;
 
 public interface TeamConstants {
 
-    enum State {GREEN, PURPLE, UNKNOWN, NONE} // Slot states for spindexer
+    enum State {
+        GREEN("Green", 'G'),
+        PURPLE("Purple", 'P'),
+        UNKNOWN("Unknown", 'U'),
+        NONE("None", 'U');
+        private final String color;
+        private final char character;
+
+        State(String color, char character) {
+            this.color = color;
+            this.character = character;
+        };
+        public String getColor() {
+            return color;
+        }
+        public char getCharacter() {
+            return character;
+        }
+
+    } // Slot states for spindexer
 
     State[] STATES_GPP = {State.GREEN, State.PURPLE, State.PURPLE};
     State[] STATES_PGP = {State.PURPLE, State.GREEN, State.PURPLE};

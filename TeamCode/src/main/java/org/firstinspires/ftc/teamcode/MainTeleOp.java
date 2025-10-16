@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 //@Disabled
 @TeleOp(name="MainTeleOp", group="Competition")
@@ -70,23 +71,40 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
             }
 
             if (gamepad1.yWasPressed()) {
-                if (ArtifactSequence == STATES_GPP) {
-                    ArtifactSequence = STATES_PGP;
-                    ArtifactSequenceString = "PGP";
-                }
-                else if (ArtifactSequence == STATES_PGP) {
-                    ArtifactSequence = STATES_PPG;
-                    ArtifactSequenceString = "PPG";
-                }
-                else if (ArtifactSequence == STATES_PPG) {
-                    ArtifactSequence = STATES_GPP;
-                    ArtifactSequenceString = "GPP";
-                }
-                else {
-                    ArtifactSequence = STATES_GPP;
-                    ArtifactSequenceString = "GPP";
+//                if (ArtifactSequence == STATES_GPP) {
+//                    ArtifactSequence = STATES_PGP;
+//                }
+//                else if (ArtifactSequence == STATES_PGP) {
+//                    ArtifactSequence = STATES_PPG;
+//                }
+//                else if (ArtifactSequence == STATES_PPG) {
+//                    ArtifactSequence = STATES_GPP;
+//                }
+//                else {
+//                    ArtifactSequence = STATES_GPP;
+//                }
+                vision.scanForAprilTags();
+                AprilTagDetection tag = vision.getFirstTargetTag();
+                if (tag != null) {
+                    State[] states = vision.getTagStates(tag);
+                    if (states != null) {
+                        ArtifactSequence = states;
+                    }
                 }
             }
+
+            if (gamepad1.b) {
+                vision.scanForAprilTags();
+                AprilTagDetection tag = vision.getFirstTargetTag();
+                if (tag != null) {
+                    telemetry.addData("X", tag.ftcPose.x);
+                    telemetry.addData("Y", tag.ftcPose.y);
+                    telemetry.addData("Z", tag.ftcPose.z);
+                    telemetry.addData("Range", tag.ftcPose.range);
+                }
+            }
+
+
 
             if (spindexer.getActiveSlotDrop() != -1) lightRGB.setColorState(spinStates.getSlot(spindexer.getActiveSlotDrop()));
             else if (spindexer.getActiveSlotSensor() != -1) lightRGB.setColorState(spinStates.getSlot(spindexer.getActiveSlotSensor()));
@@ -105,7 +123,7 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
             telemetry.addData("Timer: ", spindexer.getRemainingTime());
             telemetry.addData("DropPos: ", spindexer.getDropperPos());
             telemetry.addData("SequenceActive: ", !spinnerSequencer.isDone());
-            telemetry.addData("ArtifactSequence: ", ArtifactSequenceString);
+            telemetry.addData("ArtifactSequence: ", spinStates.convertStatesToInitials(ArtifactSequence));
             telemetry.update();
 
             spindexer.periodic();

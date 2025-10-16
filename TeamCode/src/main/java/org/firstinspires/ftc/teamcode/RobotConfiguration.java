@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
 import org.firstinspires.ftc.teamcode.Cogintilities.SpinnerSequencer;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
@@ -17,6 +18,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.MecanumDriveSingleton;
 import org.firstinspires.ftc.teamcode.SubSystems.SpinStatesSingleton;
 import org.firstinspires.ftc.teamcode.SubSystems.Spindexer;
 import org.firstinspires.ftc.teamcode.SubSystems.Spinner;
+import org.firstinspires.ftc.teamcode.SubSystems.Vision;
 
 import java.util.List;
 import java.util.Locale;
@@ -36,7 +38,6 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
     public enum AllianceColor { RED, BLUE }
 
     public State[] ArtifactSequence = null;
-    public String ArtifactSequenceString = "";
 
 
     /*------------- Private Class Variables - Preferred -------------*/
@@ -52,6 +53,8 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
     static protected Spindexer spindexer;
     static protected SpinnerSequencer spinnerSequencer;
     static protected LightRGB lightRGB;
+
+    static protected Vision vision;
 
     static private Spinner spinner;
     static private Dropper dropper;
@@ -93,6 +96,8 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
         Servo dropServo = hardwareMap.get(Servo.class, "dropServo");
         Servo servoRGB  = hardwareMap.get(Servo.class, "servoRGB");
 
+        WebcamName webcam = hardwareMap.get(WebcamName.class, "Webcam1");
+
         /* Create an object of every module/subsystem needed for both autonomous and teleOp modes. */
 //        drive = MecanumDriveSingleton.getInstance(driveMotorLF, driveMotorLR, driveMotorRF, driveMotorRR);
         intake = new Intake(intakeMotor);
@@ -103,6 +108,9 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
         lightRGB = new LightRGB(servoRGB, LIGHT_INIT_POS, LIGHT_MIN, LIGHT_MAX);
         spindexer = new Spindexer(spinner, dropper, spinStates, colorDetection);
         spinnerSequencer = new SpinnerSequencer(spindexer, spinStates);
+
+        vision = new Vision(webcam);
+        vision.enableAprilTagDetection();
 
     }
 

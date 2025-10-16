@@ -85,4 +85,16 @@ public class SpinStatesSingleton implements TeamConstants {
     public boolean isNotExcluded(int index, int... excludedIndexes) {
         return Arrays.stream(excludedIndexes).noneMatch(element -> element == index);
     }
+
+    public String convertStatesToInitials(State... states) {
+        if (states == null) {
+            return "";
+        } else {
+            StringBuilder string = new StringBuilder();
+            for (State state : states) {
+                string.append(state.getCharacter());
+            }
+            return string.toString();
+        }
+    }
 }
