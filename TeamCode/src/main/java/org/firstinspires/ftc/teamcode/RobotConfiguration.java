@@ -35,15 +35,14 @@ import java.util.Locale;
 public abstract class RobotConfiguration extends LinearOpMode implements TeamConstants{
 
     /*------------ Public Class Variables - Frowned Upon ------------*/
-    public enum AllianceColor { RED, BLUE }
+    enum AllianceColor { RED, BLUE }
 
-    public State[] ArtifactSequence = null;
 
 
     /*------------- Private Class Variables - Preferred -------------*/
     static AllianceColor alliance;
     static List<LynxModule> ctrlHubs;
-
+    State[] ArtifactSequence = null;
 
     /*----------- Define all Module Classes (SubSystems) ------------*/
     protected MecanumDriveSingleton drive;
@@ -109,8 +108,10 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
         spindexer = new Spindexer(spinner, dropper, spinStates, colorDetection);
         spinnerSequencer = new SpinnerSequencer(spindexer, spinStates);
 
-        vision = new Vision(webcam);
-        vision.enableAprilTagDetection();
+        if (webcam.isAttached()) {
+            vision = new Vision(webcam);
+            vision.enableAprilTagDetection();
+        }
 
     }
 

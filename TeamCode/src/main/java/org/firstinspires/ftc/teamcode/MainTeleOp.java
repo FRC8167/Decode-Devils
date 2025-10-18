@@ -71,6 +71,8 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
             }
 
             if (gamepad1.yWasPressed()) {
+                ArtifactSequence = new State[]{State.PURPLE, State.PURPLE, State.PURPLE};
+//
 //                if (ArtifactSequence == STATES_GPP) {
 //                    ArtifactSequence = STATES_PGP;
 //                }
@@ -83,14 +85,14 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 //                else {
 //                    ArtifactSequence = STATES_GPP;
 //                }
-                vision.scanForAprilTags();
-                AprilTagDetection tag = vision.getFirstTargetTag();
-                if (tag != null) {
-                    State[] states = vision.getTagStates(tag);
-                    if (states != null) {
-                        ArtifactSequence = states;
-                    }
-                }
+//                vision.scanForAprilTags();
+//                AprilTagDetection tag = vision.getFirstTargetTag();
+//                if (tag != null) {
+//                    State[] states = vision.getTagStates(tag);
+//                    if (states != null) {
+//                        ArtifactSequence = states;
+//                    }
+//                }
             }
 
             if (gamepad1.b) {
@@ -124,6 +126,7 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
             telemetry.addData("DropPos: ", spindexer.getDropperPos());
             telemetry.addData("SequenceActive: ", !spinnerSequencer.isDone());
             telemetry.addData("ArtifactSequence: ", spinStates.convertStatesToInitials(ArtifactSequence));
+            telemetry.addData("ArtifactSequenceLength: ", ArtifactSequence == null ? "null":ArtifactSequence.length);
             telemetry.update();
 
             spindexer.periodic();

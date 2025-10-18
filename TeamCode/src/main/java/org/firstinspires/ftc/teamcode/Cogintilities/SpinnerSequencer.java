@@ -50,7 +50,8 @@ public class SpinnerSequencer implements TeamConstants {
         nextState = 0;
         done = false;
         wiggleActive = false;
-        testStates();
+        testStatesValidity();
+        testStatesArePresent();
         update();
     }
 
@@ -64,6 +65,7 @@ public class SpinnerSequencer implements TeamConstants {
         this.states = dualModeStates;
         dualMode = DualMode.INITIAL;
         done = true;
+        testStatesValidity();
         update();
 
     }
@@ -82,16 +84,21 @@ public class SpinnerSequencer implements TeamConstants {
         update();
     }
 
-    public void runScanAll() { //Assumes artifacts in all slots
+    public void runScanAll() {
         stop();
         runScanAllInternal();
     }
 
-    public void testStates() {
-        if (statesAreInvalid(states)) stop();
+    public void testStatesArePresent() {
+        if (statesAreNotPresent(states)) stop();
     }
 
-    public boolean statesAreInvalid(State[] states) {
+
+    public void testStatesValidity() {
+        if (states == null || states.length == 0) stop();
+    }
+
+    public boolean statesAreNotPresent(State[] states) {
         int countPurple = 0;
         int countGreen = 0;
         int countNone = 0;
@@ -118,7 +125,7 @@ public class SpinnerSequencer implements TeamConstants {
     public void update() {
         if (done && timer.isDone()) {
             if (dualMode == DualMode.INITIAL) {
-                if (statesAreInvalid(states)) {
+                if (statesAreNotPresent(states)) {
                     runScanAllInternal();
                 } else {
                     dualMode = DualMode.RECENTER;
