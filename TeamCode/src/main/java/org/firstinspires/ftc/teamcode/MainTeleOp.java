@@ -71,20 +71,20 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
             }
 
             if (gamepad1.yWasPressed()) {
-                ArtifactSequence = new State[]{State.PURPLE, State.PURPLE, State.PURPLE};
+//                ArtifactSequence = new State[]{State.PURPLE, State.PURPLE, State.PURPLE};
 //
-//                if (ArtifactSequence == STATES_GPP) {
-//                    ArtifactSequence = STATES_PGP;
-//                }
-//                else if (ArtifactSequence == STATES_PGP) {
-//                    ArtifactSequence = STATES_PPG;
-//                }
-//                else if (ArtifactSequence == STATES_PPG) {
-//                    ArtifactSequence = STATES_GPP;
-//                }
-//                else {
-//                    ArtifactSequence = STATES_GPP;
-//                }
+                if (ArtifactSequence == STATES_GPP) {
+                    ArtifactSequence = STATES_PGP;
+                }
+                else if (ArtifactSequence == STATES_PGP) {
+                    ArtifactSequence = STATES_PPG;
+                }
+                else if (ArtifactSequence == STATES_PPG) {
+                    ArtifactSequence = STATES_GPP;
+                }
+                else {
+                    ArtifactSequence = STATES_GPP;
+                }
 //                vision.scanForAprilTags();
 //                AprilTagDetection tag = vision.getFirstTargetTag();
 //                if (tag != null) {
