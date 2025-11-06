@@ -33,6 +33,8 @@ public interface TeamConstants {
     double SPINNER_MAX = 1.0;
     double SPINNER_INIT_POS = 0.5;
     double SPINNER_RANGE = 1620.0; //degrees, 1620.0 estimated should be 1800 (1642.5 calculated using 600-2400 servo)
+    double SPINNER_SPEED = 240; //degrees per second, 40 rpm (measured underestimation, spec defined speed: 300/50rpm)
+    double SPINNER_GRACE_TIME = 0.05; //additional time for servo to reach target position (insures it is done for small rotations)
 
     double DROPPER_MIN = 0;
     double DROPPER_MAX = 1;
@@ -56,8 +58,9 @@ public interface TeamConstants {
     double SEQUENCER_TIMER_WIGGLE = 0.4; // Used for both modes
     double SEQUENCER_TIMER_WIGGLE_BACK = 1; // Used for scan mode
     double SEQUENCER_TIMER_WAIT = 0.5; // Used for scan mode
-    double SEQUENCER_TIMER_RECENTER = 2; // Used for dual mode TODO: Modify to use current pos to calculate time (1.5s per rotation)
+    double SEQUENCER_TIMER_RECENTER = 2; // Used for dual mode
     double SEQUENCER_WIGGLE_DEGREES = 15;
     int SEQUENCER_SCAN_CYCLE_ATTEMPTS = 15; //Attempts before adjusting
-    int SEQUENCER_SCAN_MAX_ATTEMPTS = 3;
+    int SEQUENCER_SCAN_MAX_ATTEMPTS = 3; //Scan cycles before excluding (excludes for current scan only)
+
 }

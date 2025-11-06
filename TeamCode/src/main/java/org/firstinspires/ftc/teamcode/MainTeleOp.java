@@ -96,20 +96,21 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
             }
 
             if (gamepad1.b) {
-                vision.scanForAprilTags();
-                AprilTagDetection tag = vision.getFirstTargetTag();
-                if (tag != null) {
-                    telemetry.addData("X", tag.ftcPose.x);
-                    telemetry.addData("Y", tag.ftcPose.y);
-                    telemetry.addData("Z", tag.ftcPose.z);
-                    telemetry.addData("Range", tag.ftcPose.range);
+                if (vision != null) {
+                    vision.scanForAprilTags();
+                    AprilTagDetection tag = vision.getFirstTargetTag();
+                    if (tag != null) {
+                        telemetry.addData("X", tag.ftcPose.x);
+                        telemetry.addData("Y", tag.ftcPose.y);
+                        telemetry.addData("Z", tag.ftcPose.z);
+                        telemetry.addData("Range", tag.ftcPose.range);
+                    }
                 }
             }
 
 
 
-            if (spindexer.getActiveSlotDrop() != -1) lightRGB.setColorState(spinStates.getSlot(spindexer.getActiveSlotDrop()));
-            else if (spindexer.getActiveSlotSensor() != -1) lightRGB.setColorState(spinStates.getSlot(spindexer.getActiveSlotSensor()));
+
 
             telemetry.addData("Color: ", colorDetection.getColor());
             telemetry.addData("H: ", colorDetection.getColorHSV()[0]);
@@ -122,15 +123,22 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
             telemetry.addData("Slot0: ", spinStates.getSlot(0));
             telemetry.addData("Slot1: ", spinStates.getSlot(1));
             telemetry.addData("Slot2: ", spinStates.getSlot(2));
-            telemetry.addData("Timer: ", spindexer.getRemainingTime());
+            telemetry.addData("DropTimer: ", spindexer.getDropTimerRemainingTime());
+            telemetry.addData("SpinnerTimer: ", spindexer.getSpinnerRemainingTime());
             telemetry.addData("DropPos: ", spindexer.getDropperPos());
             telemetry.addData("SequenceActive: ", !spinnerSequencer.isDone());
             telemetry.addData("ArtifactSequence: ", spinStates.convertStatesToInitials(ArtifactSequence));
             telemetry.addData("ArtifactSequenceLength: ", ArtifactSequence == null ? "null":ArtifactSequence.length);
             telemetry.update();
 
-            spindexer.periodic();
-            spinnerSequencer.update();
+            periodic();
         }
+    }
+
+    private void periodic() {
+        spindexer.periodic();
+        spinnerSequencer.update();
+        if (spindexer.getActiveSlotDrop() != -1) lightRGB.setColorState(spinStates.getSlot(spindexer.getActiveSlotDrop()));
+        else if (spindexer.getActiveSlotSensor() != -1) lightRGB.setColorState(spinStates.getSlot(spindexer.getActiveSlotSensor()));
     }
 }

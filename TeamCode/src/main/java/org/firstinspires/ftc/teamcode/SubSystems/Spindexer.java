@@ -365,7 +365,7 @@ public class Spindexer implements TeamConstants {
             spinStates.setSlot(activeSlotDrop, State.NONE);
             isOpen = true;
             dropper.open();
-            dropTimer = new TimedTimer(DROP_TIMER); // how long until door closes (arbitrary value)
+            dropTimer = new TimedTimer(DROP_TIMER); // how long until door closes
         }
     }
 
@@ -379,7 +379,7 @@ public class Spindexer implements TeamConstants {
         }
     }
 
-    public void dropWithoutStateUpdate() { // assumes successful drop
+    public void dropWithoutStateUpdate() {
         update();
         if (activeSlotDrop != -1) {
             isOpen = true;
@@ -392,8 +392,16 @@ public class Spindexer implements TeamConstants {
         if (activeSlotDrop != -1) spinStates.setSlot(activeSlotDrop, State.NONE);
     }
 
-    public double getRemainingTime() {
+    public double getDropTimerRemainingTime() {
         return dropTimer.getRemainingTime();
+    }
+
+    public boolean isSpinnerDone() {
+        return spinner.isDone();
+    }
+
+    public double getSpinnerRemainingTime() {
+        return spinner.getRemainingTime();
     }
 
     public boolean isOpen() {
@@ -406,7 +414,7 @@ public class Spindexer implements TeamConstants {
 
 
 
-    public void periodic() { // must be called during TeleOp for timer to function
+    public void periodic() { // must be called during TeleOp for timer updates to function
         update();
     }
 

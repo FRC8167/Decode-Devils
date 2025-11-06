@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SpinnerSequencer implements TeamConstants {
-    public enum Mode{DROP, SCAN, NONE}
+    public enum Mode {DROP, SCAN, NONE}
     public enum DualMode {INITIAL, RECENTER, FINAL, NONE}
 
     private final Spindexer spindexer;
@@ -130,7 +130,8 @@ public class SpinnerSequencer implements TeamConstants {
                 } else {
                     dualMode = DualMode.RECENTER;
                     spindexer.setCentered();
-                    timer = new TimedTimer(SEQUENCER_TIMER_RECENTER);
+//                    timer = new TimedTimer(SEQUENCER_TIMER_RECENTER);
+                    timer = new TimedTimer(spindexer.getSpinnerRemainingTime()); //TODO: Test, Optimize, and, if working, implement for others
                 }
             } else if (dualMode == DualMode.RECENTER) {
                 dualMode = DualMode.FINAL;
