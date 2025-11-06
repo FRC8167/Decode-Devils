@@ -11,6 +11,8 @@ public class Spinner extends Servo1D implements TeamConstants {
     double currentAngleNormalized; //(0-360)
     double previousAngleNormalized;
     double previousRotation;
+    double approxActualAngleStored; //Only used if movement is interrupted
+    double approxPreviousRotation;
     TimedTimer timer;
 
 
@@ -24,6 +26,8 @@ public class Spinner extends Servo1D implements TeamConstants {
     }
 
     public void setCenteredPositionDegrees(double degrees) {
+        approxActualAngleStored = (!timer.isDone() ? getApproxActualAngle() : Double.NaN);
+
         previousAngleNormalized = currentAngleNormalized;
         if (((0.5 * SPINNER_RANGE + degrees) / SPINNER_RANGE) <= 1 && ((0.5 * SPINNER_RANGE + degrees) / SPINNER_RANGE) >= 0) {
             setPosition((0.5 * SPINNER_RANGE + degrees) / SPINNER_RANGE);
@@ -54,9 +58,18 @@ public class Spinner extends Servo1D implements TeamConstants {
         return timer.getRemainingTime();
     }
 
-    public void update() {
+    public double getApproxActualAngle() {
+        return (
+                Double.isNaN(approxActualAngleStored) ? currentAngleNormalized : approxActualAngleStored
+        ) + (
+                Double.isNaN(approxPreviousRotation) ? previousRotation : approxPreviousRotation
+        ) * timer.getProportionCompleted();
+    }
+
+    public void update() { //TODO: Test and decide if grace time should be removed
         previousRotation = currentAngleNormalized - previousAngleNormalized;
-        timer = new TimedTimer(Math.abs(previousRotation) / SPINNER_SPEED + SPINNER_GRACE_TIME);
+        approxPreviousRotation = (!Double.isNaN(approxActualAngleStored)) ? (currentAngleNormalized - approxActualAngleStored) : Double.NaN;
+        timer = new TimedTimer(Math.abs(Double.isNaN(approxPreviousRotation) ? previousRotation : approxPreviousRotation) / SPINNER_SPEED + SPINNER_GRACE_TIME);
     }
 
     public double getPreviousRotation() {
