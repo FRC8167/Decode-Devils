@@ -8,12 +8,12 @@ import org.firstinspires.ftc.teamcode.Cogintilities.TimedTimer;
 public class Spinner extends Servo1D implements TeamConstants {
 
 
-    double currentAngleNormalized; //(0-360)
-    double previousAngleNormalized;
-    double previousRotation;
-    double approxActualAngleStored; //Only used if movement is interrupted
-    double approxPreviousRotation;
-    TimedTimer timer;
+    private double currentAngleNormalized; //(0-360)
+    private double previousAngleNormalized;
+    private double previousRotation;
+    private double approxActualAngleStored; //Only used if movement is interrupted
+    private double approxPreviousRotation;
+    private TimedTimer timer;
 
 
     public Spinner(Servo servo, double initPos, double min, double max, boolean moveOnInit) {
@@ -60,7 +60,7 @@ public class Spinner extends Servo1D implements TeamConstants {
 
     public double getApproxActualAngle() {
         return (
-                Double.isNaN(approxActualAngleStored) ? currentAngleNormalized : approxActualAngleStored
+                Double.isNaN(approxActualAngleStored) ? previousAngleNormalized : approxActualAngleStored
         ) + (
                 Double.isNaN(approxPreviousRotation) ? previousRotation : approxPreviousRotation
         ) * timer.getProportionCompleted();

@@ -7,10 +7,9 @@ import com.qualcomm.hardware.rev.RevColorSensorV3;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 
 public class ColorDetection implements TeamConstants {
-    RevColorSensorV3 colorSensor;
-    int colorColor;
-    float[] colorHSV;
-    float hue, saturation, value;
+    private final RevColorSensorV3 colorSensor;
+    private final float[] colorHSV;
+    private float hue, saturation, value;
 
     public ColorDetection(RevColorSensorV3 colorSensor) {
         this.colorSensor = colorSensor;
@@ -19,7 +18,7 @@ public class ColorDetection implements TeamConstants {
     }
 
     public void update() {
-        colorColor = colorSensor.getNormalizedColors().toColor();
+        int colorColor = colorSensor.getNormalizedColors().toColor();
         Color.colorToHSV(colorColor, colorHSV);
         hue = colorHSV[0];
         saturation = colorHSV[1];

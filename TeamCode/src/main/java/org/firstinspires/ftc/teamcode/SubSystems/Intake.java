@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 
 public class Intake implements TeamConstants {
-    DcMotorEx motor;
-    double  power;
+    private final DcMotorEx motor;
+    private double power;
 
     public Intake(DcMotorEx motor) {
         this.motor = motor;

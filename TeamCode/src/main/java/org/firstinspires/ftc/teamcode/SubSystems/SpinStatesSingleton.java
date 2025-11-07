@@ -6,9 +6,9 @@ import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 import java.util.Arrays;
 
 public class SpinStatesSingleton implements TeamConstants {
-    State slot0;
-    State slot1;
-    State slot2;
+    private State slot0;
+    private State slot1;
+    private State slot2;
 
     private static SpinStatesSingleton single_instance = null;
 
