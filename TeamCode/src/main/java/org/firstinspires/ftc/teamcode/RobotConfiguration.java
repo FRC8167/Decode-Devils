@@ -35,14 +35,15 @@ import java.util.Locale;
 public abstract class RobotConfiguration extends LinearOpMode implements TeamConstants{
 
     /*------------ Public Class Variables - Frowned Upon ------------*/
-    enum AllianceColor { RED, BLUE }
+
 
 
 
     /*------------- Private Class Variables - Preferred -------------*/
-    static AllianceColor alliance;
+    protected enum AllianceColor { RED, BLUE }
+    static protected AllianceColor alliance;
     static List<LynxModule> ctrlHubs;
-    State[] ArtifactSequence = null;
+    static protected State[] ArtifactSequence = null;
 
     /*----------- Define all Module Classes (SubSystems) ------------*/
     protected MecanumDriveSingleton drive;
@@ -124,8 +125,8 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
 
 
     /* ********* Setters, Getters, Utility and Helper Functions ********** */
-    public void setAlliance(AllianceColor color){ alliance = color; }
-    public static AllianceColor getAlliance(){ return alliance; }
+    protected void setAlliance(AllianceColor color){ alliance = color; }
+    protected static AllianceColor getAlliance(){ return alliance; }
 
 //    public String hubA() {
 //        double currentmA = 0;
