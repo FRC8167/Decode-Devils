@@ -2,8 +2,10 @@ package org.firstinspires.ftc.teamcode.Cogintilities;
 
 import androidx.annotation.NonNull;
 
+import org.firstinspires.ftc.teamcode.SubSystems.Shooter;
 import org.firstinspires.ftc.teamcode.SubSystems.SpinStatesSingleton;
 import org.firstinspires.ftc.teamcode.SubSystems.Spindexer;
+import org.firstinspires.ftc.teamcode.SubSystems.Spinner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +15,7 @@ public class SpinnerSequencer implements TeamConstants {
     public enum DualMode {INITIAL, RECENTER, FINAL, NONE}
 
     private final Spindexer spindexer;
+    private final Shooter shooter;
     private final SpinStatesSingleton spinStates;
     private State[] states;
     private State[] dualModeStates;
@@ -35,8 +38,9 @@ public class SpinnerSequencer implements TeamConstants {
     private TimedTimer timer;
 
 
-    public SpinnerSequencer(Spindexer spindexer, SpinStatesSingleton spinStates) {
+    public SpinnerSequencer(Spindexer spindexer, Shooter shooter, SpinStatesSingleton spinStates) {
         this.spindexer = spindexer;
+        this.shooter = shooter;
         this.spinStates = spinStates;
         timer = new TimedTimer();
         mode = Mode.NONE;
@@ -142,6 +146,7 @@ public class SpinnerSequencer implements TeamConstants {
         }
         switch (mode) {
             case DROP:
+                shooter.setMotorPower(SHOOTER_POWER);
                 if (!done) {
                     spindexer.dropWithoutStateUpdate();
                     if (timer.isDone()) {
@@ -234,8 +239,10 @@ public class SpinnerSequencer implements TeamConstants {
                 }
                 if (done && wiggleActive) spindexer.rotateSlotToSensor(lastScanSlot);
                 break;
-
+            default:
+                shooter.setMotorPower(0);
             }
+
 
     }
 

@@ -55,8 +55,14 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
             if (gamepad1.left_stick_button) {
                 spinnerSequencer.stop();
                 spindexer.detectColor();
-            } else if (gamepad1.right_stick_button) {
+            }
+
+            if (gamepad1.right_stick_button) {
+                spinnerSequencer.stop();
                 spindexer.drop();
+                shooter.setMotorPower(SHOOTER_POWER);
+            } else {
+                shooter.setMotorPower(0);
             }
 
             if (gamepad1.backWasPressed()) {
@@ -96,22 +102,24 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
             }
 
             if (gamepad1.b) {
-                if (vision != null) {
-                    vision.scanForAprilTags();
-                    AprilTagDetection tag = vision.getFirstTargetTag();
-                    if (tag != null) {
-                        telemetry.addData("X", tag.ftcPose.x);
-                        telemetry.addData("Y", tag.ftcPose.y);
-                        telemetry.addData("Z", tag.ftcPose.z);
-                        telemetry.addData("Range", tag.ftcPose.range);
-                    }
-                }
+                shooter.resetMin();
+//                if (vision != null) {
+//                    vision.scanForAprilTags();
+//                    AprilTagDetection tag = vision.getFirstTargetTag();
+//                    if (tag != null) {
+//                        telemetry.addData("X", tag.ftcPose.x);
+//                        telemetry.addData("Y", tag.ftcPose.y);
+//                        telemetry.addData("Z", tag.ftcPose.z);
+//                        telemetry.addData("Range", tag.ftcPose.range);
+//                    }
+//                }
             }
 
 
 
 
-
+            telemetry.addData("ShooterSpeed: ", shooter.getMotorSpeedRPM());
+            telemetry.addData("ShooterMinSpeed: ", shooter.getMinSpeedRPM());
             telemetry.addData("Color: ", colorDetection.getColor());
             telemetry.addData("H: ", colorDetection.getColorHSV()[0]);
             telemetry.addData("S: ", colorDetection.getColorHSV()[1]);
@@ -138,7 +146,10 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
     private void periodic() {
         spindexer.periodic();
         spinnerSequencer.update();
+        shooter.update();
+//        lightRGB.setColor(spindexer.isSpinnerDone() ? "Blue":"Orange");
         if (spindexer.getActiveSlotDrop() != -1) lightRGB.setColorState(spinStates.getSlot(spindexer.getActiveSlotDrop()));
         else if (spindexer.getActiveSlotSensor() != -1) lightRGB.setColorState(spinStates.getSlot(spindexer.getActiveSlotSensor()));
+
     }
 }

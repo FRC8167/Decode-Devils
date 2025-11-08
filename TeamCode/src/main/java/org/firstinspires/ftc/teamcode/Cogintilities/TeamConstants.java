@@ -47,6 +47,9 @@ public interface TeamConstants {
     // 0.25,0.75 (supposed w/ servo range error)
     // 0.03/0.16,0.97/0.83 (measured) (valid/value before move)
 
+    double SHOOTER_POWER = 1; //TODO: Replace with velocity based code
+    double SHOOTER_TICKS_PER_REV = 28;
+
     double LIGHT_INIT_POS = 0;
     double LIGHT_MIN = 0;
     double LIGHT_MAX = 1;
