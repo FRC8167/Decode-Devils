@@ -10,9 +10,9 @@ import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 
 public class Servo1D implements TeamConstants {
 
-    Servo servo;
-    double min;
-    double max;
+    private final Servo servo;
+    private final double min;
+    private final double max;
 
 
     public Servo1D(Servo servo, double initPos, double min, double max, boolean moveOnInit) {

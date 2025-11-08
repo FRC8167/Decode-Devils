@@ -5,8 +5,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 
 public class Dropper extends Servo1D implements TeamConstants {
-    double currentLengthMillimeters;
-    double currentExtensionMillimeters; // length is updated based on extension
+    private double currentLengthMillimeters;
+    private double currentExtensionMillimeters; // length is updated based on extension
 
     public Dropper(Servo servo, double initPos, double min, double max, boolean moveOnInit) {
         super(servo, initPos, min, max, moveOnInit);
