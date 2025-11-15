@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.teamcode.Cogintilities.SpinnerSequencer;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 import org.firstinspires.ftc.teamcode.SubSystems.ColorDetection;
 import org.firstinspires.ftc.teamcode.SubSystems.Dropper;
+import org.firstinspires.ftc.teamcode.SubSystems.Intake;
 import org.firstinspires.ftc.teamcode.SubSystems.Shooter;
 import org.firstinspires.ftc.teamcode.SubSystems.LightRGB;
 import org.firstinspires.ftc.teamcode.SubSystems.MecanumDriveSingleton;
@@ -48,6 +50,7 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
     /*----------- Define all Module Classes (SubSystems) ------------*/
     protected MecanumDriveSingleton drive;
     static protected Shooter shooter;
+    static protected Intake intake;
     static protected SpinStatesSingleton spinStates;
     static protected ColorDetection colorDetection;
     static protected Spindexer spindexer;
@@ -83,13 +86,15 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
         }
 
         /* ******************* Define Hardware Map Here ******************** */
-//        DcMotorEx driveMotorLF = hardwareMap.get(DcMotorEx.class, "LeftFront");
-//        DcMotorEx driveMotorLR = hardwareMap.get(DcMotorEx.class, "LeftRear");
-//        DcMotorEx driveMotorRF = hardwareMap.get(DcMotorEx.class, "RightFront");
-//        DcMotorEx driveMotorRR = hardwareMap.get(DcMotorEx.class, "RightRear");
+        DcMotorEx driveMotorLF = hardwareMap.get(DcMotorEx.class, "LeftFront");
+        DcMotorEx driveMotorLR = hardwareMap.get(DcMotorEx.class, "LeftRear");
+        DcMotorEx driveMotorRF = hardwareMap.get(DcMotorEx.class, "RightFront");
+        DcMotorEx driveMotorRR = hardwareMap.get(DcMotorEx.class, "RightRear");
 
         DcMotorEx shooterMotor = hardwareMap.get(DcMotorEx.class, "Shooter");
 
+        CRServo intakeL = hardwareMap.get(CRServo.class, "LeftIntake");
+        CRServo intakeR = hardwareMap.get(CRServo.class, "RightIntake");
 
         RevColorSensorV3 colorSensor = hardwareMap.get(RevColorSensorV3.class, "colorSensor");
         Servo spinServo = hardwareMap.get(Servo.class, "spinServo");
@@ -99,8 +104,9 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
         WebcamName webcam = hardwareMap.get(WebcamName.class, "Webcam1");
 
         /* Create an object of every module/subsystem needed for both autonomous and teleOp modes. */
-//        drive = MecanumDriveSingleton.getInstance(driveMotorLF, driveMotorLR, driveMotorRF, driveMotorRR);
+        drive = MecanumDriveSingleton.getInstance(driveMotorLF, driveMotorLR, driveMotorRF, driveMotorRR);
         shooter = new Shooter(shooterMotor);
+        intake = new Intake(intakeL, intakeR);
         colorDetection = new ColorDetection(colorSensor);
         spinStates = SpinStatesSingleton.getInstance();
         spinner = new Spinner(spinServo, SPINNER_INIT_POS, SPINNER_MIN, SPINNER_MAX, moveServos);

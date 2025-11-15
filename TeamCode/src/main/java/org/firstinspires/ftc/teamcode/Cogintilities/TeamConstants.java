@@ -27,8 +27,6 @@ public interface TeamConstants {
     State[] STATES_PGP = {State.PURPLE, State.GREEN, State.PURPLE};
     State[] STATES_PPG = {State.PURPLE, State.PURPLE, State.GREEN};
 
-    double INTAKE_POWER = 0.5;
-
     double SPINNER_MIN = 0.0;
     double SPINNER_MAX = 1.0;
     double SPINNER_INIT_POS = 0.5;
@@ -49,6 +47,10 @@ public interface TeamConstants {
 
     double SHOOTER_POWER = 1; //TODO: Replace with velocity based code
     double SHOOTER_TICKS_PER_REV = 28;
+
+    double INTAKE_POWER_FORWARD = 0.5;
+    double INTAKE_POWER_STANDARD = 0;
+    double INTAKE_POWER_BACKWARD = -0.5;
 
     double LIGHT_INIT_POS = 0;
     double LIGHT_MIN = 0;

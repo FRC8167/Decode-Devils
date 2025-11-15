@@ -28,28 +28,27 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
             else if (gamepad1.dpadRightWasPressed()) {
                 spinnerSequencer.stop();
                 spindexer.rotateBy(60);
-//                spindexer.setCenteredPositionDegrees(500);
-//                spindexer.setPosition(1);
             }
             else if (gamepad1.dpadLeftWasPressed()) {
                 spinnerSequencer.stop();
                 spindexer.rotateBy(-60);
-//                spindexer.setCenteredPositionDegrees(-500);
-//                spindexer.setPosition(0);
             } else if (gamepad1.dpadDownWasPressed()) {
                 spinnerSequencer.stop();
                 spindexer.setCenteredPositionDegrees(0);
             } else if (gamepad1.xWasPressed()) {
-//                spindexer.rotateSlotToSensor(0);
                 spinnerSequencer.stop();
                 spindexer.rotateStateToDrop(State.PURPLE);
-//            } else if (gamepad1.yWasPressed()) {
-//                spindexer.rotateSlotToSensor(1);
-//            } else if (gamepad1.bWasPressed()) {
-//                spindexer.rotateSlotToSensor(2);
             } else if (gamepad1.aWasPressed()) {
                 spinnerSequencer.stop();
                 spindexer.rotateStateToDrop(State.GREEN);
+            }
+
+            if (gamepad1.dpad_up) {
+                intake.setMotorPower(INTAKE_POWER_FORWARD);
+            } else if (gamepad1.dpad_down) {
+                intake.setMotorPower(INTAKE_POWER_BACKWARD);
+            } else {
+                intake.setMotorPower(INTAKE_POWER_STANDARD);
             }
 
             if (gamepad1.left_stick_button) {
