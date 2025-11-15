@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.teamcode.Cogintilities.MotorConfigurations;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 
 public class Shooter implements TeamConstants {
@@ -13,6 +14,7 @@ public class Shooter implements TeamConstants {
 
     public Shooter(DcMotorEx motor) {
         this.motor = motor;
+        MotorConfigurations.configureMotor(motor, MotorConfigurations.GOBILDA_6000RPM);
         this.motor.setDirection(DcMotorSimple.Direction.FORWARD);
         this.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         this.motor.setPower(0);
