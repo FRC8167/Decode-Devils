@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.Cogintilities.SpinnerSequencer;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 import org.firstinspires.ftc.teamcode.SubSystems.ColorDetection;
 import org.firstinspires.ftc.teamcode.SubSystems.Dropper;
+import org.firstinspires.ftc.teamcode.SubSystems.Fork;
 import org.firstinspires.ftc.teamcode.SubSystems.Intake;
 import org.firstinspires.ftc.teamcode.SubSystems.Shooter;
 import org.firstinspires.ftc.teamcode.SubSystems.LightRGB;
@@ -51,6 +52,7 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
     protected MecanumDriveSingleton drive;
     static protected Shooter shooter;
     static protected Intake intake;
+    static protected Fork fork;
     static protected SpinStatesSingleton spinStates;
     static protected ColorDetection colorDetection;
     static protected Spindexer spindexer;
@@ -93,26 +95,27 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
 
         DcMotorEx shooterMotor = hardwareMap.get(DcMotorEx.class, "Shooter");
 
-        CRServo intakeL = hardwareMap.get(CRServo.class, "LeftIntake");
-        CRServo intakeR = hardwareMap.get(CRServo.class, "RightIntake");
+        CRServo intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
 
         RevColorSensorV3 colorSensor = hardwareMap.get(RevColorSensorV3.class, "colorSensor");
         Servo spinServo = hardwareMap.get(Servo.class, "spinServo");
         Servo dropServo = hardwareMap.get(Servo.class, "dropServo");
+        Servo forkServo = hardwareMap.get(Servo.class, "forkServo");
         Servo servoRGB  = hardwareMap.get(Servo.class, "servoRGB");
 
         WebcamName webcam = hardwareMap.get(WebcamName.class, "Webcam1");
 
         /* Create an object of every module/subsystem needed for both autonomous and teleOp modes. */
         drive = MecanumDriveSingleton.getInstance(driveMotorLF, driveMotorLR, driveMotorRF, driveMotorRR);
-        shooter = new Shooter(shooterMotor);
-        intake = new Intake(intakeL, intakeR);
-        colorDetection = new ColorDetection(colorSensor);
-        spinStates = SpinStatesSingleton.getInstance();
-        spinner = new Spinner(spinServo, SPINNER_INIT_POS, SPINNER_MIN, SPINNER_MAX, moveServos);
-        dropper = new Dropper(dropServo, DROPPER_INIT_POS, DROPPER_MIN, DROPPER_MAX, moveServos);
-        lightRGB = new LightRGB(servoRGB, LIGHT_INIT_POS, LIGHT_MIN, LIGHT_MAX);
-        spindexer = new Spindexer(spinner, dropper, spinStates, colorDetection);
+        shooter          = new Shooter(shooterMotor);
+        intake           = new Intake(intakeServo);
+        colorDetection   = new ColorDetection(colorSensor);
+        spinStates       = SpinStatesSingleton.getInstance();
+        spinner          = new Spinner(spinServo, SPINNER_INIT_POS, SPINNER_MIN, SPINNER_MAX, moveServos);
+        dropper          = new Dropper(dropServo, DROPPER_INIT_POS, DROPPER_MIN, DROPPER_MAX, moveServos);
+        fork             = new Fork   (forkServo, FORK_INIT_POS, FORK_MIN, FORK_MAX, moveServos);
+        lightRGB         = new LightRGB(servoRGB, LIGHT_INIT_POS, LIGHT_MIN, LIGHT_MAX);
+        spindexer        = new Spindexer(spinner, dropper, spinStates, colorDetection);
         spinnerSequencer = new SpinnerSequencer(spindexer, shooter, spinStates);
 
         if (webcam.isAttached()) {

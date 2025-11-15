@@ -17,46 +17,48 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
         waitForStart();
 
         while (opModeIsActive()) {
-            if (gamepad1.rightBumperWasPressed()) {
+
+            drive.mecanumDrive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+            if (gamepad2.rightBumperWasPressed()) {
                 spinnerSequencer.stop();
                 spindexer.rotateBy(120);
             }
-            else if (gamepad1.leftBumperWasPressed()) {
+            else if (gamepad2.leftBumperWasPressed()) {
                 spinnerSequencer.stop();
                 spindexer.rotateBy(-120);
             }
-            else if (gamepad1.dpadRightWasPressed()) {
+            else if (gamepad2.dpadRightWasPressed()) {
                 spinnerSequencer.stop();
                 spindexer.rotateBy(60);
             }
-            else if (gamepad1.dpadLeftWasPressed()) {
+            else if (gamepad2.dpadLeftWasPressed()) {
                 spinnerSequencer.stop();
                 spindexer.rotateBy(-60);
-            } else if (gamepad1.dpadDownWasPressed()) {
+            } else if (gamepad2.dpadDownWasPressed()) {
                 spinnerSequencer.stop();
                 spindexer.setCenteredPositionDegrees(0);
-            } else if (gamepad1.xWasPressed()) {
+            } else if (gamepad2.xWasPressed()) {
                 spinnerSequencer.stop();
                 spindexer.rotateStateToDrop(State.PURPLE);
-            } else if (gamepad1.aWasPressed()) {
+            } else if (gamepad2.aWasPressed()) {
                 spinnerSequencer.stop();
                 spindexer.rotateStateToDrop(State.GREEN);
             }
 
-            if (gamepad1.dpad_up) {
+            if (gamepad2.dpad_up) {
                 intake.setMotorPower(INTAKE_POWER_FORWARD);
-            } else if (gamepad1.dpad_down) {
+            } else if (gamepad2.dpad_down) {
                 intake.setMotorPower(INTAKE_POWER_BACKWARD);
             } else {
                 intake.setMotorPower(INTAKE_POWER_STANDARD);
             }
 
-            if (gamepad1.left_stick_button) {
+            if (gamepad2.left_stick_button) {
                 spinnerSequencer.stop();
                 spindexer.detectColor();
             }
 
-            if (gamepad1.right_stick_button) {
+            if (gamepad2.right_stick_button) {
                 spinnerSequencer.stop();
                 spindexer.drop();
                 shooter.setMotorPower(SHOOTER_POWER);
@@ -64,18 +66,18 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
                 shooter.setMotorPower(0);
             }
 
-            if (gamepad1.backWasPressed()) {
+            if (gamepad2.backWasPressed()) {
                 if (ArtifactSequence != null) {
 //                    spinnerSequencer.runStatesToDrop(ArtifactSequence);
                     spinnerSequencer.runDual(ArtifactSequence);
                 }
             }
 
-            if (gamepad1.startWasPressed()) {
+            if (gamepad2.startWasPressed()) {
                 spinnerSequencer.runScanAll();
             }
 
-            if (gamepad1.yWasPressed()) {
+            if (gamepad2.yWasPressed()) {
 //                ArtifactSequence = new State[]{State.PURPLE, State.PURPLE, State.PURPLE};
 //
                 if (ArtifactSequence == STATES_GPP) {
@@ -100,24 +102,18 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 //                }
             }
 
-            if (gamepad1.b) {
+            if (gamepad2.b) {
                 shooter.resetMin();
-//                if (vision != null) {
-//                    vision.scanForAprilTags();
-//                    AprilTagDetection tag = vision.getFirstTargetTag();
-//                    if (tag != null) {
-//                        telemetry.addData("X", tag.ftcPose.x);
-//                        telemetry.addData("Y", tag.ftcPose.y);
-//                        telemetry.addData("Z", tag.ftcPose.z);
-//                        telemetry.addData("Range", tag.ftcPose.range);
-//                    }
-//                }
+
             }
+
+            fork.setPosition(-gamepad2.right_stick_y/2);
 
 
 
 
             telemetry.addData("ShooterSpeed: ", shooter.getMotorSpeedRPM());
+            telemetry.addData("ShooterSpeedTest: ", shooter.getMotorSpeedRpmExperimental());
             telemetry.addData("ShooterMinSpeed: ", shooter.getMinSpeedRPM());
             telemetry.addData("Color: ", colorDetection.getColor());
             telemetry.addData("H: ", colorDetection.getColorHSV()[0]);
@@ -133,6 +129,7 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
             telemetry.addData("DropTimer: ", spindexer.getDropTimerRemainingTime());
             telemetry.addData("SpinnerTimer: ", spindexer.getSpinnerRemainingTime());
             telemetry.addData("DropPos: ", spindexer.getDropperPos());
+            telemetry.addData("ForkPos: ", fork.getPos());
             telemetry.addData("SequenceActive: ", !spinnerSequencer.isDone());
             telemetry.addData("ArtifactSequence: ", spinStates.convertStatesToInitials(ArtifactSequence));
             telemetry.addData("ArtifactSequenceLength: ", ArtifactSequence == null ? "null":ArtifactSequence.length);

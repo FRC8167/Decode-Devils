@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Cogintilities.MotorConfigurations;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 
@@ -31,6 +32,10 @@ public class Shooter implements TeamConstants {
 
     public double getMotorSpeedRPM() {
         return motor.getVelocity()/SHOOTER_TICKS_PER_REV*60.0; //Speed in RPM
+    }
+
+    public double getMotorSpeedRpmExperimental() {
+        return motor.getVelocity(AngleUnit.DEGREES)/360.0*60.0; //Speed in RPM
     }
 
     public double getMotorSpeed() {

@@ -52,6 +52,11 @@ public interface TeamConstants {
     double INTAKE_POWER_STANDARD = 0;
     double INTAKE_POWER_BACKWARD = -0.5;
 
+    double FORK_MIN = 0;
+    double FORK_MAX = 1; //TODO: Determine true value
+    double FORK_INIT_POS = 0;
+
+
     double LIGHT_INIT_POS = 0;
     double LIGHT_MIN = 0;
     double LIGHT_MAX = 1;
