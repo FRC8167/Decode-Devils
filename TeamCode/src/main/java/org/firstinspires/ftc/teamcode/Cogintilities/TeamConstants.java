@@ -49,7 +49,7 @@ public interface TeamConstants {
     double SHOOTER_TICKS_PER_REV = 28;
 
     double INTAKE_POWER_FORWARD = 0.5;
-    double INTAKE_POWER_STANDARD = 0;
+    double INTAKE_POWER_NEUTRAL = 0;
     double INTAKE_POWER_BACKWARD = -0.5;
 
     double FORK_MIN = 0;

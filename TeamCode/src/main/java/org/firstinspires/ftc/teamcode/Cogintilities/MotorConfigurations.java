@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 public enum MotorConfigurations {
-    GOBILDA_6000RPM(20,     6000, 1   ),
+    GOBILDA_6000RPM(28,     6000, 1   ),
     GOBILDA_1620RPM(103.8,  1620, 3.7 ),
     GOBILDA_1150RPM(145.1,  1150, 5.2 ),
     GOBILDA_435RPM (384.5,  435,  13.7),

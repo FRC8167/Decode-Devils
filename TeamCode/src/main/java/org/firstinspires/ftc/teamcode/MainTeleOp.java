@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 //@Disabled
 @TeleOp(name="MainTeleOp", group="Competition")
@@ -50,7 +49,7 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
             } else if (gamepad2.dpad_down) {
                 intake.setMotorPower(INTAKE_POWER_BACKWARD);
             } else {
-                intake.setMotorPower(INTAKE_POWER_STANDARD);
+                intake.setMotorPower(INTAKE_POWER_NEUTRAL);
             }
 
             if (gamepad2.left_stick_button) {
@@ -107,8 +106,14 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 
             }
 
-            fork.setPosition(-gamepad2.right_stick_y/2);
+            if (-gamepad2.right_stick_y >= 0) {
+                fork.setPosition(-gamepad2.right_stick_y*.1);
+            } else {
+                fork.setPosition(0.06);
+            }
 
+
+//0.06
 
 
 
