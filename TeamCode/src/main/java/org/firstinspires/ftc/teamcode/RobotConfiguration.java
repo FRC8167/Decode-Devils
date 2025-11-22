@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
+import org.firstinspires.ftc.teamcode.Cogintilities.BetterMotor;
 import org.firstinspires.ftc.teamcode.Cogintilities.SpinnerSequencer;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 import org.firstinspires.ftc.teamcode.SubSystems.ColorDetection;
@@ -94,6 +95,7 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
         DcMotorEx driveMotorRR = hardwareMap.get(DcMotorEx.class, "RightRear");
 
         DcMotorEx shooterMotor = hardwareMap.get(DcMotorEx.class, "Shooter");
+//        DcMotorEx shooterMotor = new BetterMotor(hardwareMap, "Shooter");
 
         CRServo intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
 

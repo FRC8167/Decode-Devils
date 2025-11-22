@@ -4,16 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.HardwareDevice;
-import com.qualcomm.robotcore.hardware.MotorControlAlgorithm;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.Cogintilities.MotorConfigurations;
+import org.firstinspires.ftc.teamcode.Cogintilities.BetterMotor;
+import org.firstinspires.ftc.teamcode.Cogintilities.MotorInformation;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
-import org.firstinspires.ftc.teamcode.SubSystems.LightRGB;
-import org.firstinspires.ftc.teamcode.SubSystems.Servo1D;
 
 @TeleOp(name="TeleOpTest", group="Competition")
 public class TeleOpTest extends LinearOpMode implements TeamConstants {
@@ -22,10 +18,17 @@ public class TeleOpTest extends LinearOpMode implements TeamConstants {
     public void runOpMode() throws InterruptedException {
 
 //        initializeRobot();
-        DcMotorEx motor = hardwareMap.get(DcMotorEx.class, "ExpSpinner");
-        MotorConfigurations.configureMotor(motor, MotorConfigurations.REV_HEX_125RPM);
+//        DcMotorEx motor = hardwareMap.get(DcMotorEx.class, "ExpSpinner");
+        BetterMotor motor = new BetterMotor(hardwareMap, "ExpSpinner"); //Todo: Test usage of BetterMotor class
+
+//        MotorInformation.adjustMotor(motor, MotorInformation.REV_HEX_125RPM);
+        motor.adjustMotorInformation(MotorInformation.REV_HEX_125RPM);
+
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        motor.setTargetPosition(0);
+
+//        motor.setTargetPosition(0);
+        motor.setTargetPosition(0, AngleUnit.DEGREES);
+
         motor.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, new PIDFCoefficients(0.8,0,0,0));
         motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motor.setVelocity(50*360/60.0, AngleUnit.DEGREES);
@@ -39,13 +42,17 @@ public class TeleOpTest extends LinearOpMode implements TeamConstants {
 
         while (opModeIsActive()) {
             if (gamepad2.yWasPressed()) {
-                motor.setTargetPosition(0);
+//                motor.setTargetPosition(0);
+                motor.setTargetPosition(0, AngleUnit.DEGREES);
             } else if (gamepad2.bWasPressed()) {
-                motor.setTargetPosition((int) (EXP_SPINNER_TICKS_PER_REV/360 * 120));
+//                motor.setTargetPosition((int) (EXP_SPINNER_TICKS_PER_REV/360 * 120));
+                motor.setTargetPosition(120, AngleUnit.DEGREES);
             } else if (gamepad2.aWasPressed()) {
-                motor.setTargetPosition((int) (EXP_SPINNER_TICKS_PER_REV/360 * 120 * 2));
+//                motor.setTargetPosition((int) (EXP_SPINNER_TICKS_PER_REV/360 * 120 * 2));
+                motor.setTargetPosition(240, AngleUnit.DEGREES);
             } else if (gamepad2.xWasPressed()) {
-                motor.setTargetPosition((int) (EXP_SPINNER_TICKS_PER_REV/360 * 120*3));
+//                motor.setTargetPosition((int) (EXP_SPINNER_TICKS_PER_REV/360 * 120*3));
+                motor.setTargetPosition(360, AngleUnit.DEGREES);
             }
 //            lightRGB.setColorState(State.PURPLE);
 //            lightRGB.setOn();
@@ -77,8 +84,10 @@ public class TeleOpTest extends LinearOpMode implements TeamConstants {
 ////                servo.setPosition(pos);
 //            }
 
-            telemetry.addData("Pos: ", motor.getCurrentPosition()/EXP_SPINNER_TICKS_PER_REV*360);
+//            telemetry.addData("Pos: ", motor.getCurrentPosition()/EXP_SPINNER_TICKS_PER_REV*360);
+            telemetry.addData("Pos: ", motor.getCurrentPosition(AngleUnit.DEGREES));
             telemetry.addData("Vel: ", motor.getVelocity(AngleUnit.DEGREES));
+            telemetry.addData("VelRPM: ", motor.getVelocityRPM());
 //            telemetry.addData("Color: ", color%10);
             telemetry.update();
         }

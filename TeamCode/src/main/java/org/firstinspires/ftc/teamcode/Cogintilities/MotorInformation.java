@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.Cogintilities;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
-public enum MotorConfigurations {
+public enum MotorInformation {
     GOBILDA_6000RPM(28,     6000, 1   ),
     GOBILDA_1620RPM(103.8,  1620, 3.7 ),
     GOBILDA_1150RPM(145.1,  1150, 5.2 ),
@@ -22,7 +22,7 @@ public enum MotorConfigurations {
     private final double maxRPM;
     private final double gearing;
 
-    MotorConfigurations(double ticksPerRev, double maxRPM, double gearing) {
+    MotorInformation(double ticksPerRev, double maxRPM, double gearing) {
         this.ticksPerRev = ticksPerRev;
         this.maxRPM = maxRPM;
         this.gearing = gearing;
@@ -40,15 +40,15 @@ public enum MotorConfigurations {
         return gearing;
     }
 
-    public void configureMotor(DcMotor motor) {
-        configureMotor(motor, this);
+    public void adjustMotor(DcMotor motor) {
+        adjustMotor(motor, this);
     }
 
-    public static void configureMotor(DcMotor motor, MotorConfigurations motorConfig) {
+    public static void adjustMotor(DcMotor motor, MotorInformation motorInfo) {
         MotorConfigurationType newConfig = motor.getMotorType().clone();
-        newConfig.setTicksPerRev(motorConfig.getTicksPerRev());
-        newConfig.setMaxRPM(motorConfig.getMaxRPM());
-        newConfig.setGearing(motorConfig.getGearing());
+        newConfig.setTicksPerRev(motorInfo.getTicksPerRev());
+        newConfig.setMaxRPM(motorInfo.getMaxRPM());
+        newConfig.setGearing(motorInfo.getGearing());
         motor.setMotorType(newConfig);
     }
 }
