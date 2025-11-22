@@ -14,7 +14,10 @@ public enum MotorConfigurations {
     GOBILDA_84RPM  (1993.6, 84,   71.2),
     GOBILDA_60RPM  (2786.2, 60,   99.5),
     GOBILDA_43RPM  (3895.9, 43,   139 ),
-    GOBILDA_30RPM  (5281.1, 30,   188 );
+    GOBILDA_30RPM  (5281.1, 30,   188 ),
+
+    REV_HEX_125RPM (288,    125,  72);
+
     private final double ticksPerRev;
     private final double maxRPM;
     private final double gearing;

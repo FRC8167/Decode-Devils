@@ -31,8 +31,11 @@ public interface TeamConstants {
     double SPINNER_MAX = 1.0;
     double SPINNER_INIT_POS = 0.5;
     double SPINNER_RANGE = 1620.0; //degrees, 1620.0 estimated should be 1800 (1642.5 calculated using 600-2400 servo)
+    double SPINNER_OFFSET = -3 / SPINNER_RANGE;
     double SPINNER_SPEED = 240; //degrees per second, 40 rpm (measured underestimation, spec defined speed: 300/50rpm)
     double SPINNER_GRACE_TIME = 0.05; //additional time for servo to reach target position (insures it is done for small rotations)
+
+    double EXP_SPINNER_TICKS_PER_REV = 288;
 
     double DROPPER_MIN = 0;
     double DROPPER_MAX = 1;

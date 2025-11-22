@@ -111,7 +111,7 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
         intake           = new Intake(intakeServo);
         colorDetection   = new ColorDetection(colorSensor);
         spinStates       = SpinStatesSingleton.getInstance();
-        spinner          = new Spinner(spinServo, SPINNER_INIT_POS, SPINNER_MIN, SPINNER_MAX, moveServos);
+        spinner          = new Spinner(spinServo, SPINNER_INIT_POS+SPINNER_OFFSET, SPINNER_MIN, SPINNER_MAX, moveServos);
         dropper          = new Dropper(dropServo, DROPPER_INIT_POS, DROPPER_MIN, DROPPER_MAX, moveServos);
         fork             = new Fork   (forkServo, FORK_INIT_POS, FORK_MIN, FORK_MAX, moveServos);
         lightRGB         = new LightRGB(servoRGB, LIGHT_INIT_POS, LIGHT_MIN, LIGHT_MAX);
