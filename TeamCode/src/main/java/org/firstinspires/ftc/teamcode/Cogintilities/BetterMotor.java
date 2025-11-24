@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
@@ -27,18 +28,15 @@ public class BetterMotor extends DcMotorImplEx {
         return DPStoRPM(getVelocity(AngleUnit.DEGREES));
     }
 
-    public void setTargetPosition(double position, @NonNull AngleUnit unit, boolean rounded) {
-        double pos = getTicksPerDeg() * unit.toDegrees(position);
-        super.setTargetPosition(rounded ? (int) Math.round(pos) : (int) pos);
+    public void setTargetPosition(double position, @NonNull AngleUnit unit) {
+        int ticks = degToTicks(unit.getUnnormalized().toDegrees(position));
+        super.setTargetPosition(ticks);
     }
 
-    public void setTargetPosition(double position, AngleUnit unit) {
-        setTargetPosition(position, unit, true);
-    }
 
     public double getCurrentPosition(@NonNull AngleUnit unit) {
         int ticks = super.getCurrentPosition();
-        return unit.fromDegrees((double) ticks/getTicksPerDeg());
+        return unit.getUnnormalized().fromDegrees(ticksToDeg(ticks));
     }
 
     public void adjustMotorInformation(MotorInformation motorConfiguration) {
@@ -46,6 +44,16 @@ public class BetterMotor extends DcMotorImplEx {
     }
 
 
+
+
+
+    public double ticksToDeg(double ticks) {
+        return ticks/getTicksPerDeg();
+    }
+
+    public int degToTicks(double degrees) {
+        return (int) (degrees*getTicksPerDeg());
+    }
 
     public double getTicksPerRev() {
         return motorType.getTicksPerRev();

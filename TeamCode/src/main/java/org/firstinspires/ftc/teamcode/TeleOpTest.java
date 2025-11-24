@@ -19,7 +19,7 @@ public class TeleOpTest extends LinearOpMode implements TeamConstants {
 
 //        initializeRobot();
 //        DcMotorEx motor = hardwareMap.get(DcMotorEx.class, "ExpSpinner");
-        BetterMotor motor = new BetterMotor(hardwareMap, "ExpSpinner"); //Todo: Test usage of BetterMotor class
+        BetterMotor motor = new BetterMotor(hardwareMap, "ExpSpinner");
 
 //        MotorInformation.adjustMotor(motor, MotorInformation.REV_HEX_125RPM);
         motor.adjustMotorInformation(MotorInformation.REV_HEX_125RPM);
@@ -29,9 +29,11 @@ public class TeleOpTest extends LinearOpMode implements TeamConstants {
 //        motor.setTargetPosition(0);
         motor.setTargetPosition(0, AngleUnit.DEGREES);
 
+        motor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER,
+                new PIDFCoefficients(10,3,0,0.05));
         motor.setPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION, new PIDFCoefficients(0.8,0,0,0));
         motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motor.setVelocity(50*360/60.0, AngleUnit.DEGREES);
+        motor.setVelocityRPM(100);
 //        Servo servo = hardwareMap.get(Servo.class, "servoRGB");
 //        servo.scaleRange(DROPPER_SERVO_RANGE[0], DROPPER_SERVO_RANGE[1]);
 //        double pos = 0;
@@ -41,18 +43,27 @@ public class TeleOpTest extends LinearOpMode implements TeamConstants {
         waitForStart();
 
         while (opModeIsActive()) {
+//            motor.setPower(-gamepad2.right_stick_y);
             if (gamepad2.yWasPressed()) {
 //                motor.setTargetPosition(0);
                 motor.setTargetPosition(0, AngleUnit.DEGREES);
+//                motor.setVelocityRPM(0);
+//                motor.setPower(0);
             } else if (gamepad2.bWasPressed()) {
 //                motor.setTargetPosition((int) (EXP_SPINNER_TICKS_PER_REV/360 * 120));
                 motor.setTargetPosition(120, AngleUnit.DEGREES);
+//                motor.setVelocityRPM(50);
+//                motor.setPower(0.5);
             } else if (gamepad2.aWasPressed()) {
 //                motor.setTargetPosition((int) (EXP_SPINNER_TICKS_PER_REV/360 * 120 * 2));
                 motor.setTargetPosition(240, AngleUnit.DEGREES);
+//                motor.setVelocityRPM(100);
+//                motor.setPower(1);
             } else if (gamepad2.xWasPressed()) {
 //                motor.setTargetPosition((int) (EXP_SPINNER_TICKS_PER_REV/360 * 120*3));
                 motor.setTargetPosition(360, AngleUnit.DEGREES);
+//                motor.setVelocityRPM(-50);
+//                motor.setPower(-1);
             }
 //            lightRGB.setColorState(State.PURPLE);
 //            lightRGB.setOn();
@@ -87,7 +98,12 @@ public class TeleOpTest extends LinearOpMode implements TeamConstants {
 //            telemetry.addData("Pos: ", motor.getCurrentPosition()/EXP_SPINNER_TICKS_PER_REV*360);
             telemetry.addData("Pos: ", motor.getCurrentPosition(AngleUnit.DEGREES));
             telemetry.addData("Vel: ", motor.getVelocity(AngleUnit.DEGREES));
+            telemetry.addData("kP-ToPos", motor.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION).p);
+//            telemetry.addData("kI", motor.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).i);
+//            telemetry.addData("kD", motor.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).d);
+//            telemetry.addData("FF", motor.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER).f);
             telemetry.addData("VelRPM: ", motor.getVelocityRPM());
+            telemetry.addData("Power: ", motor.getPower());
 //            telemetry.addData("Color: ", color%10);
             telemetry.update();
         }
