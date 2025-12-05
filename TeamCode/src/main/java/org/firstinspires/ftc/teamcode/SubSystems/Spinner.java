@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.SubSystems;
 
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.Cogintilities.SpinnerCorrector;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 import org.firstinspires.ftc.teamcode.Cogintilities.TimedTimer;
 
@@ -30,11 +31,13 @@ public class Spinner extends Servo1D implements TeamConstants {
 
         previousAngleNormalized = currentAngleNormalized;
         if (((0.5 * SPINNER_RANGE + degrees) / SPINNER_RANGE) <= 1 && ((0.5 * SPINNER_RANGE + degrees) / SPINNER_RANGE) >= 0) {
-            setPosition((0.5 * SPINNER_RANGE + degrees) / SPINNER_RANGE + SPINNER_OFFSET);
+            double pos = (0.5 * SPINNER_RANGE + degrees) / SPINNER_RANGE + SPINNER_OFFSET;
+            setPosition(SpinnerCorrector.convertActualToSet(pos));
             currentAngleNormalized = degrees;
         }
         update();
-        // 0 degrees is center position  ~-900,~900, center position is none over trapdoor with slots 0,1,2 clockwise
+        // 0 degrees is center position  ~-900,~900, (approx. limits -810,810 w/o corrections, -790,790 w/ corrections)
+        // center position is none over trapdoor with slots 0,1,2 clockwise
     }
 
     public double getCenteredPositionDegrees() {

@@ -96,7 +96,7 @@ public abstract class SpinnerCorrector {
         addData(-40, 323-360);
         addData(-30, 332-360);
         addData(-20, 341-360);
-        addData(-10, 251-360);
+        addData(-10, 351-360);
         addData(0, 0);
         addData(10, 6);
         addData(20, 15);
@@ -191,7 +191,20 @@ public abstract class SpinnerCorrector {
     public static double convertActualToSet(double input) {
         return spinnerILUTInverse.get(input);
     }
+    /*
+    Note:
+    spinnerILUTInverse (convertActualToSet) is not a perfect inverse function due to discrepancies with InterpLUT interpolation methods
+    and should not be reinverted via the normal spinnerILUT (convertSetToActual) because it will create semi-compounding error if between data points
+    (This is not true for actual data points only those that use the interpolation,
+    though most data points in the inverse function are abnormal values, in this case not intervals of 10,
+    and normal values, those that would be inputted during normal operation, will cause this error)
 
+    This one way error is negligible for our purposes so long at it is exclusively one way.
+    (Maximum Two-Way Error: ~1.0197deg at -680) convertSetToActual(convertActualToSet(-680)) = -681.0197
+    (One-Way Error cannot be measured but we can assume it is most likely less)
+    (Errored value will never pass actual points regardless of the number of inversions)
 
-
+    For future uses of similar corrective functions a linear interpolative LUT would be more appropriate, (assuming semi-linear relationship)
+    or one with built in inverse capabilities, to ensure identical two-way reversion
+    */
 }
