@@ -33,14 +33,18 @@ public class BetterMotor extends DcMotorImplEx {
         super.setTargetPosition(ticks);
     }
 
+    public double getTargetPosition(@NonNull AngleUnit unit) {
+        int ticks = super.getTargetPosition();
+        return unit.getUnnormalized().fromDegrees(ticksToDeg(ticks));
+    }
 
     public double getCurrentPosition(@NonNull AngleUnit unit) {
         int ticks = super.getCurrentPosition();
         return unit.getUnnormalized().fromDegrees(ticksToDeg(ticks));
     }
 
-    public void adjustMotorInformation(MotorInformation motorConfiguration) {
-        MotorInformation.adjustMotor(this, motorConfiguration);
+    public void adjustMotorInformation(MotorInformation motorInfo) {
+        MotorInformation.adjustMotor(this, motorInfo);
     }
 
 

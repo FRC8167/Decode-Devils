@@ -201,10 +201,10 @@ public abstract class SpinnerCorrector {
 
     This one way error is negligible for our purposes so long at it is exclusively one way.
     (Maximum Two-Way Error: ~1.0197deg at -680) convertSetToActual(convertActualToSet(-680)) = -681.0197
-    (One-Way Error cannot be measured but we can assume it is most likely less)
+    (One-Way Error cannot be measured and does not make sense as a value in this context)
     (Errored value will never pass actual points regardless of the number of inversions)
 
-    For future uses of similar corrective functions a linear interpolative LUT would be more appropriate, (assuming semi-linear relationship)
+    For future uses of similar corrective functions a linear interpolative LUT may be more appropriate, (assuming semi-linear relationship)
     or one with built in inverse capabilities, to ensure identical two-way reversion
     */
 }

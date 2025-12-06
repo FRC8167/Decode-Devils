@@ -1,14 +1,10 @@
 package org.firstinspires.ftc.teamcode.SubSystems;
 
-import androidx.annotation.NonNull;
-
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
-
-public class Servo1D implements TeamConstants {
+public class Servo1D {
 
     private final Servo servo;
     private final double min;
