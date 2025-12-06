@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.SubSystems;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-public class MecanumDriveSingleton {
+public class MecanumDrive {
 
     private final DcMotorEx front_left_drive, back_left_drive, front_right_drive, back_right_drive;
     private double drive, strafe, turn;
@@ -10,34 +10,34 @@ public class MecanumDriveSingleton {
     double degradedMultiplier = 0.45;
 
     // Static variable to hold a single_instance of type Singleton
-    private static MecanumDriveSingleton single_instance = null;
+//    private static MecanumDrive single_instance = null;
 
 
-    private MecanumDriveSingleton(DcMotorEx leftFront, DcMotorEx leftRear, DcMotorEx rightFront, DcMotorEx rightRear) {
+    public MecanumDrive(DcMotorEx leftFront, DcMotorEx leftRear, DcMotorEx rightFront, DcMotorEx rightRear) {
         this.front_left_drive = leftFront;
         this.back_left_drive   = leftRear;
         this.front_right_drive = rightFront;
         this.back_right_drive  = rightRear;
 
         /* Assign Motor Directions */
-        this.front_left_drive.setDirection(DcMotorEx.Direction.REVERSE);
-        this.front_right_drive.setDirection(DcMotorEx.Direction.FORWARD);
-        this.back_left_drive.setDirection(DcMotorEx.Direction.REVERSE);
-        this.back_right_drive.setDirection(DcMotorEx.Direction.FORWARD);
+        this.front_left_drive.setDirection(DcMotorEx.Direction.FORWARD);
+        this.front_right_drive.setDirection(DcMotorEx.Direction.REVERSE);
+        this.back_left_drive.setDirection(DcMotorEx.Direction.FORWARD);
+        this.back_right_drive.setDirection(DcMotorEx.Direction.REVERSE);
 
         /* Initialize Motor Power to 0 */
         degradedMode = false;
-        setMotorPower(0,0,0,0);
+        setMotorPower(0,0,0, 0);
         drive = strafe = turn = 0;
     }
 
-    public static synchronized MecanumDriveSingleton getInstance(DcMotorEx leftFront, DcMotorEx leftRear, DcMotorEx rightFront, DcMotorEx rightRear)
-    {
-        if (single_instance == null)
-            single_instance = new MecanumDriveSingleton(leftFront, leftRear, rightFront, rightRear);
-
-        return single_instance;
-    }
+//    public static synchronized MecanumDrive getInstance(DcMotorEx leftFront, DcMotorEx leftRear, DcMotorEx rightFront, DcMotorEx rightRear)
+//    {
+//        if (single_instance == null)
+//            single_instance = new MecanumDrive(leftFront, leftRear, rightFront, rightRear);
+//
+//        return single_instance;
+//    }
 
 
     /**
@@ -72,7 +72,7 @@ public class MecanumDriveSingleton {
      * @param lrPower left rear motor power
      * @param rrPower right rear motor power
      */
-    private void setMotorPower(double lfPower,double rfPower, double lrPower, double rrPower) {
+    public void setMotorPower(double lfPower,double rfPower, double lrPower, double rrPower) { //Change to private
         front_left_drive.setPower(lfPower);
         front_right_drive.setPower(rfPower);
         back_left_drive.setPower(lrPower);

@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
-import org.firstinspires.ftc.teamcode.Cogintilities.BetterMotor;
 import org.firstinspires.ftc.teamcode.Cogintilities.SpinnerSequencer;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 import org.firstinspires.ftc.teamcode.SubSystems.ColorDetection;
@@ -18,7 +17,7 @@ import org.firstinspires.ftc.teamcode.SubSystems.Fork;
 import org.firstinspires.ftc.teamcode.SubSystems.Intake;
 import org.firstinspires.ftc.teamcode.SubSystems.Shooter;
 import org.firstinspires.ftc.teamcode.SubSystems.LightRGB;
-import org.firstinspires.ftc.teamcode.SubSystems.MecanumDriveSingleton;
+import org.firstinspires.ftc.teamcode.SubSystems.MecanumDrive;
 import org.firstinspires.ftc.teamcode.SubSystems.SpinStatesSingleton;
 import org.firstinspires.ftc.teamcode.SubSystems.Spindexer;
 import org.firstinspires.ftc.teamcode.SubSystems.Spinner;
@@ -50,7 +49,7 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
     static protected State[] ArtifactSequence = null;
 
     /*----------- Define all Module Classes (SubSystems) ------------*/
-    protected MecanumDriveSingleton drive;
+    protected MecanumDrive drive;
     static protected Shooter shooter;
     static protected Intake intake;
     static protected Fork fork;
@@ -108,7 +107,7 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
         WebcamName webcam = hardwareMap.get(WebcamName.class, "Webcam1");
 
         /* Create an object of every module/subsystem needed for both autonomous and teleOp modes. */
-        drive = MecanumDriveSingleton.getInstance(driveMotorLF, driveMotorLR, driveMotorRF, driveMotorRR);
+        drive = new MecanumDrive(driveMotorLF, driveMotorLR, driveMotorRF, driveMotorRR);
         shooter          = new Shooter(shooterMotor);
         intake           = new Intake(intakeServo);
         colorDetection   = new ColorDetection(colorSensor);

@@ -183,7 +183,7 @@ public abstract class SpinnerCorrector {
         create();
 
     } //There is definitely a better way of doing this but I did it this way for now
-    
+
     public static double convertSetToActual(double input) {
         return spinnerILUT.get(input);
     }

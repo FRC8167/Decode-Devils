@@ -17,7 +17,7 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 
         while (opModeIsActive()) {
 
-            drive.mecanumDrive(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+            drive.mecanumDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
             if (gamepad2.rightBumperWasPressed()) {
                 spinnerSequencer.stop();
                 spindexer.rotateBy(120);
@@ -60,9 +60,11 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
             if (gamepad2.right_stick_button) {
                 spinnerSequencer.stop();
                 spindexer.drop();
-                shooter.setMotorPower(SHOOTER_POWER);
+//                shooter.setRawPower(SHOOTER_POWER);
+                shooter.setVelocity(SHOTTER_VELOCITY);
             } else {
-                shooter.setMotorPower(0);
+//                shooter.setRawPower(0);
+                shooter.setVelocity(0);
             }
 
             if (gamepad2.backWasPressed()) {
@@ -102,7 +104,7 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
             }
 
             if (gamepad2.b) {
-                shooter.resetMin();
+//                shooter.resetMin();
 
             }
 
@@ -117,9 +119,13 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 
 
 
-            telemetry.addData("ShooterSpeed: ", shooter.getMotorSpeedRPM());
-            telemetry.addData("ShooterSpeedTest: ", shooter.getMotorSpeedRpmExperimental());
-            telemetry.addData("ShooterMinSpeed: ", shooter.getMinSpeedRPM());
+            telemetry.addData("ShooterSpeed: ", shooter.getVelocityRPM());
+            telemetry.addData("ShooterPower: ", shooter.getRawPower());
+            telemetry.addData("ShooterFracSpeed: ", shooter.getFractionalSpeed());
+            telemetry.addData("PIDF: ", shooter.getVelocityPIDFCoefficients().toString());
+            telemetry.addData("ShooterMode: ", shooter.getMode().toString());
+//            telemetry.addData("ShooterSpeedTest: ", shooter.getMotorSpeedRpmExperimental());
+//            telemetry.addData("ShooterMinSpeed: ", shooter.getMinSpeedRPM());
             telemetry.addData("Color: ", colorDetection.getColor());
             telemetry.addData("H: ", colorDetection.getColorHSV()[0]);
             telemetry.addData("S: ", colorDetection.getColorHSV()[1]);
@@ -138,6 +144,10 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
             telemetry.addData("SequenceActive: ", !spinnerSequencer.isDone());
             telemetry.addData("ArtifactSequence: ", spinStates.convertStatesToInitials(ArtifactSequence));
             telemetry.addData("ArtifactSequenceLength: ", ArtifactSequence == null ? "null":ArtifactSequence.length);
+            telemetry.addData("LF: ", drive.getLFpower());
+            telemetry.addData("RF: ", drive.getRFpower());
+            telemetry.addData("LR: ", drive.getLRpower());
+            telemetry.addData("RR: ", drive.getRRpower());
             telemetry.update();
 
             periodic();
@@ -147,7 +157,7 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
     private void periodic() {
         spindexer.periodic();
         spinnerSequencer.update();
-        shooter.update();
+//        shooter.update();
 //        lightRGB.setColor(spindexer.isSpinnerDone() ? "Blue":"Orange");
         if (spindexer.getActiveSlotDrop() != -1) lightRGB.setColorState(spinStates.getSlot(spindexer.getActiveSlotDrop()));
         else if (spindexer.getActiveSlotSensor() != -1) lightRGB.setColorState(spinStates.getSlot(spindexer.getActiveSlotSensor()));
