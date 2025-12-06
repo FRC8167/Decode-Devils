@@ -125,20 +125,27 @@ public class Motor1D {
         }
     }
 
-    private double rawPower = 0; // "Power" as used by archaic RunMode RUN_WITHOUT_ENCODER
+//    private double rawPower = 0; // "Power" as used by archaic RunMode RUN_WITHOUT_ENCODER
     //Note: removing rawPower may be beneficial
-    private double fractionalSpeed = 1; // "Power" as used by archaic RunMode RUN_TO_POSITION
-    //Note: Add max velocity variable using motor.setVelocity() for RunMode RUN_TO_POSITION
+//    private double fractionalSpeed = 1; // "Power" as used by archaic RunMode RUN_TO_POSITION
+    private double maxVelocityRPM; //For RunMode RUN_TO_POSITION
 
 
 
     public Motor1D(DcMotorEx motor) {
         this.motor = motor;
+        reset();
     }
 
     public Motor1D(DcMotorEx motor, MotorInformation motorInfo) {
-        this(motor);
+        this.motor = motor;
         adjustMotorInformation(motorInfo);
+        reset();
+    }
+
+    public void reset() {
+        setMode(Mode.STOPPED);
+        maxVelocityRPM = motor.getMotorType().getMaxRPM();
     }
 
 
@@ -152,36 +159,35 @@ public class Motor1D {
     }
 
     public double getRawPower() {
-//        if (motor.getMode() == DcMotorEx.RunMode.RUN_WITHOUT_ENCODER) {
-            return rawPower;
-//        } else {
-//            return Double.NaN;
-//        }
-    }
-
-    public double getFractionalSpeed() {
-        return fractionalSpeed; //Does not override raw speed or return NaN when not active to allow value to be set when not immediately in use
-    }
-
-    public void setRawPower(double power) {
-        rawPower = power;
-        if (motor.getMode() != DcMotorEx.RunMode.RUN_WITHOUT_ENCODER)
-            motor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        motor.setPower(rawPower);
-    }
-
-    public void setFractionalSpeed(double speed) {
-        fractionalSpeed = speed;
-        if (motor.getMode() == DcMotorEx.RunMode.RUN_TO_POSITION) {
-            motor.setPower(fractionalSpeed);
+        if (motor.getMode() == DcMotorEx.RunMode.RUN_WITHOUT_ENCODER) {
+            return motor.getPower();
+        } else {
+            return Double.NaN;
         }
     }
+
+//    public double getFractionalSpeed() {
+//        return fractionalSpeed; //Does not override raw speed or return NaN when not active to allow value to be set when not immediately in use
+//    }
+
+    public void setRawPower(double power) {
+        if (motor.getMode() != DcMotorEx.RunMode.RUN_WITHOUT_ENCODER)
+            motor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
+        motor.setPower(power);
+    }
+
+//    public void setFractionalSpeed(double speed) {
+//        fractionalSpeed = speed;
+//        if (motor.getMode() == DcMotorEx.RunMode.RUN_TO_POSITION) {
+//            motor.setPower(fractionalSpeed);
+//        }
+//    }
 
     public void setTargetPosition(int position) {
         motor.setTargetPosition(position);
         if (motor.getMode() != DcMotorEx.RunMode.RUN_TO_POSITION)
             motor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        motor.setPower(fractionalSpeed);
+        motor.setPower(1);
     }
 
     public void setTargetPosition(double position, @NonNull AngleUnit unit) {
@@ -214,11 +220,12 @@ public class Motor1D {
         mode.applyTo(motor);
         switch (mode) {
             case POWER_BASED:
+            case VELOCITY_BASED:
                 motor.setPower(0);
-                rawPower = 0;
                 break;
             case POSITION_BASED:
-                motor.setPower(fractionalSpeed);
+                motor.setPower(1);
+                setVelocityRPMInternal(maxVelocityRPM);
                 break;
         }
 
@@ -249,13 +256,27 @@ public class Motor1D {
     }
 
     public void setVelocity(double velocity) {
+        if (motor.getMode() != DcMotorEx.RunMode.RUN_USING_ENCODER)
+            motor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         motor.setVelocity(velocity);
-        motor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+    }
+
+
+    private void setVelocityRPMInternal(double velocityRPM) {
+        motor.setVelocity(RPMtoDPS(velocityRPM), AngleUnit.DEGREES);
     }
 
     public void setVelocityRPM(double velocityRPM) {
-        motor.setVelocity(RPMtoDPS(velocityRPM), AngleUnit.DEGREES);
-        motor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        if (motor.getMode() != DcMotorEx.RunMode.RUN_USING_ENCODER)
+            motor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        setVelocityRPMInternal(velocityRPM);
+    }
+
+    public void setMaxVelocityRPM(double velocityRPM) {
+        maxVelocityRPM = velocityRPM;
+        if (motor.getMode() == DcMotorEx.RunMode.RUN_TO_POSITION) {
+            setVelocityRPMInternal(velocityRPM);
+        }
     }
 
     public void setVelocityFractional(double fraction) {
