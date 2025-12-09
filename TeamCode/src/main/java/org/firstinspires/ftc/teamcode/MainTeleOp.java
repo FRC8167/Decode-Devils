@@ -121,7 +121,7 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 
             telemetry.addData("ShooterSpeed: ", shooter.getVelocityRPM());
             telemetry.addData("ShooterPower: ", shooter.getRawPower());
-            telemetry.addData("ShooterFracSpeed: ", shooter.getFractionalSpeed());
+//            telemetry.addData("ShooterFracSpeed: ", shooter.getFractionalSpeed());
             telemetry.addData("PIDF: ", shooter.getVelocityPIDFCoefficients().toString());
             telemetry.addData("ShooterMode: ", shooter.getMode().toString());
 //            telemetry.addData("ShooterSpeedTest: ", shooter.getMotorSpeedRpmExperimental());

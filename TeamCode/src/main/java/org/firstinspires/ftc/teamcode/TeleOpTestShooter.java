@@ -1,0 +1,70 @@
+package org.firstinspires.ftc.teamcode;
+
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.Cogintilities.BetterMotor;
+import org.firstinspires.ftc.teamcode.Cogintilities.ConfigurableConstants;
+import org.firstinspires.ftc.teamcode.Cogintilities.MotorInformation;
+import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
+import org.firstinspires.ftc.teamcode.Cogintilities.TimedTimer;
+
+@TeleOp(name="TeleOpTestShooter", group="Competition")
+public class TeleOpTestShooter extends LinearOpMode implements TeamConstants {
+
+    @Override
+    public void runOpMode() throws InterruptedException {
+
+//        initializeRobot(true);
+        BetterMotor motor = new BetterMotor(hardwareMap,"Shooter");
+        motor.adjustMotorInformation(MotorInformation.GOBILDA_6000RPM);
+        motor.setVelocity(0);
+        motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//        FtcDashboard dashboard = FtcDashboard.getInstance();
+//        Telemetry dashboardTelemetry = dashboard.getTelemetry();
+
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+
+        double targetVel = 0;
+        TimedTimer timer = new TimedTimer(ConfigurableConstants.ALTERNATION_PERIOD/2.0);
+
+        telemetry.addData("TargetVel: ", targetVel);
+        telemetry.addData("CurrentVel: ", motor.getVelocityRPM());
+        telemetry.update();
+
+        waitForStart();
+
+        while (opModeIsActive()) {
+
+            if (timer.isDone()) {
+                if (targetVel == ConfigurableConstants.VEL_LOW_RPM) {
+                    targetVel = ConfigurableConstants.VEL_HIGH_RPM;
+                } else if (targetVel == ConfigurableConstants.VEL_HIGH_RPM) {
+                    targetVel = ConfigurableConstants.VEL_LOW_RPM;
+                } else {
+                    targetVel = ConfigurableConstants.VEL_LOW_RPM;
+                }
+                motor.setVelocityRPM(targetVel);
+                timer.startNewTimer(ConfigurableConstants.ALTERNATION_PERIOD/2.0);
+                motor.setVelocityPIDFCoefficients(
+                        ConfigurableConstants.KP,
+                        ConfigurableConstants.KI,
+                        ConfigurableConstants.KD,
+                        ConfigurableConstants.FF
+                );
+            }
+
+            telemetry.addData("TargetVel: ", targetVel);
+            telemetry.addData("CurrentVel: ", motor.getVelocityRPM());
+            telemetry.update();
+        }
+    }
+}
