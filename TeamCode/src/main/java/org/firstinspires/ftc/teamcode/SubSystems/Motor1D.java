@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.Cogintilities.DefaultMotorInfo;
 import org.firstinspires.ftc.teamcode.Cogintilities.MotorInformation;
 
 public class Motor1D {

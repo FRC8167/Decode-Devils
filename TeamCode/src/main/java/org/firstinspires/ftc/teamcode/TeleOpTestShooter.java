@@ -1,19 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Cogintilities.BetterMotor;
 import org.firstinspires.ftc.teamcode.Cogintilities.ConfigurableConstants;
-import org.firstinspires.ftc.teamcode.Cogintilities.MotorInformation;
+import org.firstinspires.ftc.teamcode.Cogintilities.DefaultMotorInfo;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 import org.firstinspires.ftc.teamcode.Cogintilities.TimedTimer;
 
@@ -25,7 +20,7 @@ public class TeleOpTestShooter extends LinearOpMode implements TeamConstants {
 
 //        initializeRobot(true);
         BetterMotor motor = new BetterMotor(hardwareMap,"Shooter");
-        motor.adjustMotorInformation(MotorInformation.GOBILDA_6000RPM);
+        motor.adjustMotorInformation(DefaultMotorInfo.GOBILDA_6000RPM);
         motor.setVelocity(0);
         motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 //        FtcDashboard dashboard = FtcDashboard.getInstance();

@@ -1,54 +1,48 @@
 package org.firstinspires.ftc.teamcode.Cogintilities;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
-public enum MotorInformation {
-    GOBILDA_6000RPM(28,     6000, 1   ),
-    GOBILDA_1620RPM(103.8,  1620, 3.7 ),
-    GOBILDA_1150RPM(145.1,  1150, 5.2 ),
-    GOBILDA_435RPM (384.5,  435,  13.7),
-    GOBILDA_312RPM (537.7,  312,  19.2),
-    GOBILDA_223RPM (751.8,  223,  26.9),
-    GOBILDA_117RPM (1425.1, 117,  50.9),
-    GOBILDA_84RPM  (1993.6, 84,   71.2),
-    GOBILDA_60RPM  (2786.2, 60,   99.5),
-    GOBILDA_43RPM  (3895.9, 43,   139 ),
-    GOBILDA_30RPM  (5281.1, 30,   188 ),
+import org.firstinspires.ftc.robotcore.external.navigation.Rotation;
 
-    REV_HEX_125RPM (288,    125,  72);
+/**
+ * An interface representing the physical properties of a DC motor.
+ * Allows for standard motor types and custom geared motors to be used interchangeably.
+ */
+public interface MotorInformation {
 
-    private final double ticksPerRev;
-    private final double maxRPM;
-    private final double gearing;
+    double getTicksPerRev();
+    double getMaxRPM();
+    double getGearing();
+    Rotation getOrientation();
 
-    MotorInformation(double ticksPerRev, double maxRPM, double gearing) {
-        this.ticksPerRev = ticksPerRev;
-        this.maxRPM = maxRPM;
-        this.gearing = gearing;
+    default boolean isReversed() {
+        return false;
     }
 
-    public double getTicksPerRev() {
-        return ticksPerRev;
+
+    /**
+     * Applies the motor's properties to a DcMotor instance.
+     * This default method can be used by any class that implements the interface.
+     */
+    default void adjustMotor(@NonNull DcMotor motor) {
+        MotorConfigurationType newConfig = motor.getMotorType().clone();
+        newConfig.setTicksPerRev(this.getTicksPerRev());
+        newConfig.setMaxRPM(this.getMaxRPM());
+        newConfig.setGearing(this.getGearing());
+        motor.setMotorType(newConfig);
     }
 
-    public double getMaxRPM() {
-        return maxRPM;
-    }
-
-    public double getGearing() {
-        return gearing;
-    }
-
-    public void adjustMotor(DcMotor motor) {
-        adjustMotor(motor, this);
-    }
-
-    public static void adjustMotor(DcMotor motor, MotorInformation motorInfo) {
+    static void adjustMotor(@NonNull DcMotor motor, @NonNull MotorInformation motorInfo) {
         MotorConfigurationType newConfig = motor.getMotorType().clone();
         newConfig.setTicksPerRev(motorInfo.getTicksPerRev());
         newConfig.setMaxRPM(motorInfo.getMaxRPM());
         newConfig.setGearing(motorInfo.getGearing());
+        newConfig.setOrientation(motorInfo.getOrientation());
         motor.setMotorType(newConfig);
     }
+
+
 }

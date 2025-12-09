@@ -3,12 +3,11 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Cogintilities.BetterMotor;
-import org.firstinspires.ftc.teamcode.Cogintilities.MotorInformation;
+import org.firstinspires.ftc.teamcode.Cogintilities.DefaultMotorInfo;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 
 @TeleOp(name="TeleOpTest", group="Competition")
@@ -22,7 +21,7 @@ public class TeleOpTest extends LinearOpMode implements TeamConstants {
         BetterMotor motor = new BetterMotor(hardwareMap, "ExpSpinner");
 
 //        MotorInformation.adjustMotor(motor, MotorInformation.REV_HEX_125RPM);
-        motor.adjustMotorInformation(MotorInformation.REV_HEX_125RPM);
+        motor.adjustMotorInformation(DefaultMotorInfo.REV_HEX_125RPM);
 
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 

@@ -1,11 +1,8 @@
 package org.firstinspires.ftc.teamcode.SubSystems;
 
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.Cogintilities.MotorInformation;
+import org.firstinspires.ftc.teamcode.Cogintilities.DefaultMotorInfo;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 
 public class Shooter extends Motor1D implements TeamConstants {
@@ -15,7 +12,7 @@ public class Shooter extends Motor1D implements TeamConstants {
 
     public Shooter(DcMotorEx motor) {
         super(motor);
-        adjustMotorInformation(MotorInformation.GOBILDA_6000RPM);
+        adjustMotorInformation(DefaultMotorInfo.GOBILDA_6000RPM);
         setVelocityPIDFCoefficients(
                 0.05,
                 0.05,

@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 
 @Config
 public class ConfigurableConstants {
+    private ConfigurableConstants() {}
 
     public static double KP = 26;
     public static double KI = 0;
@@ -12,5 +13,4 @@ public class ConfigurableConstants {
     public static double VEL_LOW_RPM = 1000;
     public static double VEL_HIGH_RPM = 5000;
     public static double ALTERNATION_PERIOD = 10;
-
 }
