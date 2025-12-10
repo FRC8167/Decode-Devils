@@ -33,7 +33,7 @@ public class TeleOpTestShooter extends LinearOpMode implements TeamConstants {
 
         telemetry.addData("TargetVel: ", targetVel);
         telemetry.addData("CurrentVel: ", motor.getVelocityRPM());
-        telemetry.update();
+        telemetry.update(); //Note: Updating telemetry while using initializeRobot() will delete possible warnings
 
         waitForStart();
 

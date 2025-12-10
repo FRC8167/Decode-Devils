@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -7,6 +9,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
 import org.firstinspires.ftc.teamcode.Cogintilities.SpinnerSequencer;
@@ -47,6 +50,8 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
     static protected AllianceColor alliance;
     static List<LynxModule> ctrlHubs;
     static protected State[] ArtifactSequence = null;
+    protected Telemetry telemetry;
+
 
     /*----------- Define all Module Classes (SubSystems) ------------*/
     protected MecanumDrive drive;
@@ -123,6 +128,36 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
             vision = new Vision(webcam);
             vision.enableAprilTagDetection();
         }
+
+// Default to standard telemetry as a safe starting point.
+        this.telemetry = super.telemetry;
+        boolean dashboardInitialized = false;
+
+        try {
+            FtcDashboard dashboard = FtcDashboard.getInstance();
+
+            if (dashboard != null) {
+                Telemetry dashboardTelemetry = dashboard.getTelemetry();
+                if (dashboardTelemetry != null) {
+                    this.telemetry = new MultipleTelemetry(super.telemetry, dashboardTelemetry);
+                    dashboardInitialized = true;
+                } else {
+                    super.telemetry.addData("Warning", "FTC Dashboard connected, but telemetry is null.");
+                }
+            } else {
+                super.telemetry.addData("Info", "FTC Dashboard not connected. Using standard telemetry.");
+            }
+        } catch (Exception e) {
+            super.telemetry.addData("Error", "FTC Dashboard failed to initialize: " + e.getMessage());
+        }
+
+        if (dashboardInitialized) {
+            this.telemetry.addData("Status", "FTC Dashboard telemetry is active.");
+        } else {
+            this.telemetry.addData("Status", "Standard telemetry is active.");
+        }
+
+        this.telemetry.update();
 
     }
 
