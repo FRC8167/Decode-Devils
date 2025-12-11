@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.teamcode.Cogintilities.DefaultMotorInfo;
 import org.firstinspires.ftc.teamcode.Cogintilities.MotorInformation;
 
 public class Motor1D {
@@ -47,7 +46,6 @@ public class Motor1D {
         }
 
     }
-
     public enum Direction { FORWARD, REVERSE;
         public Direction inverted() {
             return this==FORWARD ? REVERSE : FORWARD;
@@ -80,7 +78,6 @@ public class Motor1D {
             return migrate(motor.getDirection());
         }
     }
-
     public enum Mode {
         POWER_BASED,
         VELOCITY_BASED,
@@ -130,26 +127,30 @@ public class Motor1D {
     //Note: removing rawPower may be beneficial
 //    private double fractionalSpeed = 1; // "Power" as used by archaic RunMode RUN_TO_POSITION
     private double maxVelocityRPM; //For RunMode RUN_TO_POSITION
-    private double targetVelocityRPM = 0;
-    private Mode mode; // Prevents mode from needing to be reobtained from hardware
+    private double targetVelocityRPM;
+    private final Mode mode; // Prevents mode from needing to be reobtained from hardware
 
 
 
-    public Motor1D(DcMotorEx motor) {
+    public Motor1D(DcMotorEx motor, Mode mode) {
         this.motor = motor;
+        this.mode = mode;
+        setZeroPowerBehavior(ZeroPowerBehavior.FLOAT);
         reset();
+
     }
 
-    public Motor1D(DcMotorEx motor, MotorInformation motorInfo) {
+    public Motor1D(DcMotorEx motor, Mode mode, MotorInformation motorInfo) {
         this.motor = motor;
+        this.mode = mode;
+        setZeroPowerBehavior(ZeroPowerBehavior.FLOAT);
         adjustMotorInformation(motorInfo);
         reset();
     }
 
     public void reset() {
-        setMode(Mode.STOPPED);
-        maxVelocityRPM = motor.getMotorType().getMaxRPM();
-        targetVelocityRPM = 0;
+        setModeInternal(Mode.STOPPED);
+        setModeInternal(mode);
     }
 
 
@@ -163,11 +164,10 @@ public class Motor1D {
     }
 
     public double getRawPower() {
-        if (motor.getMode() == DcMotorEx.RunMode.RUN_WITHOUT_ENCODER) {
+        if (mode == Mode.POWER_BASED)
             return motor.getPower();
-        } else {
+        else
             return Double.NaN;
-        }
     }
 
 //    public double getFractionalSpeed() {
@@ -175,9 +175,10 @@ public class Motor1D {
 //    }
 
     public void setRawPower(double power) {
-        if (motor.getMode() != DcMotorEx.RunMode.RUN_WITHOUT_ENCODER)
-            motor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
-        motor.setPower(power);
+        if (mode == Mode.POWER_BASED)
+            motor.setPower(power);
+        else
+            throw new IllegalStateException("Invalid Mode for operation: " + mode.toString());
     }
 
 //    public void setFractionalSpeed(double speed) {
@@ -188,24 +189,35 @@ public class Motor1D {
 //    }
 
     public void setTargetPosition(int position) {
-        motor.setTargetPosition(position);
-        if (motor.getMode() != DcMotorEx.RunMode.RUN_TO_POSITION)
-            motor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        motor.setPower(1);
+        if (mode == Mode.POSITION_BASED) {
+            motor.setTargetPosition(position);
+            motor.setPower(1);
+        } else
+            throw new IllegalStateException("Invalid Mode for operation: " + mode.toString());
     }
 
     public void setTargetPosition(double position, @NonNull AngleUnit unit) {
-        int ticks = degToTicks(unit.getUnnormalized().toDegrees(position));
-        setTargetPosition(ticks);
+        if (mode == Mode.POSITION_BASED) {
+            int ticks = degToTicks(unit.getUnnormalized().toDegrees(position));
+            motor.setTargetPosition(ticks);
+            motor.setPower(1);
+        } else
+            throw new IllegalStateException("Invalid Mode for operation: " + mode.toString());
     }
 
-    public int getTargetPosition() {
-        return motor.getTargetPosition();
+    public double getTargetPosition() {
+        if (mode == Mode.POSITION_BASED)
+            return motor.getTargetPosition();
+        else
+            return Double.NaN;
     }
 
     public double getTargetPosition(@NonNull AngleUnit unit) {
-        int ticks = getTargetPosition();
-        return unit.getUnnormalized().fromDegrees(ticksToDeg(ticks));
+        if (mode == Mode.POSITION_BASED) {
+            int ticks = motor.getTargetPosition();
+            return unit.getUnnormalized().fromDegrees(ticksToDeg(ticks));
+        } else
+            return Double.NaN;
     }
 
     public int getCurrentPosition() {
@@ -213,12 +225,11 @@ public class Motor1D {
     }
 
     public double getCurrentPosition(@NonNull AngleUnit unit) {
-        int ticks = getCurrentPosition();
+        int ticks = motor.getCurrentPosition();
         return unit.getUnnormalized().fromDegrees(ticksToDeg(ticks));
     }
 
-    public void setMode(Mode mode) { //TODO: Alter to use base motor to prevent cyclic methods
-        this.mode = mode;
+    private void setModeInternal(@NonNull Mode mode) {
         motor.setPower(0);
         motor.setVelocity(0);
         motor.setTargetPosition(motor.getCurrentPosition());
@@ -230,7 +241,6 @@ public class Motor1D {
                 break;
             case POSITION_BASED:
                 motor.setPower(1);
-                setVelocityRPMInternal(maxVelocityRPM);
                 break;
         }
 
@@ -244,57 +254,58 @@ public class Motor1D {
         return motor.isBusy();
     }
 
-//    public void enable() {
-//        motor.setMotorEnable();
-//    }
-//
-//    public void disable() {
-//        motor.setMotorDisable();
-//    }
+    public void enable() {
+        motor.setMotorEnable();
+    }
+
+    public void disable() {
+        motor.setMotorDisable();
+    }
 
     public boolean isEnabled() {
         return motor.isMotorEnabled();
     }
 
     public void setVelocity(double velocity) {
-        if (mode != Mode.VELOCITY_BASED) {
-            motor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            motor.setPower(1);
-            mode = Mode.VELOCITY_BASED;
-        }
-        motor.setVelocity(velocity);
-        targetVelocityRPM = Double.NaN;
+        if (mode == Mode.VELOCITY_BASED) {
+            motor.setVelocity(velocity);
+            targetVelocityRPM = Double.NaN;
+        } else
+            throw new IllegalStateException("Invalid Mode for operation: " + mode.toString());
     }
 
 
-    private void setVelocityRPMInternal(double velocityRPM) {
-        motor.setVelocity(RPMtoDPS(velocityRPM), AngleUnit.DEGREES);
-    }
+//    private void setVelocityRPMInternal(double velocityRPM) {
+//        motor.setVelocity(RPMtoDPS(velocityRPM), AngleUnit.DEGREES);
+//    }
 
     public void setVelocityRPM(double velocityRPM) {
         if (mode != Mode.VELOCITY_BASED) {
-            motor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-            motor.setPower(1);
-            mode = Mode.VELOCITY_BASED;
-        }
-        setVelocityRPMInternal(velocityRPM);
-        targetVelocityRPM = velocityRPM;
+            motor.setVelocity(RPMtoDPS(velocityRPM), AngleUnit.DEGREES);
+            targetVelocityRPM = velocityRPM;
+        } else
+            throw new IllegalStateException("Invalid Mode for operation: " + mode.toString());
+
     }
 
     public double getTargetVelocityRPM() {
+
         return targetVelocityRPM;
     }
 
     public void setMaxVelocityRPM(double velocityRPM) {
         maxVelocityRPM = velocityRPM;
         if (motor.getMode() == DcMotorEx.RunMode.RUN_TO_POSITION) {
-            setVelocityRPMInternal(velocityRPM);
-        }
+            motor.setVelocity(RPMtoDPS(velocityRPM), AngleUnit.DEGREES);
+        } else
+            throw new IllegalStateException("Invalid Mode for operation: " + mode.toString());
     }
 
     public void setVelocityFractional(double fraction) {
-        motor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
-        motor.setPower(fraction);
+        if (mode == Mode.VELOCITY_BASED)
+            motor.setPower(fraction);
+        else
+            throw new IllegalStateException("Invalid Mode for operation: " + mode.toString());
     }
 
     public double getVelocity() {
@@ -306,41 +317,68 @@ public class Motor1D {
     }
 
     public void setVelocityPIDFCoefficients(double p, double i, double d, double f) {
-        motor.setVelocityPIDFCoefficients(p, i, d, f);
+        if (mode == Mode.VELOCITY_BASED || mode == Mode.POSITION_BASED)
+            motor.setVelocityPIDFCoefficients(p, i, d, f);
+        else
+            throw new IllegalStateException("Invalid Mode for operation: " + mode.toString());
     }
 
     public void setVelocityPIDFCoefficients(PIDFCoefficients pidfCoefficients) {
-        motor.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+        if (mode == Mode.VELOCITY_BASED || mode == Mode.POSITION_BASED)
+            motor.setPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER, pidfCoefficients);
+        else
+            throw new IllegalStateException("Invalid Mode for operation: " + mode.toString());
     }
 
     public PIDFCoefficients getVelocityPIDFCoefficients() {
-        return motor.getPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        if (mode == Mode.VELOCITY_BASED || mode == Mode.POSITION_BASED)
+            return motor.getPIDFCoefficients(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        else
+            return null;
     }
 
     public void setPositionPCoefficient(double p) {
-        motor.setPositionPIDFCoefficients(p);
+        if (mode == Mode.POSITION_BASED)
+            motor.setPositionPIDFCoefficients(p);
+        else
+            throw new IllegalStateException("Invalid Mode for operation: " + mode.toString());
     }
 
     public double getPositionPCoefficient() {
-        return motor.getPIDFCoefficients(DcMotorEx.RunMode.RUN_TO_POSITION).p;
+        if (mode == Mode.POSITION_BASED)
+            return motor.getPIDFCoefficients(DcMotorEx.RunMode.RUN_TO_POSITION).p;
+        else
+            return Double.NaN;
     }
 
     public void setTargetPositionTolerance(int tolerance) {
-        motor.setTargetPositionTolerance(tolerance);
+        if (mode == Mode.POSITION_BASED)
+            motor.setTargetPositionTolerance(tolerance);
+        else
+            throw new IllegalStateException("Invalid Mode for operation: " + mode.toString());
     }
 
     public void setTargetPositionTolerance(double tolerance, @NonNull AngleUnit unit) {
-        int ticks = degToTicks(unit.getUnnormalized().toDegrees(tolerance));
-        motor.setTargetPositionTolerance(ticks);
+        if (mode == Mode.POSITION_BASED) {
+            int ticks = degToTicks(unit.getUnnormalized().toDegrees(tolerance));
+            motor.setTargetPositionTolerance(ticks);
+        } else
+            throw new IllegalStateException("Invalid Mode for operation: " + mode.toString());
     }
 
-    public int getTargetPositionTolerance() {
-        return motor.getTargetPositionTolerance();
+    public double getTargetPositionTolerance() {
+        if (mode == Mode.POSITION_BASED)
+            return motor.getTargetPositionTolerance();
+        else
+            return Double.NaN;
     }
 
     public double getTargetPositionTolerance(@NonNull AngleUnit unit) {
-        int ticks = motor.getTargetPositionTolerance();
-        return unit.getUnnormalized().fromDegrees(ticksToDeg(ticks));
+        if (mode == Mode.POSITION_BASED) {
+            int ticks = motor.getTargetPositionTolerance();
+            return unit.getUnnormalized().fromDegrees(ticksToDeg(ticks));
+        } else
+            return Double.NaN;
     }
 
     public double getCurrent(CurrentUnit unit) {
@@ -349,7 +387,7 @@ public class Motor1D {
 
 
     public void adjustMotorInformation(MotorInformation motorInfo) {
-        MotorInformation.adjustMotor(motor, motorInfo);
+        motorInfo.adjustMotor(motor);
     }
 
     public void setZeroPowerBehavior(ZeroPowerBehavior zeroPowerBehavior) {

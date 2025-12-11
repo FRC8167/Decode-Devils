@@ -14,10 +14,8 @@ public class Shooter extends Motor1D implements TeamConstants {
 
     public Shooter(DcMotorEx motor) {
 //        this.motor = new BetterMotor(motor);
-        super(motor);
-        adjustMotorInformation(DefaultMotorInfo.GOBILDA_6000RPM);
+        super(motor, Mode.VELOCITY_BASED, DefaultMotorInfo.GOBILDA_6000RPM);
         setVelocityPIDFCoefficients(26,0,14,12.7);
-        setMode(Mode.VELOCITY_BASED);
 //        this.motor = motor;
 //        MotorInformation.adjustMotor(this.motor, DefaultMotorInfo.GOBILDA_6000RPM);
 //        this.motor.setDirection(DcMotorSimple.Direction.FORWARD);
