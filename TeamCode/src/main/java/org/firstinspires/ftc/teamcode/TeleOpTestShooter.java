@@ -29,7 +29,7 @@ public class TeleOpTestShooter extends LinearOpMode implements TeamConstants {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
         double targetVel = 0;
-        TimedTimer timer = new TimedTimer(ConfigurableConstants.ALTERNATION_PERIOD/2.0);
+//        TimedTimer timer = new TimedTimer(ConfigurableConstants.ALTERNATION_PERIOD/2.0);
 
         telemetry.addData("TargetVel: ", targetVel);
         telemetry.addData("CurrentVel: ", motor.getVelocityRPM());
@@ -39,23 +39,23 @@ public class TeleOpTestShooter extends LinearOpMode implements TeamConstants {
 
         while (opModeIsActive()) {
 
-            if (timer.isDone()) {
-                if (targetVel == ConfigurableConstants.VEL_LOW_RPM) {
-                    targetVel = ConfigurableConstants.VEL_HIGH_RPM;
-                } else if (targetVel == ConfigurableConstants.VEL_HIGH_RPM) {
-                    targetVel = ConfigurableConstants.VEL_LOW_RPM;
-                } else {
-                    targetVel = ConfigurableConstants.VEL_LOW_RPM;
-                }
-                motor.setVelocityRPM(targetVel);
-                timer.startNewTimer(ConfigurableConstants.ALTERNATION_PERIOD/2.0);
-                motor.setVelocityPIDFCoefficients(
-                        ConfigurableConstants.KP,
-                        ConfigurableConstants.KI,
-                        ConfigurableConstants.KD,
-                        ConfigurableConstants.FF
-                );
-            }
+//            if (timer.isDone()) {
+//                if (targetVel == ConfigurableConstants.VEL_LOW_RPM) {
+//                    targetVel = ConfigurableConstants.VEL_HIGH_RPM;
+//                } else if (targetVel == ConfigurableConstants.VEL_HIGH_RPM) {
+//                    targetVel = ConfigurableConstants.VEL_LOW_RPM;
+//                } else {
+//                    targetVel = ConfigurableConstants.VEL_LOW_RPM;
+//                }
+//                motor.setVelocityRPM(targetVel);
+//                timer.startNewTimer(ConfigurableConstants.ALTERNATION_PERIOD/2.0);
+//                motor.setVelocityPIDFCoefficients(
+//                        ConfigurableConstants.KP,
+//                        ConfigurableConstants.KI,
+//                        ConfigurableConstants.KD,
+//                        ConfigurableConstants.FF
+//                );
+//            }
 
             telemetry.addData("TargetVel: ", targetVel);
             telemetry.addData("CurrentVel: ", motor.getVelocityRPM());

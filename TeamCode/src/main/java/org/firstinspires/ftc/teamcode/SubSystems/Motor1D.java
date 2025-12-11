@@ -130,6 +130,8 @@ public class Motor1D {
     //Note: removing rawPower may be beneficial
 //    private double fractionalSpeed = 1; // "Power" as used by archaic RunMode RUN_TO_POSITION
     private double maxVelocityRPM; //For RunMode RUN_TO_POSITION
+    private double targetVelocityRPM = 0;
+    private Mode mode; // Prevents mode from needing to be reobtained from hardware
 
 
 
@@ -147,6 +149,7 @@ public class Motor1D {
     public void reset() {
         setMode(Mode.STOPPED);
         maxVelocityRPM = motor.getMotorType().getMaxRPM();
+        targetVelocityRPM = 0;
     }
 
 
@@ -214,7 +217,8 @@ public class Motor1D {
         return unit.getUnnormalized().fromDegrees(ticksToDeg(ticks));
     }
 
-    public void setMode(Mode mode) {
+    public void setMode(Mode mode) { //TODO: Alter to use base motor to prevent cyclic methods
+        this.mode = mode;
         motor.setPower(0);
         motor.setVelocity(0);
         motor.setTargetPosition(motor.getCurrentPosition());
@@ -233,33 +237,33 @@ public class Motor1D {
     }
 
     public Mode getMode() {
-        return Mode.pullFrom(motor);
-    }
-
-    public void resetEncoder() {
-        motor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        return mode;
     }
 
     public boolean isBusy() {
         return motor.isBusy();
     }
 
-    public void enable() {
-        motor.setMotorEnable();
-    }
-
-    public void disable() {
-        motor.setMotorDisable();
-    }
+//    public void enable() {
+//        motor.setMotorEnable();
+//    }
+//
+//    public void disable() {
+//        motor.setMotorDisable();
+//    }
 
     public boolean isEnabled() {
         return motor.isMotorEnabled();
     }
 
     public void setVelocity(double velocity) {
-        if (motor.getMode() != DcMotorEx.RunMode.RUN_USING_ENCODER)
+        if (mode != Mode.VELOCITY_BASED) {
             motor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            motor.setPower(1);
+            mode = Mode.VELOCITY_BASED;
+        }
         motor.setVelocity(velocity);
+        targetVelocityRPM = Double.NaN;
     }
 
 
@@ -268,9 +272,17 @@ public class Motor1D {
     }
 
     public void setVelocityRPM(double velocityRPM) {
-        if (motor.getMode() != DcMotorEx.RunMode.RUN_USING_ENCODER)
+        if (mode != Mode.VELOCITY_BASED) {
             motor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+            motor.setPower(1);
+            mode = Mode.VELOCITY_BASED;
+        }
         setVelocityRPMInternal(velocityRPM);
+        targetVelocityRPM = velocityRPM;
+    }
+
+    public double getTargetVelocityRPM() {
+        return targetVelocityRPM;
     }
 
     public void setMaxVelocityRPM(double velocityRPM) {

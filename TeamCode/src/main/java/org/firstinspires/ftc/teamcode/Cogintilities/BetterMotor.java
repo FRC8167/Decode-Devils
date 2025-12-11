@@ -10,7 +10,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class BetterMotor extends DcMotorImplEx {
 
-    private BetterMotor(@NonNull DcMotorEx motor) {
+    public BetterMotor(@NonNull DcMotorEx motor) {
         super(motor.getController(), motor.getPortNumber(), motor.getDirection(), motor.getMotorType());
     }
 

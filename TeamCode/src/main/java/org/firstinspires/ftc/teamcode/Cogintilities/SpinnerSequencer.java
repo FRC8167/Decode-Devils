@@ -146,7 +146,7 @@ public class SpinnerSequencer implements TeamConstants {
         }
         switch (mode) {
             case DROP:
-                shooter.setRawPower(SHOOTER_POWER);
+//                shooter.setRawPower(SHOOTER_POWER);
                 if (!done) {
                     spindexer.dropWithoutStateUpdate();
                     if (timer.isDone()) {
@@ -240,7 +240,7 @@ public class SpinnerSequencer implements TeamConstants {
                 if (done && wiggleActive) spindexer.rotateSlotToSensor(lastScanSlot);
                 break;
             default:
-                shooter.setRawPower(0);
+//                shooter.setRawPower(0);
             }
 
 

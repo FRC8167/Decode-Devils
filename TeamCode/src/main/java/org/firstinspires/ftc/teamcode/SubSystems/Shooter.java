@@ -2,25 +2,24 @@ package org.firstinspires.ftc.teamcode.SubSystems;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.teamcode.Cogintilities.BetterMotor;
 import org.firstinspires.ftc.teamcode.Cogintilities.DefaultMotorInfo;
+import org.firstinspires.ftc.teamcode.Cogintilities.MotorInformation;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 
 public class Shooter extends Motor1D implements TeamConstants {
-//    private final DcMotorEx motor;
+//    public final BetterMotor motor;
 //
 //    private double minSpeedRPM;
 
     public Shooter(DcMotorEx motor) {
+//        this.motor = new BetterMotor(motor);
         super(motor);
         adjustMotorInformation(DefaultMotorInfo.GOBILDA_6000RPM);
-        setVelocityPIDFCoefficients(
-                0.05,
-                0.05,
-                0.00008,
-                0.00045
-        );
+        setVelocityPIDFCoefficients(26,0,14,12.7);
+        setMode(Mode.VELOCITY_BASED);
 //        this.motor = motor;
-//        MotorInformation.adjustMotor(motor, MotorInformation.GOBILDA_6000RPM);
+//        MotorInformation.adjustMotor(this.motor, DefaultMotorInfo.GOBILDA_6000RPM);
 //        this.motor.setDirection(DcMotorSimple.Direction.FORWARD);
 //        this.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 //        this.motor.setPower(0);

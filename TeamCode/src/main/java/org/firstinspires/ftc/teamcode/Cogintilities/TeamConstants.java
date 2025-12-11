@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Cogintilities;
 
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+
 public interface TeamConstants {
 
     enum State {
@@ -51,6 +53,12 @@ public interface TeamConstants {
     double SHOOTER_POWER = 0.8; //TODO: Replace with velocity based code
     double SHOTTER_VELOCITY = 4300;
     double SHOOTER_TICKS_PER_REV = 28;
+    PIDFCoefficients SHOOTER_VEL_PIDF_COEFFS = new PIDFCoefficients(
+            26,
+            0,
+            14,
+            12.7
+    );
 
     double INTAKE_POWER_FORWARD = 1;
     double INTAKE_POWER_NEUTRAL = 0;

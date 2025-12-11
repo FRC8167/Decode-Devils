@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.Cogintilities.ConfigurableConstants;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 
 //@Disabled
@@ -61,10 +62,12 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
                 spinnerSequencer.stop();
                 spindexer.drop();
 //                shooter.setRawPower(SHOOTER_POWER);
-                shooter.setVelocity(SHOTTER_VELOCITY);
+//                if (shooter.getTargetVelocityRPM() != ConfigurableConstants.SHOOTER_VELOCITY)
+                    shooter.setVelocityRPM(ConfigurableConstants.SHOOTER_VELOCITY);
             } else {
+//                if (shooter.getTargetVelocityRPM() != 0)
+                    shooter.setVelocityRPM(0);
 //                shooter.setRawPower(0);
-                shooter.setVelocity(0);
             }
 
             if (gamepad2.backWasPressed()) {
@@ -119,13 +122,11 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 
 
 
-            telemetry.addData("ShooterSpeed: ", shooter.getVelocityRPM());
-            telemetry.addData("ShooterPower: ", shooter.getRawPower());
-//            telemetry.addData("ShooterFracSpeed: ", shooter.getFractionalSpeed());
-            telemetry.addData("PIDF: ", shooter.getVelocityPIDFCoefficients().toString());
-            telemetry.addData("ShooterMode: ", shooter.getMode().toString());
-//            telemetry.addData("ShooterSpeedTest: ", shooter.getMotorSpeedRpmExperimental());
-//            telemetry.addData("ShooterMinSpeed: ", shooter.getMinSpeedRPM());
+            telemetry.addData("ShooterVelocity: ", shooter.getVelocityRPM());
+            telemetry.addData("ShooterTargetVelocity: ", shooter.getTargetVelocityRPM());
+//            telemetry.addData("ShooterPower: ", shooter.getRawPower());
+//            telemetry.addData("PIDF: ", shooter.getVelocityPIDFCoefficients().toString());
+//            telemetry.addData("ShooterMode: ", shooter.getMode().toString());
             telemetry.addData("Color: ", colorDetection.getColor());
             telemetry.addData("H: ", colorDetection.getColorHSV()[0]);
             telemetry.addData("S: ", colorDetection.getColorHSV()[1]);
