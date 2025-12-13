@@ -32,9 +32,11 @@ public class Spinner extends Servo1D implements TeamConstants {
         previousAngleNormalized = currentAngleNormalized;
 
         if (((0.5 * SPINNER_RANGE + degrees) / SPINNER_RANGE) <= 1 && ((0.5 * SPINNER_RANGE + degrees) / SPINNER_RANGE) >= 0) {
-            double adjustedDegrees = SpinnerCorrector.convertActualToSet(degrees);
-            double adjustedPos = (0.5 * SPINNER_RANGE + adjustedDegrees) / SPINNER_RANGE + SPINNER_OFFSET;
-            setPosition(adjustedPos);
+//            double adjustedDegrees = SpinnerCorrector.convertActualToSet(degrees);
+//            double adjustedPos = (0.5 * SPINNER_RANGE + adjustedDegrees) / SPINNER_RANGE + SPINNER_OFFSET;
+//            setPosition(adjustedPos);
+            double pos = (0.5 * SPINNER_RANGE + degrees) / SPINNER_RANGE + SPINNER_OFFSET;
+            setPosition(pos);
             currentAngleNormalized = degrees;
         }
         update();

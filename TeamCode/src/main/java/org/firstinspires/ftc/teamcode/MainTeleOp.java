@@ -18,7 +18,9 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 
         while (opModeIsActive()) {
 
+            drive.setDegradedDrive(gamepad1.right_bumper);
             drive.mecanumDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+
             if (gamepad2.rightBumperWasPressed()) {
                 spinnerSequencer.stop();
                 spindexer.rotateBy(120);
@@ -45,13 +47,21 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
                 spindexer.rotateStateToDrop(State.GREEN);
             }
 
-            if (gamepad2.dpad_up) {
-                intake.setMotorPower(INTAKE_POWER_FORWARD);
-            } else if (gamepad2.dpad_down) {
-                intake.setMotorPower(INTAKE_POWER_BACKWARD);
+            if (-gamepad2.left_stick_y > 0) {
+                intake.setPower(INTAKE_POWER_FORWARD*-gamepad2.left_stick_y);
+            } else if (-gamepad2.left_stick_y < 0) {
+                intake.setPower(INTAKE_POWER_BACKWARD*gamepad2.left_stick_y);
             } else {
-                intake.setMotorPower(INTAKE_POWER_NEUTRAL);
+                intake.setPower(INTAKE_POWER_NEUTRAL);
             }
+
+//            if (gamepad2.dpad_up) {
+//                intake.setMotorPower(INTAKE_POWER_FORWARD);
+//            } else if (gamepad2.dpad_down) {
+//                intake.setMotorPower(INTAKE_POWER_BACKWARD);
+//            } else {
+//                intake.setMotorPower(INTAKE_POWER_NEUTRAL);
+//            }
 
             if (gamepad2.left_stick_button) {
                 spinnerSequencer.stop();
@@ -138,6 +148,7 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
             telemetry.addData("Slot0: ", spinStates.getSlot(0));
             telemetry.addData("Slot1: ", spinStates.getSlot(1));
             telemetry.addData("Slot2: ", spinStates.getSlot(2));
+            telemetry.addData("IntakePower: ", intake.getPower());
             telemetry.addData("DropTimer: ", spindexer.getDropTimerRemainingTime());
             telemetry.addData("SpinnerTimer: ", spindexer.getSpinnerRemainingTime());
             telemetry.addData("DropPos: ", spindexer.getDropperPos());

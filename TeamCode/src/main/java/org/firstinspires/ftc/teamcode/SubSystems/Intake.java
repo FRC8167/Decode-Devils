@@ -11,10 +11,10 @@ public class Intake implements TeamConstants {
         this.intake = intake;
     }
 
-    public void setMotorPower(double power) {
+    public void setPower(double power) {
         intake.setPower(power);
     }
-    public double getMotorPower() {
+    public double getPower() {
         return intake.getPower();
     }
 

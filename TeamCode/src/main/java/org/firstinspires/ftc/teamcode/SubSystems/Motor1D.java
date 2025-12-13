@@ -280,7 +280,7 @@ public class Motor1D {
 //    }
 
     public void setVelocityRPM(double velocityRPM) {
-        if (mode != Mode.VELOCITY_BASED) {
+        if (mode == Mode.VELOCITY_BASED) {
             motor.setVelocity(RPMtoDPS(velocityRPM), AngleUnit.DEGREES);
             targetVelocityRPM = velocityRPM;
         } else
