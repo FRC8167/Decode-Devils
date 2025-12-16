@@ -67,6 +67,8 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
                 shooter.setVelocityRPM(ConfigurableConstants.SHOOTER_VELOCITY_FAR * gamepad2.right_trigger);
             } else if (gamepad2.left_trigger > 0) {
                 shooter.setVelocityRPM(ConfigurableConstants.SHOOTER_VELOCITY_CLOSE * gamepad2.left_trigger);
+            } else {
+                shooter.setVelocityRPM(0);
             }
 
 //            if (gamepad2.dpad_up) {
@@ -187,14 +189,21 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 //        lightRGB.setColor(spindexer.isSpinnerDone() ? "Blue":"Orange");
 //        if (spindexer.getActiveSlotDrop() != -1) lightRGB.setColorState(spinStates.getSlot(spindexer.getActiveSlotDrop()));
 //        else if (spindexer.getActiveSlotSensor() != -1) lightRGB.setColorState(spinStates.getSlot(spindexer.getActiveSlotSensor()));
+        telemetry.addData("Vel: ", shooter.getVelocityRPM());
+        telemetry.addData("TarVel: ", shooter.getTargetVelocityRPM());
+        telemetry.addData("C-Enough: ", shooter.isCloseEnough(100));
         if (shooter.isCloseEnough(100)) {
             double targetVel = shooter.getTargetVelocityRPM();
-//            if (targetVel != 0) {
+            if (targetVel == 0) {
+                lightRGB.setOff();
+
+            } else if (targetVel == ConfigurableConstants.SHOOTER_VELOCITY_CLOSE) {
                 lightRGB.setColor(Color.GREEN);
-//                throw new RuntimeException();
-//            } else {
-//                lightRGB.setOff();
-//            }
+            } else if (targetVel == ConfigurableConstants.SHOOTER_VELOCITY_FAR) {
+                lightRGB.setColor(Color.AZURE);
+            } else {
+                lightRGB.setColor(Color.VIOLET);
+            }
         } else {
             lightRGB.setColor(Color.ORANGE);
         }

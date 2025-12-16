@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Cogintilities;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import org.jetbrains.annotations.Contract;
@@ -28,7 +29,7 @@ public enum Color implements TeamConstants{
 
     @Nullable
     @Contract(pure = true)
-    public static Color fromState(State state) {
+    public static Color fromState(@NonNull State state) {
         switch (state) {
             case PURPLE:
                 return VIOLET;

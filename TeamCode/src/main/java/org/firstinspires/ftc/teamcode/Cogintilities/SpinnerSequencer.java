@@ -238,9 +238,10 @@ public class SpinnerSequencer implements TeamConstants {
                 }
                 if (done && wiggleActive) spindexer.rotateSlotToSensor(lastScanSlot);
                 break;
-            default:
-                shooter.setVelocityRPM(0);
-            }
+//            default:
+//                shooter.setVelocityRPM(0);
+//            Note: Disabled because it caused issues w/ manual set, can be altered later if need be
+        }
 
 
     }
