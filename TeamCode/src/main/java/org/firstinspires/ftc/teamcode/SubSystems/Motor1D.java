@@ -127,7 +127,7 @@ public class Motor1D {
     //Note: removing rawPower may be beneficial
 //    private double fractionalSpeed = 1; // "Power" as used by archaic RunMode RUN_TO_POSITION
     private double maxVelocityRPM; //For RunMode RUN_TO_POSITION
-    private double targetVelocityRPM;
+    private double targetVelocityRPM = 0;
     private final Mode mode; // Prevents mode from needing to be reobtained from hardware
 
 
@@ -289,7 +289,6 @@ public class Motor1D {
     }
 
     public double getTargetVelocityRPM() {
-
         return targetVelocityRPM;
     }
 
@@ -299,6 +298,13 @@ public class Motor1D {
             motor.setVelocity(RPMtoDPS(velocityRPM), AngleUnit.DEGREES);
         } else
             throw new IllegalStateException("Invalid Mode for operation: " + mode.toString());
+    }
+
+    public double getMaxVelocityRPM() {
+        if (Double.isNaN(maxVelocityRPM)) {
+            maxVelocityRPM = motor.getMotorType().getMaxRPM();
+        }
+        return maxVelocityRPM;
     }
 
     public void setVelocityFractional(double fraction) {

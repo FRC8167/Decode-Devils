@@ -24,6 +24,12 @@ public class Shooter extends Motor1D implements TeamConstants {
 //        minSpeedRPM = 0;
     }
 
+    public boolean isCloseEnough(double tolerance) {
+        double vel = getVelocityRPM();
+        double tarVel = getTargetVelocityRPM();
+        return tarVel - tolerance <= vel && tarVel + tolerance >= vel;
+    }
+
 //    public void setMotorPower(double power) {
 //        motor.setPower(power);
 //    }

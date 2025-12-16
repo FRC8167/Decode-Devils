@@ -5,7 +5,6 @@ import androidx.annotation.NonNull;
 import org.firstinspires.ftc.teamcode.SubSystems.Shooter;
 import org.firstinspires.ftc.teamcode.SubSystems.SpinStatesSingleton;
 import org.firstinspires.ftc.teamcode.SubSystems.Spindexer;
-import org.firstinspires.ftc.teamcode.SubSystems.Spinner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -146,7 +145,7 @@ public class SpinnerSequencer implements TeamConstants {
         }
         switch (mode) {
             case DROP:
-                shooter.setVelocityRPM(ConfigurableConstants.SHOOTER_VELOCITY);
+                shooter.setVelocityRPM(ConfigurableConstants.SHOOTER_VELOCITY_FAR);
                 if (!done) {
                     spindexer.dropWithoutStateUpdate();
                     if (timer.isDone()) {

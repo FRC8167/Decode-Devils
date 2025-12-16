@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.Cogintilities.Color;
 import org.firstinspires.ftc.teamcode.Cogintilities.ConfigurableConstants;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 
@@ -55,6 +56,19 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
                 intake.setPower(INTAKE_POWER_NEUTRAL);
             }
 
+//            shooter.setVelocityRPM(
+////                    Math.min(
+////                            ConfigurableConstants.SHOOTER_VELOCITY_FAR * gamepad2.right_trigger +
+////                                    ConfigurableConstants.SHOOTER_VELOCITY_CLOSE * gamepad2.left_trigger,
+////                            shooter.getMaxVelocityRPM()
+////                    )
+////            );
+            if (gamepad2.right_trigger > 0) {
+                shooter.setVelocityRPM(ConfigurableConstants.SHOOTER_VELOCITY_FAR * gamepad2.right_trigger);
+            } else if (gamepad2.left_trigger > 0) {
+                shooter.setVelocityRPM(ConfigurableConstants.SHOOTER_VELOCITY_CLOSE * gamepad2.left_trigger);
+            }
+
 //            if (gamepad2.dpad_up) {
 //                intake.setMotorPower(INTAKE_POWER_FORWARD);
 //            } else if (gamepad2.dpad_down) {
@@ -71,13 +85,9 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
             if (gamepad2.right_stick_button) {
                 spinnerSequencer.stop();
                 spindexer.drop();
-//                shooter.setRawPower(SHOOTER_POWER);
-//                if (shooter.getTargetVelocityRPM() != ConfigurableConstants.SHOOTER_VELOCITY)
-                    shooter.setVelocityRPM(ConfigurableConstants.SHOOTER_VELOCITY);
+//                shooter.setVelocityRPM(ConfigurableConstants.SHOOTER_VELOCITY_FAR);
             } else {
-//                if (shooter.getTargetVelocityRPM() != 0)
-                    shooter.setVelocityRPM(0);
-//                shooter.setRawPower(0);
+//                shooter.setVelocityRPM(0);
             }
 
             if (gamepad2.backWasPressed()) {
@@ -134,6 +144,7 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 
             telemetry.addData("ShooterVelocity: ", shooter.getVelocityRPM());
             telemetry.addData("ShooterTargetVelocity: ", shooter.getTargetVelocityRPM());
+            telemetry.addData("CloseEnough: ", shooter.isCloseEnough(100));
 //            telemetry.addData("ShooterPower: ", shooter.getRawPower());
 //            telemetry.addData("PIDF: ", shooter.getVelocityPIDFCoefficients().toString());
 //            telemetry.addData("ShooterMode: ", shooter.getMode().toString());
@@ -160,6 +171,9 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
             telemetry.addData("RF: ", drive.getRFpower());
             telemetry.addData("LR: ", drive.getLRpower());
             telemetry.addData("RR: ", drive.getRRpower());
+            telemetry.addData("RT", gamepad2.right_trigger);
+            telemetry.addData("LT", gamepad2.left_trigger);
+            telemetry.addData("ColorVal", lightRGB.servoPos());
             telemetry.update();
 
             periodic();
@@ -171,8 +185,18 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
         spinnerSequencer.update();
 //        shooter.update();
 //        lightRGB.setColor(spindexer.isSpinnerDone() ? "Blue":"Orange");
-        if (spindexer.getActiveSlotDrop() != -1) lightRGB.setColorState(spinStates.getSlot(spindexer.getActiveSlotDrop()));
-        else if (spindexer.getActiveSlotSensor() != -1) lightRGB.setColorState(spinStates.getSlot(spindexer.getActiveSlotSensor()));
-
+//        if (spindexer.getActiveSlotDrop() != -1) lightRGB.setColorState(spinStates.getSlot(spindexer.getActiveSlotDrop()));
+//        else if (spindexer.getActiveSlotSensor() != -1) lightRGB.setColorState(spinStates.getSlot(spindexer.getActiveSlotSensor()));
+        if (shooter.isCloseEnough(100)) {
+            double targetVel = shooter.getTargetVelocityRPM();
+//            if (targetVel != 0) {
+                lightRGB.setColor(Color.GREEN);
+//                throw new RuntimeException();
+//            } else {
+//                lightRGB.setOff();
+//            }
+        } else {
+            lightRGB.setColor(Color.ORANGE);
+        }
     }
 }
