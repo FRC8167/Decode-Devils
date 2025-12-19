@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Cogintilities.Color;
@@ -13,7 +14,7 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
     @Override
     public void runOpMode() throws InterruptedException {
 
-        initializeRobot(true);
+        initializeRobot(new Pose2d(0,0,0), true);
 
         waitForStart();
 
@@ -92,6 +93,10 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 //                shooter.setVelocityRPM(0);
             }
 
+            if (gamepad2.right_stick_x != 0) {
+
+            }
+
             if (gamepad2.backWasPressed()) {
                 if (ArtifactSequence != null) {
 //                    spinnerSequencer.runStatesToDrop(ArtifactSequence);
@@ -133,11 +138,11 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 
             }
 
-            if (-gamepad2.right_stick_y >= 0) {
-                fork.setPosition(-gamepad2.right_stick_y*.1);
-            } else {
-                fork.setPosition(0.06);
-            }
+//            if (-gamepad2.right_stick_y >= 0) {
+//                fork.setPosition(-gamepad2.right_stick_y*.1);
+//            } else {
+//                fork.setPosition(0.06);
+//            }
 
 
 //0.06
@@ -165,7 +170,7 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
             telemetry.addData("DropTimer: ", spindexer.getDropTimerRemainingTime());
             telemetry.addData("SpinnerTimer: ", spindexer.getSpinnerRemainingTime());
             telemetry.addData("DropPos: ", spindexer.getDropperPos());
-            telemetry.addData("ForkPos: ", fork.getPos());
+//            telemetry.addData("ForkPos: ", fork.getPos());
             telemetry.addData("SequenceActive: ", !spinnerSequencer.isDone());
             telemetry.addData("ArtifactSequence: ", spinStates.convertStatesToInitials(ArtifactSequence));
             telemetry.addData("ArtifactSequenceLength: ", ArtifactSequence == null ? "null":ArtifactSequence.length);

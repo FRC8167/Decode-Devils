@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.SubSystems;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
-public class MecanumDrive {
+public class MecanumDriveBasic {
 
     private final DcMotorEx front_left_drive, back_left_drive, front_right_drive, back_right_drive;
     private double drive, strafe, turn;
@@ -13,7 +13,7 @@ public class MecanumDrive {
 //    private static MecanumDrive single_instance = null;
 
 
-    public MecanumDrive(DcMotorEx leftFront, DcMotorEx leftRear, DcMotorEx rightFront, DcMotorEx rightRear) {
+    public MecanumDriveBasic(DcMotorEx leftFront, DcMotorEx leftRear, DcMotorEx rightFront, DcMotorEx rightRear) {
         this.front_left_drive = leftFront;
         this.back_left_drive   = leftRear;
         this.front_right_drive = rightFront;

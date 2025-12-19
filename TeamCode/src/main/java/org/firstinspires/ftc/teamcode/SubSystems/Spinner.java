@@ -14,6 +14,8 @@ public class Spinner extends Servo1D implements TeamConstants {
     private double previousRotation;
     private double approxActualAngleStored; //Only used if movement is interrupted
     private double approxPreviousRotation;
+
+    private double wiggleOffset;
     private TimedTimer timer;
 
 
@@ -22,22 +24,24 @@ public class Spinner extends Servo1D implements TeamConstants {
         currentAngleNormalized = 0;
         previousAngleNormalized = 0;
         previousRotation = 0;
+        wiggleOffset = 0;
         timer = new TimedTimer();
         update();
     }
 
     public void setCenteredPositionDegrees(double degrees) {
+        double offsetDegrees = degrees + wiggleOffset;
         approxActualAngleStored = (!timer.isDone() ? getApproxActualAngle() : Double.NaN);
 
         previousAngleNormalized = currentAngleNormalized;
 
-        if (((0.5 * SPINNER_RANGE + degrees) / SPINNER_RANGE) <= 1 && ((0.5 * SPINNER_RANGE + degrees) / SPINNER_RANGE) >= 0) {
+        if (((0.5 * SPINNER_RANGE + offsetDegrees) / SPINNER_RANGE) <= 1 && ((0.5 * SPINNER_RANGE + offsetDegrees) / SPINNER_RANGE) >= 0) {
 //            double adjustedDegrees = SpinnerCorrector.convertActualToSet(degrees);
 //            double adjustedPos = (0.5 * SPINNER_RANGE + adjustedDegrees) / SPINNER_RANGE + SPINNER_OFFSET;
 //            setPosition(adjustedPos);
-            double pos = (0.5 * SPINNER_RANGE + degrees) / SPINNER_RANGE + SPINNER_OFFSET;
+            double pos = (0.5 * SPINNER_RANGE + offsetDegrees) / SPINNER_RANGE + SPINNER_OFFSET;
             setPosition(pos);
-            currentAngleNormalized = degrees;
+            currentAngleNormalized = offsetDegrees;
         }
         update();
         // 0 degrees is center position  ~-900,~900, (approx. limits -810,810 w/o corrections, -790,790 w/ corrections)

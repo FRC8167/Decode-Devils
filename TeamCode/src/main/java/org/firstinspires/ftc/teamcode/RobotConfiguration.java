@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -14,13 +15,14 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
 import org.firstinspires.ftc.teamcode.Cogintilities.SpinnerSequencer;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
+import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.SubSystems.ColorDetection;
 import org.firstinspires.ftc.teamcode.SubSystems.Dropper;
 import org.firstinspires.ftc.teamcode.SubSystems.Fork;
 import org.firstinspires.ftc.teamcode.SubSystems.Intake;
 import org.firstinspires.ftc.teamcode.SubSystems.Shooter;
 import org.firstinspires.ftc.teamcode.SubSystems.LightRGB;
-import org.firstinspires.ftc.teamcode.SubSystems.MecanumDrive;
+import org.firstinspires.ftc.teamcode.SubSystems.MecanumDriveBasic;
 import org.firstinspires.ftc.teamcode.SubSystems.SpinStatesSingleton;
 import org.firstinspires.ftc.teamcode.SubSystems.Spindexer;
 import org.firstinspires.ftc.teamcode.SubSystems.Spinner;
@@ -54,10 +56,11 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
 
 
     /*----------- Define all Module Classes (SubSystems) ------------*/
-    protected MecanumDrive drive;
+    static protected MecanumDriveBasic drive;
+    static protected MecanumDrive autoDrive;
     static protected Shooter shooter;
     static protected Intake intake;
-    static protected Fork fork;
+//    static protected Fork fork;
     static protected SpinStatesSingleton spinStates;
     static protected ColorDetection colorDetection;
     static protected Spindexer spindexer;
@@ -84,7 +87,7 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
      *
      * @throws InterruptedException
      */
-    public void initializeRobot(boolean moveServos) throws InterruptedException {
+    public void initializeRobot(Pose2d startPos, boolean moveServos) throws InterruptedException {
 
         /* Find all Control Hubs and Set Sensor Bulk Read Mode to AUTO */
         ctrlHubs = hardwareMap.getAll(LynxModule.class);
@@ -106,20 +109,21 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
         RevColorSensorV3 colorSensor = hardwareMap.get(RevColorSensorV3.class, "colorSensor");
         Servo spinServo = hardwareMap.get(Servo.class, "spinServo");
         Servo dropServo = hardwareMap.get(Servo.class, "dropServo");
-        Servo forkServo = hardwareMap.get(Servo.class, "forkServo");
+//        Servo forkServo = hardwareMap.get(Servo.class, "forkServo");
         Servo servoRGB  = hardwareMap.get(Servo.class, "servoRGB");
 
         WebcamName webcam = hardwareMap.get(WebcamName.class, "Webcam1");
 
         /* Create an object of every module/subsystem needed for both autonomous and teleOp modes. */
-        drive = new MecanumDrive(driveMotorLF, driveMotorLR, driveMotorRF, driveMotorRR);
+        drive            = new MecanumDriveBasic(driveMotorLF, driveMotorLR, driveMotorRF, driveMotorRR);
+        autoDrive        = new MecanumDrive(hardwareMap, startPos);
         shooter          = new Shooter(shooterMotor);
         intake           = new Intake(intakeServo);
         colorDetection   = new ColorDetection(colorSensor);
         spinStates       = SpinStatesSingleton.getInstance();
         spinner          = new Spinner(spinServo, SPINNER_INIT_POS+SPINNER_OFFSET, SPINNER_MIN, SPINNER_MAX, moveServos);
         dropper          = new Dropper(dropServo, DROPPER_INIT_POS, DROPPER_MIN, DROPPER_MAX, moveServos);
-        fork             = new Fork   (forkServo, FORK_INIT_POS, FORK_MIN, FORK_MAX, moveServos);
+//        fork             = new Fork   (forkServo, FORK_INIT_POS, FORK_MIN, FORK_MAX, moveServos);
         lightRGB         = new LightRGB(servoRGB, LIGHT_INIT_POS, LIGHT_MIN, LIGHT_MAX);
         spindexer        = new Spindexer(spinner, dropper, spinStates, colorDetection);
         spinnerSequencer = new SpinnerSequencer(spindexer, shooter, spinStates);
