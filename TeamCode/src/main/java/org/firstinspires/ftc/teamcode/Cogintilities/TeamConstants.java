@@ -36,7 +36,7 @@ public interface TeamConstants {
     double SPINNER_OFFSET = -7 / SPINNER_RANGE; //-3
     double SPINNER_SPEED = 240; //degrees per second, 40 rpm (measured underestimation, spec defined speed: 300/50rpm)
     double SPINNER_GRACE_TIME = 0.05; //additional time for servo to reach target position (insures it is done for small rotations)
-    double SPINNER_WIGGLE_MANUAL = 5;
+    double SPINNER_WIGGLE_MANUAL = 10;
 
     double EXP_SPINNER_TICKS_PER_REV = 288;
 

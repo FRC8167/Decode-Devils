@@ -373,10 +373,10 @@ public class Spindexer implements TeamConstants {
         update();
         if (activeSlotDrop != -1) {
             spinStates.setSlot(activeSlotDrop, State.NONE);
-            isOpen = true;
-            dropper.open();
-            dropTimer = new TimedTimer(0.1);
         }
+        isOpen = true;
+        dropper.open();
+        dropTimer = new TimedTimer(0.1);
     }
 
     public void dropWithoutStateUpdate() {

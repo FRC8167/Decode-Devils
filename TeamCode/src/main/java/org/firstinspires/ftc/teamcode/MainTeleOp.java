@@ -6,15 +6,51 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.Cogintilities.Color;
 import org.firstinspires.ftc.teamcode.Cogintilities.ConfigurableConstants;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
+import org.firstinspires.ftc.teamcode.Cogintilities.TimedTimer;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 //@Disabled
 @TeleOp(name="MainTeleOp", group="Competition")
 public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 
+    int artifactsOnRamp;
+    TimedTimer buttonTimer;
+
     @Override
     public void runOpMode() throws InterruptedException {
 
         initializeRobot(new Pose2d(0,0,0), true);
+
+        artifactsOnRamp = 0;
+
+        buttonTimer = new TimedTimer();
+
+        while (opModeInInit() && ArtifactSequence == null) {
+            if (vision != null) {
+                vision.enableAprilTagDetection();
+                vision.scanForAprilTags();
+                AprilTagDetection tag = vision.getFirstTargetTag();
+                if (tag != null) {
+                    State[] states = vision.getTagStates(tag);
+                    if (states != null) {
+                        telemetry.addData("States: ", spinStates.convertStatesToInitials(states));
+                        lightRGB.setColor(Color.AZURE);
+                        ArtifactSequence = states;
+                    } else {
+                        telemetry.addLine("Invalid Tag");
+                        lightRGB.setColor(Color.YELLOW);
+                    }
+                } else {
+                    telemetry.addLine("No Tag Detected");
+                    lightRGB.setColor(Color.RED);
+                }
+            } else {
+                telemetry.addLine("Vision Inactive");
+                lightRGB.setColor(Color.VIOLET);
+                break;
+            }
+            telemetry.update();
+        }
 
         waitForStart();
 
@@ -80,10 +116,10 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 //                intake.setMotorPower(INTAKE_POWER_NEUTRAL);
 //            }
 
-            if (gamepad2.left_stick_button) {
-                spinnerSequencer.stop();
-                spindexer.detectColor();
-            }
+//            if (gamepad2.left_stick_button) {
+//                spinnerSequencer.stop();
+//                spindexer.detectColor();
+//            }
 
             if (gamepad2.right_stick_button) {
                 spinnerSequencer.stop();
@@ -95,16 +131,36 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 
             spindexer.setWiggleOffset(SPINNER_WIGGLE_MANUAL*gamepad2.right_stick_x);
 
-            if (gamepad2.backWasPressed()) {
-                if (ArtifactSequence != null) {
-//                    spinnerSequencer.runStatesToDrop(ArtifactSequence);
-                    spinnerSequencer.runDual(ArtifactSequence);
+            if (gamepad1.backWasPressed()) {
+//                if (ArtifactSequence != null) {
+////                    spinnerSequencer.runStatesToDrop(ArtifactSequence);
+//                    spinnerSequencer.runDual(ArtifactSequence);
+//                }
+                artifactsOnRamp = 0;
+
+            }
+
+            if (gamepad1.dpadUpWasPressed() && buttonTimer.isDone()) {
+                artifactsOnRamp += 1;
+                if (artifactsOnRamp > 9) {
+                    artifactsOnRamp = 9;
+                } else {
+                    lightRGB.setColor(Color.WHITE);
+                    buttonTimer.startNewTimer(0.2);
+                }
+            } else if (gamepad1.dpadDownWasPressed() && buttonTimer.isDone()) {
+                artifactsOnRamp -= 1;
+                if (artifactsOnRamp < 0) {
+                    artifactsOnRamp = 0;
+                } else {
+                    lightRGB.setColor(Color.YELLOW);
+                    buttonTimer.startNewTimer(0.2);
                 }
             }
 
-            if (gamepad2.startWasPressed()) {
-                spinnerSequencer.runScanAll();
-            }
+//            if (gamepad2.startWasPressed()) {
+//                spinnerSequencer.runScanAll();
+//            }
 
             if (gamepad2.yWasPressed()) {
 //                ArtifactSequence = new State[]{State.PURPLE, State.PURPLE, State.PURPLE};
@@ -131,6 +187,14 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 //                }
             }
 
+            if (gamepad1.xWasPressed()) {
+                ArtifactSequence = STATES_GPP;
+            } else if (gamepad1.yWasPressed()) {
+                ArtifactSequence = STATES_PGP;
+            } else if (gamepad1.bWasPressed()) {
+                ArtifactSequence = STATES_PPG;
+            }
+
             if (gamepad2.b) {
 //                shooter.resetMin();
 
@@ -146,39 +210,40 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 //0.06
 
 
-
+            telemetry.addData("ArtifactsOnRamp: ", artifactsOnRamp);
+            telemetry.addData("Sequence: ", spinStates.convertStatesToInitials(ArtifactSequence));
+            telemetry.addData("Next",    spinStates.getNextToShoot(artifactsOnRamp, ArtifactSequence));
+            telemetry.addData("2ndNext", spinStates.get2ndNextToShoot(artifactsOnRamp, ArtifactSequence));
+            telemetry.addData("3rdNext", spinStates.get3rdNextToShoot(artifactsOnRamp, ArtifactSequence));
+            telemetry.addLine("");
             telemetry.addData("ShooterVelocity: ", shooter.getVelocityRPM());
             telemetry.addData("ShooterTargetVelocity: ", shooter.getTargetVelocityRPM());
-            telemetry.addData("CloseEnough: ", shooter.isCloseEnough(100));
-//            telemetry.addData("ShooterPower: ", shooter.getRawPower());
-//            telemetry.addData("PIDF: ", shooter.getVelocityPIDFCoefficients().toString());
-//            telemetry.addData("ShooterMode: ", shooter.getMode().toString());
-            telemetry.addData("Color: ", colorDetection.getColor());
-            telemetry.addData("H: ", colorDetection.getColorHSV()[0]);
-            telemetry.addData("S: ", colorDetection.getColorHSV()[1]);
-            telemetry.addData("V: ", colorDetection.getColorHSV()[2]);
+//            telemetry.addData("CloseEnough: ", shooter.isCloseEnough(100));
+//            telemetry.addData("Color: ", colorDetection.getColor());
+//            telemetry.addData("H: ", colorDetection.getColorHSV()[0]);
+//            telemetry.addData("S: ", colorDetection.getColorHSV()[1]);
+//            telemetry.addData("V: ", colorDetection.getColorHSV()[2]);
             telemetry.addData("CenterPos: ", spindexer.getCenteredPositionDegrees());
-            telemetry.addData("RawPos: ", spindexer.getPosition());
+//            telemetry.addData("RawPos: ", spindexer.getPosition());
             telemetry.addData("ActiveDrop: ", spindexer.getActiveSlotDrop());
             telemetry.addData("ActiveSensor: ", spindexer.getActiveSlotSensor());
-            telemetry.addData("Slot0: ", spinStates.getSlot(0));
-            telemetry.addData("Slot1: ", spinStates.getSlot(1));
-            telemetry.addData("Slot2: ", spinStates.getSlot(2));
-            telemetry.addData("IntakePower: ", intake.getPower());
-            telemetry.addData("DropTimer: ", spindexer.getDropTimerRemainingTime());
-            telemetry.addData("SpinnerTimer: ", spindexer.getSpinnerRemainingTime());
-            telemetry.addData("DropPos: ", spindexer.getDropperPos());
-//            telemetry.addData("ForkPos: ", fork.getPos());
-            telemetry.addData("SequenceActive: ", !spinnerSequencer.isDone());
+//            telemetry.addData("Slot0: ", spinStates.getSlot(0));
+//            telemetry.addData("Slot1: ", spinStates.getSlot(1));
+//            telemetry.addData("Slot2: ", spinStates.getSlot(2));
+//            telemetry.addData("IntakePower: ", intake.getPower());
+//            telemetry.addData("DropTimer: ", spindexer.getDropTimerRemainingTime());
+//            telemetry.addData("SpinnerTimer: ", spindexer.getSpinnerRemainingTime());
+//            telemetry.addData("DropPos: ", spindexer.getDropperPos());
+//            telemetry.addData("SequenceActive: ", !spinnerSequencer.isDone());
             telemetry.addData("ArtifactSequence: ", spinStates.convertStatesToInitials(ArtifactSequence));
             telemetry.addData("ArtifactSequenceLength: ", ArtifactSequence == null ? "null":ArtifactSequence.length);
-            telemetry.addData("LF: ", drive.getLFpower());
-            telemetry.addData("RF: ", drive.getRFpower());
-            telemetry.addData("LR: ", drive.getLRpower());
-            telemetry.addData("RR: ", drive.getRRpower());
-            telemetry.addData("RT", gamepad2.right_trigger);
-            telemetry.addData("LT", gamepad2.left_trigger);
-            telemetry.addData("ColorVal", lightRGB.servoPos());
+//            telemetry.addData("LF: ", drive.getLFpower());
+//            telemetry.addData("RF: ", drive.getRFpower());
+//            telemetry.addData("LR: ", drive.getLRpower());
+//            telemetry.addData("RR: ", drive.getRRpower());
+//            telemetry.addData("RT", gamepad2.right_trigger);
+//            telemetry.addData("LT", gamepad2.left_trigger);
+//            telemetry.addData("ColorVal", lightRGB.servoPos());
             telemetry.update();
 
             periodic();
@@ -192,23 +257,26 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 //        lightRGB.setColor(spindexer.isSpinnerDone() ? "Blue":"Orange");
 //        if (spindexer.getActiveSlotDrop() != -1) lightRGB.setColorState(spinStates.getSlot(spindexer.getActiveSlotDrop()));
 //        else if (spindexer.getActiveSlotSensor() != -1) lightRGB.setColorState(spinStates.getSlot(spindexer.getActiveSlotSensor()));
-        telemetry.addData("Vel: ", shooter.getVelocityRPM());
-        telemetry.addData("TarVel: ", shooter.getTargetVelocityRPM());
-        telemetry.addData("C-Enough: ", shooter.isCloseEnough(100));
-        if (shooter.isCloseEnough(100)) {
-            double targetVel = shooter.getTargetVelocityRPM();
-            if (targetVel == 0) {
-                lightRGB.setOff();
-
-            } else if (targetVel == ConfigurableConstants.SHOOTER_VELOCITY_CLOSE) {
-                lightRGB.setColor(Color.GREEN);
-            } else if (targetVel == ConfigurableConstants.SHOOTER_VELOCITY_FAR) {
-                lightRGB.setColor(Color.AZURE);
-            } else {
-                lightRGB.setColor(Color.VIOLET);
-            }
-        } else {
-            lightRGB.setColor(Color.ORANGE);
+//        telemetry.addData("Vel: ", shooter.getVelocityRPM());
+//        telemetry.addData("TarVel: ", shooter.getTargetVelocityRPM());
+//        telemetry.addData("C-Enough: ", shooter.isCloseEnough(100));
+        if (buttonTimer.isDone()) {
+            lightRGB.setColorState(spinStates.get2ndNextToShoot(artifactsOnRamp, ArtifactSequence));
         }
+//        if (shooter.isCloseEnough(100)) {
+//            double targetVel = shooter.getTargetVelocityRPM();
+//            if (targetVel == 0) {
+//                lightRGB.setOff();
+//
+//            } else if (targetVel == ConfigurableConstants.SHOOTER_VELOCITY_CLOSE) {
+//                lightRGB.setColor(Color.GREEN);
+//            } else if (targetVel == ConfigurableConstants.SHOOTER_VELOCITY_FAR) {
+//                lightRGB.setColor(Color.AZURE);
+//            } else {
+//                lightRGB.setColor(Color.VIOLET);
+//            }
+//        } else {
+//            lightRGB.setColor(Color.ORANGE);
+//        }
     }
 }

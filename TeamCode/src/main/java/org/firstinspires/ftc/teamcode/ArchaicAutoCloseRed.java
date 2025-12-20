@@ -13,7 +13,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 
 //@Disabled
-@Autonomous(name="ArchaicAutoCloseRed", group="Autonomous", preselectTeleOp = "TeleOpMain")
+@Autonomous(name="ArchaicAutoCloseRed", group="Autonomous", preselectTeleOp = "MainTeleOp")
 public class ArchaicAutoCloseRed extends RobotConfiguration implements TeamConstants {
 
     @SuppressLint("DefaultLocale")

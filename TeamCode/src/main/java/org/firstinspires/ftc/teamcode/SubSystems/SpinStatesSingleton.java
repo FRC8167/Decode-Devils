@@ -97,4 +97,25 @@ public class SpinStatesSingleton implements TeamConstants {
             return string.toString();
         }
     }
+
+    public State getNextToShoot(int scored, State[] sequence) {
+        if (sequence == null)
+            return State.NONE;
+        int index = scored % 3;
+        return sequence[index];
+    }
+
+    public State get2ndNextToShoot(int scored, State[] sequence) {
+        if (sequence == null)
+            return State.NONE;
+        int index = (scored+1) % 3;
+        return sequence[index];
+    }
+
+    public State get3rdNextToShoot(int scored, State[] sequence) {
+        if (sequence == null)
+            return State.NONE;
+        int index = (scored+2) % 3;
+        return sequence[index];
+    }
 }
