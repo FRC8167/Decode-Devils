@@ -41,7 +41,7 @@ public class Spinner extends Servo1D implements TeamConstants {
 //            setPosition(adjustedPos);
             double pos = (0.5 * SPINNER_RANGE + offsetDegrees) / SPINNER_RANGE + SPINNER_OFFSET;
             setPosition(pos);
-            currentAngleNormalized = offsetDegrees;
+            currentAngleNormalized = degrees;
         }
         update();
         // 0 degrees is center position  ~-900,~900, (approx. limits -810,810 w/o corrections, -790,790 w/ corrections)
@@ -59,6 +59,12 @@ public class Spinner extends Servo1D implements TeamConstants {
     public void continueRotatingBy(double degrees) {
         if (previousRotation >= 0) rotateBy(degrees);
         else rotateBy(-degrees);
+    }
+
+    public void setWiggleOffset(double degrees) {
+        wiggleOffset = degrees;
+        double pos = (0.5 * SPINNER_RANGE + wiggleOffset + currentAngleNormalized) / SPINNER_RANGE + SPINNER_OFFSET;
+        setPosition(pos);
     }
 
     public boolean isDone() {

@@ -15,4 +15,6 @@ public class ConfigurableConstants {
 //    public static double ALTERNATION_PERIOD = 10;
     public static double SHOOTER_VELOCITY_CLOSE = 3600;
     public static double SHOOTER_VELOCITY_FAR = 4300;
+    public static double SHOOTER_VELOCITY_AUTO_FAR = 4300;
+    public static double SHOOTER_VELOCITY_AUTO_CLOSE = 3500;
 }

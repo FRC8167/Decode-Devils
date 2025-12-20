@@ -93,9 +93,7 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 //                shooter.setVelocityRPM(0);
             }
 
-            if (gamepad2.right_stick_x != 0) {
-
-            }
+            spindexer.setWiggleOffset(SPINNER_WIGGLE_MANUAL*gamepad2.right_stick_x);
 
             if (gamepad2.backWasPressed()) {
                 if (ArtifactSequence != null) {

@@ -392,6 +392,10 @@ public class Spindexer implements TeamConstants {
         if (activeSlotDrop != -1) spinStates.setSlot(activeSlotDrop, State.NONE);
     }
 
+    public void setWiggleOffset(double degrees) {
+       spinner.setWiggleOffset(degrees);
+    }
+
     public double getDropTimerRemainingTime() {
         return dropTimer.getRemainingTime();
     }
