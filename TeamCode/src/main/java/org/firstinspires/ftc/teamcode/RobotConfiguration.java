@@ -68,6 +68,7 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
     static protected LightRGB lightRGB;
 
     static protected Vision vision;
+    static protected Vision visionPos;
 
     static private Spinner spinner;
     static private Dropper dropper;
@@ -113,6 +114,7 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
         Servo servoRGB  = hardwareMap.get(Servo.class, "servoRGB");
 
         WebcamName webcam = hardwareMap.get(WebcamName.class, "Webcam1");
+        WebcamName webcam2 = hardwareMap.get(WebcamName.class, "Webcam2");
 
         /* Create an object of every module/subsystem needed for both autonomous and teleOp modes. */
         drive            = new MecanumDriveBasic(driveMotorLF, driveMotorLR, driveMotorRF, driveMotorRR);
@@ -131,6 +133,11 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
         if (webcam.isAttached()) {
             vision = new Vision(webcam);
             vision.enableAprilTagDetection();
+        }
+
+        if (webcam2.isAttached()) {
+            visionPos = new Vision(webcam2);
+            visionPos.enableAprilTagDetection();
         }
 
 // Default to standard telemetry as a safe starting point.

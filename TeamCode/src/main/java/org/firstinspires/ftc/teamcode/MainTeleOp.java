@@ -3,6 +3,9 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.Cogintilities.Color;
 import org.firstinspires.ftc.teamcode.Cogintilities.ConfigurableConstants;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
@@ -206,6 +209,27 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 //                fork.setPosition(0.06);
 //            }
 
+            if (visionPos != null) {
+                visionPos.scanForAprilTags();
+                AprilTagDetection tag = visionPos.getFirstTargetTag();
+                if (tag != null) {
+                    telemetry.addData("X: ", tag.ftcPose.x);
+                    telemetry.addData("Y: ", tag.ftcPose.y);
+                    telemetry.addData("Z: ", tag.ftcPose.z);
+                    telemetry.addData("Bearing: ", tag.ftcPose.bearing);
+
+                    Position position = tag.robotPose.getPosition();
+                    YawPitchRollAngles orientation = tag.robotPose.getOrientation();
+                    telemetry.addData("RobotX: ", position.x);
+                    telemetry.addData("RobotY: ", position.y);
+                    telemetry.addData("RobotZ: ", position.z);
+                    telemetry.addData("RobotRoll: ", orientation.getRoll());
+                    telemetry.addData("RobotYaw: ", orientation.getYaw());
+                    telemetry.addData("RobotPitch: ", orientation.getPitch());
+//                    telemetry.addData("Angle?: ", Math.toDegrees(Math.atan2(-65+position.y, -65+position.x));
+                    telemetry.addLine("");
+                }
+            }
 
 //0.06
 
@@ -215,7 +239,9 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
             telemetry.addData("Next",    spinStates.getNextToShoot(artifactsOnRamp, ArtifactSequence));
             telemetry.addData("2ndNext", spinStates.get2ndNextToShoot(artifactsOnRamp, ArtifactSequence));
             telemetry.addData("3rdNext", spinStates.get3rdNextToShoot(artifactsOnRamp, ArtifactSequence));
+
             telemetry.addLine("");
+
             telemetry.addData("ShooterVelocity: ", shooter.getVelocityRPM());
             telemetry.addData("ShooterTargetVelocity: ", shooter.getTargetVelocityRPM());
 //            telemetry.addData("CloseEnough: ", shooter.isCloseEnough(100));

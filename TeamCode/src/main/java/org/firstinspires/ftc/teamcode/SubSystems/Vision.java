@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.Exposur
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraIntrinsics;
+import org.firstinspires.ftc.teamcode.Cogintilities.ConfigurableConstants;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
@@ -57,6 +57,7 @@ public class Vision implements TeamConstants {
         aprilTag = new AprilTagProcessor.Builder()
                 //.setLensIntrinsics(intrinsics.fx, intrinsics.fy, intrinsics.cx, intrinsics.cy)
                 .setLensIntrinsics(FX, FY, CX, CY)
+                .setCameraPose(ConfigurableConstants.cameraPosition(), ConfigurableConstants.cameraOrientation())
                 .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
                 .setTagLibrary(AprilTagGameDatabase.getCurrentGameTagLibrary())
                 .setOutputUnits(DistanceUnit.INCH, AngleUnit.DEGREES)
@@ -70,6 +71,7 @@ public class Vision implements TeamConstants {
                 .setCamera(atCamera)
                 .addProcessors(aprilTag)
                 .setCameraResolution(new Size(640, 480))
+                .setLiveViewContainerId(0)
                 .build();
 
         // Wait until camera is streaming
@@ -81,6 +83,15 @@ public class Vision implements TeamConstants {
 
         // Start with AprilTags disabled to save CPU
         disableAprilTagDetection();
+    }
+
+    public void rebuild() throws InterruptedException {
+        boolean wasEnabled = isAprilTagDetectionEnabled();
+        buildAprilTagProcessor();
+        buildVisionPortal();
+        if (wasEnabled) {
+            enableAprilTagDetection();
+        }
     }
 
     /* ===================== CAMERA CONTROLS ===================== */
@@ -103,6 +114,10 @@ public class Vision implements TeamConstants {
 
     public void disableAprilTagDetection() {
         visionPortal.setProcessorEnabled(aprilTag, false);
+    }
+
+    public boolean isAprilTagDetectionEnabled() {
+        return visionPortal.getProcessorEnabled(aprilTag);
     }
 
     /* ===================== APRILTAG FUNCTIONS ===================== */
@@ -129,6 +144,8 @@ public class Vision implements TeamConstants {
         return filtered;
     }
 
+
+
     //Only TRUE if tags 20, 21, 22, 23, or 24
     public boolean targetTagVisible() {
         return !getTargetTags().isEmpty();
@@ -138,6 +155,22 @@ public class Vision implements TeamConstants {
     public AprilTagDetection getFirstTargetTag() {
         List<AprilTagDetection> filtered = getTargetTags();
         return filtered.isEmpty() ? null : filtered.get(0);
+    }
+
+    public List<State[]> getSequences() {
+        List<AprilTagDetection> filtered = getTargetTags();
+        if (filtered == null) return null;
+        List<State[]> sequences = new ArrayList<>();
+        for (AprilTagDetection detection : filtered) {
+            State[] states = getTagStates(detection);
+            if (states != null) sequences.add(states);
+        }
+        return sequences.isEmpty() ? null : sequences;
+    }
+
+    public State[] getFirstSequence() {
+        List<State[]> sequences = getSequences();
+        return (sequences == null || sequences.isEmpty()) ? null : sequences.get(0);
     }
 
     //Make a string from the tag ID representing the motif pattern
@@ -153,12 +186,30 @@ public class Vision implements TeamConstants {
         }
     }
 
+    public List<AprilTagDetection> getGoalTags() {
+        List<AprilTagDetection> filtered = getTargetTags();
+        if (filtered == null) return null;
+        List<AprilTagDetection> goalTags = new ArrayList<>();
+        for (AprilTagDetection detection : filtered) {
+            String code = getTagCode(detection);
+            if (code.equals("BLUE GOAL") || code.equals("RED GOAL")) {
+                goalTags.add(detection);
+            }
+        }
+        return goalTags.isEmpty() ? null : goalTags;
+    }
+
+    public AprilTagDetection getFirstGoalTag() {
+        List<AprilTagDetection> goalTags = getGoalTags();
+        return (goalTags == null || goalTags.isEmpty()) ? null : goalTags.get(0);
+    }
+
     public State[] getTagStates(AprilTagDetection tag) {
         if (tag == null) return null;
         switch (tag.id) {
-            case 21: return new State[]{State.GREEN, State.PURPLE, State.PURPLE};
-            case 22: return new State[]{State.PURPLE, State.GREEN, State.PURPLE};
-            case 23: return new State[]{State.PURPLE, State.PURPLE, State.GREEN};
+            case 21: return STATES_GPP;
+            case 22: return STATES_PGP;
+            case 23: return STATES_PPG;
             default: return null;
         }
     }
