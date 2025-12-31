@@ -1,7 +1,9 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.OpModes.AutoOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+
+import org.firstinspires.ftc.teamcode.Robot.RobotConfiguration;
 
 @Disabled
 @Autonomous(name="Display Name") //, preselectTeleOp = "TeleOpMode", group="Name of Group")
