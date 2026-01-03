@@ -5,6 +5,8 @@ import android.annotation.SuppressLint;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.Cogintilities.Color;
 import org.firstinspires.ftc.teamcode.Cogintilities.ConfigurableConstants;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
@@ -49,6 +51,34 @@ public class ArchaicAutoFar extends RobotConfiguration implements TeamConstants 
                 telemetry.addLine("Vision Inactive");
                 lightRGB.setColor(Color.VIOLET);
             }
+
+            if (visionPos != null) {
+                visionPos.scanForAprilTags();
+                AprilTagDetection tag = visionPos.getFirstGoalTag();
+                if (tag != null) {
+//                    telemetry.addData("X: ", tag.ftcPose.x);
+//                    telemetry.addData("Y: ", tag.ftcPose.y);
+//                    telemetry.addData("Z: ", tag.ftcPose.z);
+//                    telemetry.addData("Bearing: ", tag.ftcPose.bearing);
+//                    telemetry.addData("Bearing(Calculated): ", Math.toDegrees(Math.atan2(tag.ftcPose.y, tag.ftcPose.x))-90);
+                    double adjustedBearing = Math.toDegrees(Math.atan2(tag.ftcPose.y + 5.5, tag.ftcPose.x - 3.5)) - 90;
+                    telemetry.addLine("");
+                    telemetry.addData("Bearing(Calculated & Adjusted): ", adjustedBearing);
+                    if (Math.abs(adjustedBearing) <= 2) {
+                        telemetry.addLine("Position OK");
+                    }
+
+//                    telemetry.addData("RobotX: ", position.x);
+//                    telemetry.addData("RobotY: ", position.y);
+//                    telemetry.addData("RobotZ: ", position.z);
+//                    telemetry.addData("RobotRoll: ", orientation.getRoll());
+//                    telemetry.addData("RobotYaw: ", orientation.getYaw());
+//                    telemetry.addData("RobotPitch: ", orientation.getPitch());
+//                    telemetry.addData("Angle?: ", Math.toDegrees(Math.atan2(-65+position.y, -65+position.x));
+//                    telemetry.addLine("");
+                }
+            }
+
             telemetry.update();
         }
 
@@ -76,8 +106,9 @@ public class ArchaicAutoFar extends RobotConfiguration implements TeamConstants 
 
         if (ArtifactSequence != null) {
             State firstState = ArtifactSequence[0];
+            State secondState = ArtifactSequence[1];
             lightRGB.setColorState(firstState);
-            if (firstState == State.GREEN) {
+            if (firstState == State.GREEN || secondState == State.GREEN) {
                 firstPos = -60;
                 firstOff = 0;
                 secondPos = 60;

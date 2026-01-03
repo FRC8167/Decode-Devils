@@ -121,7 +121,7 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 
             if (gamepad1.a) {
                 if (!posTagValidityTimer.isDone()) {
-                    drive.turnToHeadingError(-(Math.toDegrees(Math.atan2(posTag.ftcPose.y + 5.5, posTag.ftcPose.x - 3.5)) - 90));
+                    drive.turnToHeadingError(-(Math.toDegrees(Math.atan2(posTag.ftcPose.y + 5.5, posTag.ftcPose.x - 3.5)) - 90 + (gamepad1.left_trigger - gamepad1.right_trigger) * 3));
                     skipNextDrive = true;
                 }
             }
@@ -310,7 +310,7 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
             lightRGB.setColorState(spinStates.get2ndNextToShoot(artifactsOnRamp, ArtifactSequence));
         } else if (shooter.getTargetVelocityRPM() != 0) {
             if (!posTagValidityTimer.isDone()) {
-                if (Math.abs(Math.toDegrees(Math.atan2(posTag.ftcPose.y+5.5, posTag.ftcPose.x-3.5))-90) <= 2) {
+                if (Math.abs(Math.toDegrees(Math.atan2(posTag.ftcPose.y + 5.5, posTag.ftcPose.x - 3.5)) - 90 + (gamepad1.left_trigger - gamepad1.right_trigger) * 3) <= 2) {
                     lightRGB.setColor(Color.AZURE);
                 } else {
                     lightRGB.setColor(Color.ORANGE);

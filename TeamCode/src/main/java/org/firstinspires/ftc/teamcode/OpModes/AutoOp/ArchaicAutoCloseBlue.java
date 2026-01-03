@@ -76,8 +76,9 @@ public class ArchaicAutoCloseBlue extends RobotConfiguration implements TeamCons
 
         if (ArtifactSequence != null) {
             State firstState = ArtifactSequence[0];
+            State secondState = ArtifactSequence[1];
             lightRGB.setColorState(firstState);
-            if (firstState == State.GREEN) {
+            if (firstState == State.GREEN || secondState == State.GREEN) {
                 firstPos = -60;
                 firstOff = 0;
                 secondPos = 60;
