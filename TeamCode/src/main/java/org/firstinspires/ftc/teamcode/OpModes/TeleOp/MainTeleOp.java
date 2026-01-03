@@ -17,6 +17,12 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 
     int artifactsOnRamp;
+    AprilTagDetection posTag;
+    TimedTimer posTagValidityTimer = new TimedTimer();
+
+    boolean skipNextDrive = false;
+
+
     TimedTimer buttonTimer;
 
     @Override
@@ -34,7 +40,7 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
                 vision.scanForAprilTags();
                 AprilTagDetection tag = vision.getFirstTargetTag();
                 if (tag != null) {
-                    State[] states = vision.getTagStates(tag);
+                    State[] states = vision.getFirstSequence();
                     if (states != null) {
                         telemetry.addData("States: ", spinStates.convertStatesToInitials(states));
                         lightRGB.setColor(Color.AZURE);
@@ -60,7 +66,9 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
         while (opModeIsActive()) {
 
             drive.setDegradedDrive(gamepad1.right_bumper);
-            drive.mecanumDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+            if (!skipNextDrive)
+                drive.mecanumDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
+            skipNextDrive = false;
 
             if (gamepad2.rightBumperWasPressed()) {
                 spinnerSequencer.stop();
@@ -109,6 +117,13 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
                 shooter.setVelocityRPM(ConfigurableConstants.SHOOTER_VELOCITY_CLOSE * gamepad2.left_trigger);
             } else {
                 shooter.setVelocityRPM(0);
+            }
+
+            if (gamepad1.a) {
+                if (!posTagValidityTimer.isDone()) {
+                    drive.turnToHeadingError(-(Math.toDegrees(Math.atan2(posTag.ftcPose.y + 5.5, posTag.ftcPose.x - 3.5)) - 90));
+                    skipNextDrive = true;
+                }
             }
 
 //            if (gamepad2.dpad_up) {
@@ -211,23 +226,28 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 
             if (visionPos != null) {
                 visionPos.scanForAprilTags();
-                AprilTagDetection tag = visionPos.getFirstTargetTag();
+                AprilTagDetection tag = visionPos.getFirstGoalTag();
                 if (tag != null) {
-                    telemetry.addData("X: ", tag.ftcPose.x);
-                    telemetry.addData("Y: ", tag.ftcPose.y);
-                    telemetry.addData("Z: ", tag.ftcPose.z);
-                    telemetry.addData("Bearing: ", tag.ftcPose.bearing);
+//                    telemetry.addData("X: ", tag.ftcPose.x);
+//                    telemetry.addData("Y: ", tag.ftcPose.y);
+//                    telemetry.addData("Z: ", tag.ftcPose.z);
+//                    telemetry.addData("Bearing: ", tag.ftcPose.bearing);
+//                    telemetry.addData("Bearing(Calculated): ", Math.toDegrees(Math.atan2(tag.ftcPose.y, tag.ftcPose.x))-90);
+//                    telemetry.addData("Bearing(Calculated & Adjusted): ", Math.toDegrees(Math.atan2(tag.ftcPose.y+5.5, tag.ftcPose.x-3.5))-90);
+
+                    posTag = tag;
+                    posTagValidityTimer.startNewTimer(0.2);
 
                     Position position = tag.robotPose.getPosition();
                     YawPitchRollAngles orientation = tag.robotPose.getOrientation();
-                    telemetry.addData("RobotX: ", position.x);
-                    telemetry.addData("RobotY: ", position.y);
-                    telemetry.addData("RobotZ: ", position.z);
-                    telemetry.addData("RobotRoll: ", orientation.getRoll());
-                    telemetry.addData("RobotYaw: ", orientation.getYaw());
-                    telemetry.addData("RobotPitch: ", orientation.getPitch());
+//                    telemetry.addData("RobotX: ", position.x);
+//                    telemetry.addData("RobotY: ", position.y);
+//                    telemetry.addData("RobotZ: ", position.z);
+//                    telemetry.addData("RobotRoll: ", orientation.getRoll());
+//                    telemetry.addData("RobotYaw: ", orientation.getYaw());
+//                    telemetry.addData("RobotPitch: ", orientation.getPitch());
 //                    telemetry.addData("Angle?: ", Math.toDegrees(Math.atan2(-65+position.y, -65+position.x));
-                    telemetry.addLine("");
+//                    telemetry.addLine("");
                 }
             }
 
@@ -286,8 +306,18 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 //        telemetry.addData("Vel: ", shooter.getVelocityRPM());
 //        telemetry.addData("TarVel: ", shooter.getTargetVelocityRPM());
 //        telemetry.addData("C-Enough: ", shooter.isCloseEnough(100));
-        if (buttonTimer.isDone()) {
+        if (buttonTimer.isDone() && shooter.getTargetVelocityRPM() == 0) {
             lightRGB.setColorState(spinStates.get2ndNextToShoot(artifactsOnRamp, ArtifactSequence));
+        } else if (shooter.getTargetVelocityRPM() != 0) {
+            if (!posTagValidityTimer.isDone()) {
+                if (Math.abs(Math.toDegrees(Math.atan2(posTag.ftcPose.y+5.5, posTag.ftcPose.x-3.5))-90) <= 2) {
+                    lightRGB.setColor(Color.AZURE);
+                } else {
+                    lightRGB.setColor(Color.ORANGE);
+                }
+            } else {
+                lightRGB.setOff();
+            }
         }
 //        if (shooter.isCloseEnough(100)) {
 //            double targetVel = shooter.getTargetVelocityRPM();

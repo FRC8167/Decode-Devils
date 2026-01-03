@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.SubSystems;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class MecanumDriveBasic {
 
@@ -62,6 +65,59 @@ public class MecanumDriveBasic {
         double backRightPower  = (drive + strafe - turn) / denominator;
 
         setMotorPower(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
+    }
+
+    public void turnToHeadingError(double error) {
+        double newTurnCmd;
+        double headingFineGain   = 0.01;
+
+        /* Need Angle Wrap calculation to ensure turning the shortest distance */
+        if (Math.abs(error) > 1) {
+            newTurnCmd = Range.clip(headingFineGain * error, -1.0, 1.0);
+            newTurnCmd += (newTurnCmd >= 0) ? 0.08 : -0.08;
+        }
+        else newTurnCmd = 0;
+
+        mecanumDrive(0, 0, newTurnCmd);
+
+    }
+
+
+    // Drive with the specified heading in radians
+    public void driveWithHeading(double driveCmd, double strafeCmd, double turnCmd, double currentHeading, double headingDeg) {
+        double error, gain, newTurnCmd;
+        double headingCourseGain = 0.1;
+        double headingFineGain   = 0.05;
+
+        error = headingDeg - currentHeading;
+        /* Need Angle Wrap calculation to ensure turning the shortest distance */
+        if(error > 10) {
+            newTurnCmd = Range.clip(headingCourseGain * error, -1.0, 1.0);
+        } else {
+            newTurnCmd = Range.clip(headingFineGain   * error, -1.0, 1.0);
+        }
+
+        mecanumDrive(driveCmd, strafeCmd, newTurnCmd);
+
+    }
+
+
+    // This routine drives the robot field relative
+    public void driveFieldRelative(double forward, double right, double rotate, double currentHeading) {
+        // First, convert direction being asked to drive to polar coordinates
+        double theta = Math.atan2(forward, right);
+        double r = Math.hypot(right, forward);
+
+        // Second, rotate angle by the angle the robot is pointing
+        theta = AngleUnit.normalizeRadians(theta - currentHeading);
+//                imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
+
+        // Third, convert back to cartesian
+        double newForward = r * Math.sin(theta);
+        double newRight = r * Math.cos(theta);
+
+        // Finally, call the drive method with robot relative forward and right amounts
+        mecanumDrive(newForward, newRight, rotate);
     }
 
 

@@ -134,10 +134,14 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
             vision.enableAprilTagDetection();
         }
 
+        if (isStopRequested()) return;
+
         if (webcam2.isAttached()) {
             visionPos = new Vision(webcam2);
             visionPos.enableAprilTagDetection();
         }
+
+        if (isStopRequested()) return;
 
 // Default to standard telemetry as a safe starting point.
         this.telemetry = super.telemetry;

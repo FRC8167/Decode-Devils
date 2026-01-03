@@ -33,7 +33,7 @@ public class ArchaicAutoFar extends RobotConfiguration implements TeamConstants 
                 vision.scanForAprilTags();
                 AprilTagDetection tag = vision.getFirstTargetTag();
                 if (tag != null) {
-                    State[] states = vision.getTagStates(tag);
+                    State[] states = vision.getFirstSequence();
                     if (states != null) {
                         telemetry.addData("States: ", spinStates.convertStatesToInitials(states));
                         lightRGB.setColor(Color.AZURE);
@@ -61,7 +61,7 @@ public class ArchaicAutoFar extends RobotConfiguration implements TeamConstants 
             vision.scanForAprilTags();
             AprilTagDetection tag = vision.getFirstTargetTag();
             if (tag != null) {
-                State[] states = vision.getTagStates(tag);
+                State[] states = vision.getFirstSequence();
                 if (states != null) {
                     ArtifactSequence = states;
                 }
@@ -101,7 +101,7 @@ public class ArchaicAutoFar extends RobotConfiguration implements TeamConstants 
                     }
                     if (spindexer.isSpinnerDone()) {
                         step = 2;
-                        timer.startNewTimer(5);
+                        timer.startNewTimer(3);
                     }
                 }
 
