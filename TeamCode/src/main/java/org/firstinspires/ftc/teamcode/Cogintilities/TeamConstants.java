@@ -86,4 +86,6 @@ public interface TeamConstants {
     int SEQUENCER_SCAN_CYCLE_ATTEMPTS = 15; //Attempts before adjusting
     int SEQUENCER_SCAN_MAX_ATTEMPTS = 3; //Scan cycles before excluding (excludes for current scan only)
 
+    double LimeVision_Staleness_Tol = 200; //Staleness in milliseconds
+
 }
