@@ -5,13 +5,16 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-import org.firstinspires.ftc.teamcode.Cogintilities.PoseConverter;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 import org.firstinspires.ftc.teamcode.RoadRunner.Drawing;
 import org.firstinspires.ftc.teamcode.Robot.RobotConfiguration;
+import org.firstinspires.ftc.teamcode.SubSystems.LimeVision;
 
 @TeleOp(name="TeleOpTestLimeLight", group="Competition")
 public class TeleOpTestLimelight extends RobotConfiguration implements TeamConstants {
@@ -25,60 +28,43 @@ public class TeleOpTestLimelight extends RobotConfiguration implements TeamConst
         Pose3D poseMT2 = null;
 
         waitForStart();
-        limeVision.takePhoto("Test");
+//        limeVision.takePhoto("Test");
 
         while (opModeIsActive()) {
             drive.setDegradedDrive(false);
             drive.mecanumDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
 
             if (limeVision != null) {
-                poseMT1 = limeVision.getMT1Pos();
-                poseMT2 = limeVision.getMT2Pos();
+                poseMT1 = limeVision.getRobotPose3D();
             }
 
-            if (poseMT1 != null || poseMT2 != null) {
+            if (poseMT1 != null) {
+                telemetry.addLine("MT1:");
+                telemetry.addLine("Position:");
+                Position position = poseMT1.getPosition().toUnit(DistanceUnit.INCH);
+                telemetry.addData("X: ", position.x);
+                telemetry.addData("Y: ", position.y);
+                telemetry.addData("Z: ", position.z);
+                telemetry.addLine("Orientation:");
+                YawPitchRollAngles orientation = poseMT1.getOrientation();
+                telemetry.addData("Yaw: ", orientation.getYaw());
+                telemetry.addData("Pitch: ", orientation.getPitch());
+                telemetry.addData("Roll: ", orientation.getRoll());
 
                 TelemetryPacket packet = new TelemetryPacket();
-
-                if (poseMT1 != null) {
-                    telemetry.addLine("MT1:");
-                    telemetry.addLine("Position:");
-                    Position position = poseMT1.getPosition();
-                    telemetry.addData("X: ", position.x);
-                    telemetry.addData("Y: ", position.y);
-                    telemetry.addData("Z: ", position.z);
-                    telemetry.addLine("Orientation:");
-                    YawPitchRollAngles orientation = poseMT1.getOrientation();
-                    telemetry.addData("Yaw: ", orientation.getYaw());
-                    telemetry.addData("Pitch: ", orientation.getPitch());
-                    telemetry.addData("Roll: ", orientation.getRoll());
-
-                    packet.fieldOverlay().setStroke("#3F51B5");
-                    Drawing.drawRobot(packet.fieldOverlay(), PoseConverter.Pose3DtoPose2d(poseMT1));
-                }
-
-                if (poseMT1 != null && poseMT2 != null) {
-                    telemetry.addLine("");
-                }
-
-                if (poseMT2 != null) {
-                    telemetry.addLine("MT1:");
-                    telemetry.addLine("Position:");
-                    Position position = poseMT2.getPosition();
-                    telemetry.addData("X: ", position.x);
-                    telemetry.addData("Y: ", position.y);
-                    telemetry.addData("Z: ", position.z);
-                    telemetry.addLine("Orientation:");
-                    YawPitchRollAngles orientation = poseMT2.getOrientation();
-                    telemetry.addData("Yaw: ", orientation.getYaw());
-                    telemetry.addData("Pitch: ", orientation.getPitch());
-                    telemetry.addData("Roll: ", orientation.getRoll());
-
-                    packet.fieldOverlay().setStroke("#3FB551");
-                    Drawing.drawRobot(packet.fieldOverlay(), PoseConverter.Pose3DtoPose2d(poseMT2));
-                }
+                packet.fieldOverlay().setStroke("#3F51B5");
+                Drawing.drawRobot(packet.fieldOverlay(), LimeVision.Pose3DtoPose2d(poseMT1));
+                packet.fieldOverlay().setStroke("#B5513F");
+                Drawing.drawRobot(packet.fieldOverlay(), LimeVision.Pose3DtoPose2d(new Pose3D(RED_GOAL_CENTER, new YawPitchRollAngles(AngleUnit.DEGREES,0,0,0,0))));
+                packet.fieldOverlay().setStroke("#3F51B5");
+                Drawing.drawRobot(packet.fieldOverlay(), LimeVision.Pose3DtoPose2d(new Pose3D(BLUE_GOAL_CENTER, new YawPitchRollAngles(AngleUnit.DEGREES,0,0,0,0))));
                 FtcDashboard.getInstance().sendTelemetryPacket(packet);
+
+
             }
+
+//
+
             telemetry.addLine("");
             telemetry.update();
 

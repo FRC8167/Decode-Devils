@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode.Cogintilities;
 
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+
 public interface TeamConstants {
 
     enum State {
@@ -86,6 +89,9 @@ public interface TeamConstants {
     int SEQUENCER_SCAN_CYCLE_ATTEMPTS = 15; //Attempts before adjusting
     int SEQUENCER_SCAN_MAX_ATTEMPTS = 3; //Scan cycles before excluding (excludes for current scan only)
 
-    double LimeVision_Staleness_Tol = 200; //Staleness in milliseconds
+    double LIME_VISION_STALENESS_TOL = 200; //Staleness in milliseconds
 
+    Position BLUE_GOAL_CENTER = new Position(DistanceUnit.INCH, -63.607644, -63.638894, 38.75, 0);
+    Position RED_GOAL_CENTER = new Position(DistanceUnit.INCH, -63.607644, 63.638894, 38.75, 0);
+    //Note: Coordinate system is looking from red side towards field with 0 deg to their right
 }

@@ -26,7 +26,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraCharacteri
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
 import org.firstinspires.ftc.robotcore.internal.system.Deadline;
-import org.firstinspires.ftc.teamcode.Cogintilities.LimeVision;
+import org.firstinspires.ftc.teamcode.SubSystems.LimeVision;
 import org.firstinspires.ftc.teamcode.Cogintilities.SpinnerSequencer;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
@@ -215,16 +215,16 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
 
         Limelight3A limelight = hardwareMap.get(Limelight3A.class, "limelight");
 
-        IMU imu = hardwareMap.get(IMU.class, "imu");
-
-        IMU.Parameters myIMUparameters;
-        myIMUparameters = new IMU.Parameters(
-                new RevHubOrientationOnRobot(
-                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                        RevHubOrientationOnRobot.UsbFacingDirection.LEFT
-                )
-        );
-        imu.initialize(myIMUparameters);
+//        IMU imu = hardwareMap.get(IMU.class, "imu");
+//
+//        IMU.Parameters myIMUparameters;
+//        myIMUparameters = new IMU.Parameters(
+//                new RevHubOrientationOnRobot(
+//                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
+//                        RevHubOrientationOnRobot.UsbFacingDirection.LEFT
+//                )
+//        );
+//        imu.initialize(myIMUparameters);
 
         /* Create an object of every module/subsystem needed for both autonomous and teleOp modes. */
         drive            = new MecanumDriveBasic(driveMotorLF, driveMotorLR, driveMotorRF, driveMotorRR);
@@ -240,9 +240,7 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
         spindexer        = new Spindexer(spinner, dropper, spinStates, colorDetection);
         spinnerSequencer = new SpinnerSequencer(spindexer, shooter, spinStates);
 
-//        if (limelight.isConnected()) {
-            limeVision = new LimeVision(limelight, imu);
-//        }
+        limeVision = new LimeVision(limelight);
 
 
 
