@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Robot;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -114,6 +115,10 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
 
         WebcamName webcam = hardwareMap.get(WebcamName.class, "Webcam1");
         WebcamName webcam2 = hardwareMap.get(WebcamName.class, "Webcam2");
+
+        Limelight3A limelight = hardwareMap.get(Limelight3A.class, "limelight");
+
+        limelight.
 
         /* Create an object of every module/subsystem needed for both autonomous and teleOp modes. */
         drive            = new MecanumDriveBasic(driveMotorLF, driveMotorLR, driveMotorRF, driveMotorRR);
