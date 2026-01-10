@@ -17,9 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LimeVision implements TeamConstants {
-    Limelight3A limelight;
+    private final Limelight3A limelight;
 //    IMU imu;
-    int pipeline;
+    private int pipeline;
 
     public LimeVision(Limelight3A limelight) {
         this.limelight = limelight;
@@ -37,6 +37,12 @@ public class LimeVision implements TeamConstants {
 //    public void setImu(IMU imu) {
 //        this.imu = imu;
 //    }
+
+
+    public void setPipeline(int pipeline) {
+        this.limelight.pipelineSwitch(pipeline);
+        this.pipeline = pipeline;
+    }
 
     public void start() {
         limelight.start();
