@@ -71,10 +71,45 @@ public class LimeVision implements TeamConstants {
         Position position = pose3D.getPosition();
         YawPitchRollAngles orientation = pose3D.getOrientation();
 
-//        TODO: finish coding bearing calculation
+        List<LLResultTypes.FiducialResult> goalFiducials = getGoalFiducials(result);
+        if (goalFiducials == null || goalFiducials.isEmpty()) return Double.NaN;
+        LLResultTypes.FiducialResult goalFiducial = null;
+        if (goalFiducials.size() == 1) {
+            goalFiducial = goalFiducials.get(0);
+        } else {
+            goalFiducials.size();
+            for (LLResultTypes.FiducialResult fiducialResult : goalFiducials) {
+                int id = fiducialResult.getFiducialId();
+                double angle = orientation.getYaw(AngleUnit.DEGREES);
+                if (angle >= -180 && angle < 0 && id == 20) {
+                    goalFiducial = fiducialResult;
+                    break;
+                } else if (angle >= 0 && angle < 180 && id == 24) {
+                    goalFiducial = fiducialResult;
+                    break;
+                }
+
+            }
+        }
+
+        if (goalFiducial == null) return Double.NaN;
+
+        double rawAngle;
+
+        int id = goalFiducial.getFiducialId();
+        if (id == 20) {
+            rawAngle = PoseMath.poseArcTan(position, BLUE_GOAL_CENTER, AngleUnit.DEGREES);
+        } else if (id == 24) {
+            rawAngle = PoseMath.poseArcTan(position, RED_GOAL_CENTER, AngleUnit.DEGREES);
+        } else {
+            return Double.NaN;
+        }
+
+        double robotBearing = rawAngle-orientation.getYaw(AngleUnit.DEGREES);
+        return AngleUnit.normalizeDegrees(robotBearing);
     }
 
-    static public List<LLResultTypes.FiducialResult> getGoalFiducial(LLResult result) { //Note: O
+    static public List<LLResultTypes.FiducialResult> getGoalFiducials(LLResult result) { //Note: O
         if (result == null || !result.isValid()) return null;
         List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
         if (fiducialResults == null || fiducialResults.isEmpty()) return null;
