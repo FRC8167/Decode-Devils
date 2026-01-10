@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Cogintilities;
 
-public abstract class SpinnerCorrector {
+public final class SpinnerCorrector {
+    private SpinnerCorrector() {}
 
     private static final InterpLUT spinnerILUT = new InterpLUT();
     private static final InterpLUT spinnerILUTInverse = new InterpLUT();

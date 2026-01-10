@@ -73,8 +73,8 @@ public class MecanumDriveBasic {
 
         /* Need Angle Wrap calculation to ensure turning the shortest distance */
         if (Math.abs(error) > 1) {
-            newTurnCmd = Range.clip(headingFineGain * error, -1.0, 1.0);
-            newTurnCmd += (newTurnCmd >= 0) ? 0.08 : -0.08;
+            newTurnCmd = Range.clip(headingFineGain * -error, -1.0, 1.0);
+            newTurnCmd += (newTurnCmd > 0) ? 0.08 : -0.08;
         }
         else newTurnCmd = 0;
 

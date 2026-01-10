@@ -17,8 +17,8 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 
     int artifactsOnRamp;
-    AprilTagDetection posTag;
-    TimedTimer posTagValidityTimer = new TimedTimer();
+//    AprilTagDetection posTag;
+//    TimedTimer posTagValidityTimer = new TimedTimer();
 
     boolean skipNextDrive = false;
 
@@ -120,10 +120,14 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
             }
 
             if (gamepad1.a) {
-                if (!posTagValidityTimer.isDone()) {
-                    drive.turnToHeadingError(-(Math.toDegrees(Math.atan2(posTag.ftcPose.y + 5.5, posTag.ftcPose.x - 3.5)) - 90 + (gamepad1.left_trigger - gamepad1.right_trigger) * 3));
+                if (!Double.isNaN(limeVision.getGoalBearing())) {
+                    drive.turnToHeadingError(limeVision.getGoalBearing()); //TODO: Test if integration is correct
                     skipNextDrive = true;
                 }
+//                if (!posTagValidityTimer.isDone()) {
+//                    drive.turnToHeadingError(-(Math.toDegrees(Math.atan2(posTag.ftcPose.y + 5.5, posTag.ftcPose.x - 3.5)) - 90 + (gamepad1.left_trigger - gamepad1.right_trigger) * 3));
+//                    skipNextDrive = true;
+//                }
             }
 
 //            if (gamepad2.dpad_up) {
@@ -218,40 +222,33 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 
             }
 
-//            if (-gamepad2.right_stick_y >= 0) {
-//                fork.setPosition(-gamepad2.right_stick_y*.1);
-//            } else {
-//                fork.setPosition(0.06);
+
+//            if (visionPos != null) {
+//                visionPos.scanForAprilTags();
+//                AprilTagDetection tag = visionPos.getFirstGoalTag();
+//                if (tag != null) {
+////                    telemetry.addData("X: ", tag.ftcPose.x);
+////                    telemetry.addData("Y: ", tag.ftcPose.y);
+////                    telemetry.addData("Z: ", tag.ftcPose.z);
+////                    telemetry.addData("Bearing: ", tag.ftcPose.bearing);
+////                    telemetry.addData("Bearing(Calculated): ", Math.toDegrees(Math.atan2(tag.ftcPose.y, tag.ftcPose.x))-90);
+////                    telemetry.addData("Bearing(Calculated & Adjusted): ", Math.toDegrees(Math.atan2(tag.ftcPose.y+5.5, tag.ftcPose.x-3.5))-90);
+//
+//                    posTag = tag;
+//                    posTagValidityTimer.startNewTimer(0.2);
+//
+//                    Position position = tag.robotPose.getPosition();
+//                    YawPitchRollAngles orientation = tag.robotPose.getOrientation();
+////                    telemetry.addData("RobotX: ", position.x);
+////                    telemetry.addData("RobotY: ", position.y);
+////                    telemetry.addData("RobotZ: ", position.z);
+////                    telemetry.addData("RobotRoll: ", orientation.getRoll());
+////                    telemetry.addData("RobotYaw: ", orientation.getYaw());
+////                    telemetry.addData("RobotPitch: ", orientation.getPitch());
+////                    telemetry.addData("Angle?: ", Math.toDegrees(Math.atan2(-65+position.y, -65+position.x));
+////                    telemetry.addLine("");
+//                }
 //            }
-
-            if (visionPos != null) {
-                visionPos.scanForAprilTags();
-                AprilTagDetection tag = visionPos.getFirstGoalTag();
-                if (tag != null) {
-//                    telemetry.addData("X: ", tag.ftcPose.x);
-//                    telemetry.addData("Y: ", tag.ftcPose.y);
-//                    telemetry.addData("Z: ", tag.ftcPose.z);
-//                    telemetry.addData("Bearing: ", tag.ftcPose.bearing);
-//                    telemetry.addData("Bearing(Calculated): ", Math.toDegrees(Math.atan2(tag.ftcPose.y, tag.ftcPose.x))-90);
-//                    telemetry.addData("Bearing(Calculated & Adjusted): ", Math.toDegrees(Math.atan2(tag.ftcPose.y+5.5, tag.ftcPose.x-3.5))-90);
-
-                    posTag = tag;
-                    posTagValidityTimer.startNewTimer(0.2);
-
-                    Position position = tag.robotPose.getPosition();
-                    YawPitchRollAngles orientation = tag.robotPose.getOrientation();
-//                    telemetry.addData("RobotX: ", position.x);
-//                    telemetry.addData("RobotY: ", position.y);
-//                    telemetry.addData("RobotZ: ", position.z);
-//                    telemetry.addData("RobotRoll: ", orientation.getRoll());
-//                    telemetry.addData("RobotYaw: ", orientation.getYaw());
-//                    telemetry.addData("RobotPitch: ", orientation.getPitch());
-//                    telemetry.addData("Angle?: ", Math.toDegrees(Math.atan2(-65+position.y, -65+position.x));
-//                    telemetry.addLine("");
-                }
-            }
-
-//0.06
 
 
             telemetry.addData("ArtifactsOnRamp: ", artifactsOnRamp);
@@ -309,12 +306,17 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
         if (buttonTimer.isDone() && shooter.getTargetVelocityRPM() == 0) {
             lightRGB.setColorState(spinStates.get2ndNextToShoot(artifactsOnRamp, ArtifactSequence));
         } else if (shooter.getTargetVelocityRPM() != 0) {
-            if (!posTagValidityTimer.isDone()) {
-                if (Math.abs(Math.toDegrees(Math.atan2(posTag.ftcPose.y + 5.5, posTag.ftcPose.x - 3.5)) - 90 + (gamepad1.left_trigger - gamepad1.right_trigger) * 3) <= 2) {
-                    lightRGB.setColor(Color.AZURE);
-                } else {
-                    lightRGB.setColor(Color.ORANGE);
-                }
+//            if (!posTagValidityTimer.isDone()) {
+//                if (Math.abs(Math.toDegrees(Math.atan2(posTag.ftcPose.y + 5.5, posTag.ftcPose.x - 3.5)) - 90 + (gamepad1.left_trigger - gamepad1.right_trigger) * 3) <= 2) {
+//                    lightRGB.setColor(Color.AZURE);
+//                } else {
+//                    lightRGB.setColor(Color.ORANGE);
+//                }
+            double bearing = limeVision.getGoalBearing();
+            if (!Double.isNaN(bearing)) {
+                if (Math.abs(bearing) <= 2) {
+                    lightRGB.setColor(Color.AZURE); //TODO: Decide if color feedback is worth its drawbacks or come up with alternative (rumble?)
+                } else lightRGB.setColor(Color.ORANGE);
             } else {
                 lightRGB.setOff();
             }

@@ -81,7 +81,7 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
     static protected LightRGB lightRGB;
 
     static protected Vision vision;
-    static protected Vision visionPos;
+//    static protected Vision visionPos;
     static protected LimeVision limeVision;
 
     static private Spinner spinner;
@@ -129,102 +129,8 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
 
         WebcamName webcam = hardwareMap.get(WebcamName.class, "Webcam1");
 //        WebcamName webcam2 = hardwareMap.get(WebcamName.class, "Webcam2");
-        WebcamName webcam2 = new WebcamName() {
-            @NonNull
-            @Override
-            public SerialNumber getSerialNumber() {
-                return null;
-            }
-
-            @Nullable
-            @Override
-            public String getUsbDeviceNameIfAttached() {
-                return "";
-            }
-
-            @Override
-            public boolean isAttached() {
-                return false;
-            }
-
-            @Override
-            public Manufacturer getManufacturer() {
-                return null;
-            }
-
-            @Override
-            public String getDeviceName() {
-                return "";
-            }
-
-            @Override
-            public String getConnectionInfo() {
-                return "";
-            }
-
-            @Override
-            public int getVersion() {
-                return 0;
-            }
-
-            @Override
-            public void resetDeviceConfigurationForOpMode() {
-
-            }
-
-            @Override
-            public void close() {
-
-            }
-
-            @Override
-            public boolean isWebcam() {
-                return false;
-            }
-
-            @Override
-            public boolean isCameraDirection() {
-                return false;
-            }
-
-            @Override
-            public boolean isSwitchable() {
-                return false;
-            }
-
-            @Override
-            public boolean isUnknown() {
-                return false;
-            }
-
-            @Override
-            public void asyncRequestCameraPermission(Context context, Deadline deadline, Continuation<? extends Consumer<Boolean>> continuation) {
-
-            }
-
-            @Override
-            public boolean requestCameraPermission(Deadline deadline) {
-                return false;
-            }
-
-            @Override
-            public CameraCharacteristics getCameraCharacteristics() {
-                return null;
-            }
-        };
 
         Limelight3A limelight = hardwareMap.get(Limelight3A.class, "limelight");
-
-//        IMU imu = hardwareMap.get(IMU.class, "imu");
-//
-//        IMU.Parameters myIMUparameters;
-//        myIMUparameters = new IMU.Parameters(
-//                new RevHubOrientationOnRobot(
-//                        RevHubOrientationOnRobot.LogoFacingDirection.UP,
-//                        RevHubOrientationOnRobot.UsbFacingDirection.LEFT
-//                )
-//        );
-//        imu.initialize(myIMUparameters);
 
         /* Create an object of every module/subsystem needed for both autonomous and teleOp modes. */
         drive            = new MecanumDriveBasic(driveMotorLF, driveMotorLR, driveMotorRF, driveMotorRR);
@@ -251,10 +157,10 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
 
         if (isStopRequested()) return;
 
-        if (webcam2.isAttached()) {
-            visionPos = new Vision(webcam2);
-            visionPos.enableAprilTagDetection();
-        }
+//        if (webcam2.isAttached()) {
+//            visionPos = new Vision(webcam2);
+//            visionPos.enableAprilTagDetection();
+//        }
 
         if (isStopRequested()) return;
 
