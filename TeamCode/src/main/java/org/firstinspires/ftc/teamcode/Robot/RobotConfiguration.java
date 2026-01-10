@@ -240,9 +240,9 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
         spindexer        = new Spindexer(spinner, dropper, spinStates, colorDetection);
         spinnerSequencer = new SpinnerSequencer(spindexer, shooter, spinStates);
 
-        if (limelight.isConnected()) {
+//        if (limelight.isConnected()) {
             limeVision = new LimeVision(limelight, imu);
-        }
+//        }
 
 
 
