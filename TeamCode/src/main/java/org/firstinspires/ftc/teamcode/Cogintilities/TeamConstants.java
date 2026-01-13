@@ -90,6 +90,7 @@ public interface TeamConstants {
     int SEQUENCER_SCAN_MAX_ATTEMPTS = 3; //Scan cycles before excluding (excludes for current scan only)
 
     double LIME_VISION_STALENESS_TOL = 200; //Staleness in milliseconds
+    double LIME_VISION_POSE_MEDIATING_STALENESS_TOL = 0.5; //Staleness in seconds for which older poses will be removed
 
     Position BLUE_GOAL_CENTER = new Position(DistanceUnit.INCH, -63.607644, -63.638894, 38.75, 0);
     Position RED_GOAL_CENTER = new Position(DistanceUnit.INCH, -63.607644, 63.638894, 38.75, 0);

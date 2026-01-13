@@ -1,9 +1,15 @@
 package org.firstinspires.ftc.teamcode.Cogintilities;
 
+import androidx.annotation.NonNull;
+
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PoseMath {
     private PoseMath() {}
@@ -48,6 +54,71 @@ public class PoseMath {
     static public <T> double poseArcTan(T pose, AngleUnit unit) {
         Position originPosition = new Position(DistanceUnit.INCH,0,0,0,0);
         return poseArcTan(originPosition, pose, unit);
+    }
+
+    static public Pose3D poseMedian(List<Pose3D> poseList, DistanceUnit distanceUnit, AngleUnit angleUnit) {
+        if (poseList == null || poseList.isEmpty()) return null;
+        List<Double> x = new ArrayList<>();
+        List<Double> y = new ArrayList<>();
+        List<Double> z = new ArrayList<>();
+        List<Double> yaw = new ArrayList<>();
+        List<Double> pitch = new ArrayList<>();
+        List<Double> roll = new ArrayList<>();
+        for (Pose3D pose : poseList) {
+            Position position = pose.getPosition().toUnit(distanceUnit);
+            YawPitchRollAngles orientation = pose.getOrientation();
+            x.add(position.x);
+            y.add(position.y);
+            z.add(position.z);
+            yaw.add(orientation.getYaw(angleUnit));
+            pitch.add(orientation.getPitch(angleUnit));
+            roll.add(orientation.getRoll(angleUnit));
+        }
+
+        double newX = VariousMath.median(x);
+        double newY = VariousMath.median(y);
+        double newZ = VariousMath.median(z);
+        double newYaw = VariousMath.median(yaw);
+        double newPitch = VariousMath.median(pitch);
+        double newRoll = VariousMath.median(roll);
+
+        Position newPosition = new Position(distanceUnit, newX, newY, newZ, System.nanoTime());
+        YawPitchRollAngles newOrientation = new YawPitchRollAngles(angleUnit, newYaw, newPitch, newRoll, System.nanoTime());
+
+        return new Pose3D(newPosition, newOrientation);
+    }
+
+    static public List<Pose3D> removeOldPoses(List<Pose3D> poseList, double stalenessSeconds) {
+        if (poseList == null) return null;
+        if (poseList.size() <=1) return poseList;
+
+        poseList.removeIf(pose3D -> poseStaleness(pose3D) > stalenessSeconds);
+        return poseList;
+    }
+
+    @NonNull
+    static public Pose3D poseWithAcquisitionTime(@NonNull Pose3D pose3D, long acquisitionTime) {
+        Position position = pose3D.getPosition();
+        YawPitchRollAngles orientation = pose3D.getOrientation();
+        Position newPosition = new Position(position.unit, position.x, position.y, position.z, acquisitionTime);
+        YawPitchRollAngles newOrientation = new YawPitchRollAngles(
+                AngleUnit.DEGREES,
+                orientation.getYaw(AngleUnit.DEGREES),
+                orientation.getPitch(AngleUnit.DEGREES),
+                orientation.getRoll(AngleUnit.DEGREES),
+                acquisitionTime);
+        return new Pose3D(newPosition, newOrientation);
+    }
+
+    @NonNull
+    static public Pose3D poseWithAcquisitionTime(@NonNull Pose3D pose3D) {
+        return poseWithAcquisitionTime(pose3D, System.nanoTime());
+    }
+
+    static public double poseStaleness(Pose3D pose3D) {
+        double positionStaleness    = VariousMath.elapsedSecondsFromAbsoluteNano(pose3D.getPosition().acquisitionTime);
+        double orientationStaleness = VariousMath.elapsedSecondsFromAbsoluteNano(pose3D.getOrientation().getAcquisitionTime());
+        return Math.max(positionStaleness, orientationStaleness);
     }
 
 }

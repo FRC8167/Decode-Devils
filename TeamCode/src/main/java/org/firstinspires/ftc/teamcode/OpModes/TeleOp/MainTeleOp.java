@@ -120,8 +120,9 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
             }
 
             if (gamepad1.a) {
-                if (!Double.isNaN(limeVision.getGoalBearing())) {
-                    drive.turnToHeadingError(limeVision.getGoalBearing()); //TODO: Test if integration is correct
+                double goalBearing = limeVision.getMediatedGoalBearing();
+                if (!Double.isNaN(goalBearing)) {
+                    drive.turnToHeadingError(goalBearing); //TODO: Test if integration is correct
                     skipNextDrive = true;
                 }
 //                if (!posTagValidityTimer.isDone()) {
@@ -312,7 +313,7 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 //                } else {
 //                    lightRGB.setColor(Color.ORANGE);
 //                }
-            double bearing = limeVision.getGoalBearing();
+            double bearing = limeVision.getMediatedGoalBearing();
             if (!Double.isNaN(bearing)) {
                 if (Math.abs(bearing) <= 2) {
                     lightRGB.setColor(Color.AZURE); //TODO: Decide if color feedback is worth its drawbacks or come up with alternative (rumble?)

@@ -21,6 +21,9 @@ public class LimeVision implements TeamConstants {
 //    IMU imu;
     private int pipeline;
 
+    private List<Pose3D> previousPoses = new ArrayList<>();
+    private double previousTagID;
+
     public LimeVision(Limelight3A limelight) {
         this.limelight = limelight;
         this.limelight.setPollRateHz(100); // This sets how often we ask Limelight for data (100 times per second)
@@ -54,25 +57,49 @@ public class LimeVision implements TeamConstants {
 
     public LLResult getResult() {
         LLResult result = limelight.getLatestResult();
-        if (result != null && result.isValid() && result.getPipelineIndex() == 0 && result.getStaleness() <= LIME_VISION_STALENESS_TOL) {
+        if (result != null && result.isValid() && result.getPipelineIndex() == pipeline && result.getStaleness() <= LIME_VISION_STALENESS_TOL) {
             return result;
         } else return null;
     }
 
     public Pose3D getRobotPose3D() {
+        previousPoses = PoseMath.removeOldPoses(previousPoses, LIME_VISION_POSE_MEDIATING_STALENESS_TOL);
         LLResult result = getResult();
         if (result == null) return null;
-        return result.getBotpose();
+        List<LLResultTypes.FiducialResult> fiducials = getGoalFiducials(result);
+        double fiducialID;
+        if (fiducials != null && !fiducials.isEmpty()) {
+            fiducialID = fiducials.get(0).getFiducialId();
+            if (fiducialID != previousTagID) {
+                previousPoses.clear();
+                previousTagID = fiducialID;
+            }
+        }
+        Pose3D pose = result.getBotpose();
+        if (pose == null) return null;
+        previousPoses.add(PoseMath.poseWithAcquisitionTime(pose));
+        return pose;
+    }
+
+    public Pose3D getMediatiatedRobotPose3D() {
+        getRobotPose3D();
+        return PoseMath.poseMedian(previousPoses, DistanceUnit.INCH, AngleUnit.DEGREES);
+    }
+
+    public double getPreviousPosesSize() {
+        return previousPoses.size();
     }
 
     public Pose2d getRobotPose2d() {
         return Pose3DtoPose2d(getRobotPose3D());
     }
 
-    public double getGoalBearing() {
-        LLResult result = getResult();
+    public Pose2d getMediatedRobotPose2d() {
+        return Pose3DtoPose2d(getMediatiatedRobotPose3D());
+    }
+
+    public double getGoalBearing(LLResult result, Pose3D pose3D) {
         if (result == null) return Double.NaN;
-        Pose3D pose3D = result.getBotpose();
         if (pose3D == null) return Double.NaN;
         Position position = pose3D.getPosition();
         YawPitchRollAngles orientation = pose3D.getOrientation();
@@ -113,6 +140,21 @@ public class LimeVision implements TeamConstants {
 
         double robotBearing = rawAngle-orientation.getYaw(AngleUnit.DEGREES);
         return AngleUnit.normalizeDegrees(robotBearing);
+    }
+
+    public double getGoalBearing(Pose3D pose3D) {
+        return getGoalBearing(getResult(), pose3D);
+    }
+
+    public double getGoalBearing() {
+        LLResult result = getResult();
+        if (result == null) return Double.NaN;
+        Pose3D pose3D = result.getBotpose();
+        return getGoalBearing(result, pose3D);
+    }
+
+    public double getMediatedGoalBearing() {
+        return getGoalBearing(getResult(), getMediatiatedRobotPose3D());
     }
 
     static public List<LLResultTypes.FiducialResult> getGoalFiducials(LLResult result) { //Note: O
