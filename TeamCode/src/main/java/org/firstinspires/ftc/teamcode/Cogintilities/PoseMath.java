@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.Cogintilities;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.roadrunner.Pose2d;
+
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
@@ -13,6 +15,14 @@ import java.util.List;
 
 public class PoseMath {
     private PoseMath() {}
+
+    public static Pose2d Pose3DtoPose2d(Pose3D pose3D) {
+        if (pose3D == null) return null;
+        Position position = pose3D.getPosition().toUnit(DistanceUnit.INCH);
+        YawPitchRollAngles orientation = pose3D.getOrientation();
+
+        return new Pose2d(position.x, position.y, orientation.getYaw(AngleUnit.RADIANS));
+    }
 
     static public <T,T2> double pose3DDistance(T firstPose, T2 secondPose) {
         Position firstPosition = normalizeToPosition(firstPose);
@@ -119,6 +129,12 @@ public class PoseMath {
         double positionStaleness    = VariousMath.elapsedSecondsFromAbsoluteNano(pose3D.getPosition().acquisitionTime);
         double orientationStaleness = VariousMath.elapsedSecondsFromAbsoluteNano(pose3D.getOrientation().getAcquisitionTime());
         return Math.max(positionStaleness, orientationStaleness);
+    }
+
+    static public <T> boolean poseIsValid(T pose) {
+        Position position = normalizeToPosition(pose);
+        if (position == null) return false;
+        return !(position.x > 72 || position.x < -72 || position.y > 72 || position.y < -72 || position.z > 10 || position.z < -10);
     }
 
 }

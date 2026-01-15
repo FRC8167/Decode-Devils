@@ -11,6 +11,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.teamcode.Cogintilities.DrawingUtility;
+import org.firstinspires.ftc.teamcode.Cogintilities.PoseMath;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 import org.firstinspires.ftc.teamcode.RoadRunner.Drawing;
 import org.firstinspires.ftc.teamcode.Robot.RobotConfiguration;
@@ -26,6 +28,8 @@ public class TeleOpTestLimelight extends RobotConfiguration implements TeamConst
 
         Pose3D poseMT1 = null;
         Pose3D poseMediated = null;
+
+        DrawingUtility drawingUtility = new DrawingUtility();
 
         waitForStart();
 //        limeVision.takePhoto("Test");
@@ -55,37 +59,34 @@ public class TeleOpTestLimelight extends RobotConfiguration implements TeamConst
 //                telemetry.addData("Calculated Bearing: ", limeVision.getGoalBearing());
 //                telemetry.addLine();
 //                telemetry.addLine();
-                TelemetryPacket packet = new TelemetryPacket();
-                packet.fieldOverlay().setStroke("#3F51B5");
-                Drawing.drawRobot(packet.fieldOverlay(), LimeVision.Pose3DtoPose2d(poseMT1));
-
-//                telemetry.addLine("Mediated:");
-//                telemetry.addLine("Position:");
-//                Position positionMediated = poseMediated.getPosition().toUnit(DistanceUnit.INCH);
-//                telemetry.addData("X: ", positionMediated.x);
-//                telemetry.addData("Y: ", positionMediated.y);
-//                telemetry.addData("Z: ", positionMediated.z);
-//                telemetry.addLine("Orientation:");
-//                YawPitchRollAngles orientationMediated = poseMediated.getOrientation();
-//                telemetry.addData("Yaw: ", orientationMediated.getYaw());
-//                telemetry.addData("Pitch: ", orientationMediated.getPitch());
-//                telemetry.addData("Roll: ", orientationMediated.getRoll());
-//                telemetry.addLine();
-                telemetry.addData("Calculated Bearing: ", limeVision.getMediatedGoalBearing());
-                telemetry.addData("# of poses: ", limeVision.getPreviousPosesSize());
 //                TelemetryPacket packet = new TelemetryPacket();
-                packet.fieldOverlay().setStroke("#3FB551");
-                Drawing.drawRobot(packet.fieldOverlay(), LimeVision.Pose3DtoPose2d(poseMediated));
-//                packet.fieldOverlay().setStroke("#B5513F");
-//                Drawing.drawRobot(packet.fieldOverlay(), LimeVision.Pose3DtoPose2d(new Pose3D(RED_GOAL_CENTER, new YawPitchRollAngles(AngleUnit.DEGREES,0,0,0,0))));
 //                packet.fieldOverlay().setStroke("#3F51B5");
-//                Drawing.drawRobot(packet.fieldOverlay(), LimeVision.Pose3DtoPose2d(new Pose3D(BLUE_GOAL_CENTER, new YawPitchRollAngles(AngleUnit.DEGREES,0,0,0,0))));
-                FtcDashboard.getInstance().sendTelemetryPacket(packet);
-
+//                Drawing.drawRobot(packet.fieldOverlay(), PoseMath.Pose3DtoPose2d(poseMT1));
+                drawingUtility.drawRobot("#3F51B5", poseMT1);
 
             }
 
-//
+            if (poseMediated != null) {
+                telemetry.addLine("Mediated:");
+                telemetry.addLine("Position:");
+                Position positionMediated = poseMediated.getPosition().toUnit(DistanceUnit.INCH);
+                telemetry.addData("X: ", positionMediated.x);
+                telemetry.addData("Y: ", positionMediated.y);
+                telemetry.addData("Z: ", positionMediated.z);
+                telemetry.addLine("Orientation:");
+                YawPitchRollAngles orientationMediated = poseMediated.getOrientation();
+                telemetry.addData("Yaw: ", orientationMediated.getYaw());
+                telemetry.addData("Pitch: ", orientationMediated.getPitch());
+                telemetry.addData("Roll: ", orientationMediated.getRoll());
+                telemetry.addLine();
+                telemetry.addData("Calculated Bearing: ", limeVision.getMediatedGoalBearing());
+                telemetry.addData("# of poses: ", limeVision.getPreviousPosesSize());
+//                packet.fieldOverlay().setStroke("#3FB551");
+//                Drawing.drawRobot(packet.fieldOverlay(), PoseMath.Pose3DtoPose2d(poseMediated));
+                drawingUtility.drawRobot("#3FB551", poseMediated);
+            }
+
+            drawingUtility.send();
 
             telemetry.addLine("");
             telemetry.update();

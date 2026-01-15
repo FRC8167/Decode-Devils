@@ -46,7 +46,7 @@ public class LightRGB extends Servo1D implements TeamConstants {
 
     public void setColor(Color color) {
         setOn();
-        currentPosition = color.getValue();
+        currentPosition = color.getServoValue();
         update();
     }
 

@@ -22,6 +22,8 @@ public class LimeVision implements TeamConstants {
     private int pipeline;
 
     private List<Pose3D> previousPoses = new ArrayList<>();
+    private LLResult previousResult = null;
+    private LLResult recentResult = null;
     private double previousTagID;
 
     public LimeVision(Limelight3A limelight) {
@@ -74,15 +76,17 @@ public class LimeVision implements TeamConstants {
                 previousPoses.clear();
                 previousTagID = fiducialID;
             }
-        }
+        } else return null;
+
         Pose3D pose = result.getBotpose();
-        if (pose == null) return null;
+        if (pose == null || !PoseMath.poseIsValid(pose)) return null;
         previousPoses.add(PoseMath.poseWithAcquisitionTime(pose));
         return pose;
     }
 
     public Pose3D getMediatiatedRobotPose3D() {
         getRobotPose3D();
+        if (previousPoses.size() < LIME_VISION_POSE_MEDIATING_MIN_POSES) return null;
         return PoseMath.poseMedian(previousPoses, DistanceUnit.INCH, AngleUnit.DEGREES);
     }
 
@@ -91,11 +95,11 @@ public class LimeVision implements TeamConstants {
     }
 
     public Pose2d getRobotPose2d() {
-        return Pose3DtoPose2d(getRobotPose3D());
+        return PoseMath.Pose3DtoPose2d(getRobotPose3D());
     }
 
     public Pose2d getMediatedRobotPose2d() {
-        return Pose3DtoPose2d(getMediatiatedRobotPose3D());
+        return PoseMath.Pose3DtoPose2d(getMediatiatedRobotPose3D());
     }
 
     public double getGoalBearing(LLResult result, Pose3D pose3D) {
@@ -147,10 +151,7 @@ public class LimeVision implements TeamConstants {
     }
 
     public double getGoalBearing() {
-        LLResult result = getResult();
-        if (result == null) return Double.NaN;
-        Pose3D pose3D = result.getBotpose();
-        return getGoalBearing(result, pose3D);
+        return getGoalBearing(getResult(), getRobotPose3D());
     }
 
     public double getMediatedGoalBearing() {
@@ -201,12 +202,7 @@ public class LimeVision implements TeamConstants {
         limelight.captureSnapshot(string);
     }
 
-    public static Pose2d Pose3DtoPose2d(Pose3D pose3D) {
-        Position position = pose3D.getPosition().toUnit(DistanceUnit.INCH);
-        YawPitchRollAngles orientation = pose3D.getOrientation();
 
-        return new Pose2d(position.x, position.y, orientation.getYaw(AngleUnit.RADIANS));
-    }
 
 
 }
