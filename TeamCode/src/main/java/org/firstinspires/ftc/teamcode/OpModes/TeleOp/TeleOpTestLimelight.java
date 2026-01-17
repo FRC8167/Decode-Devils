@@ -89,6 +89,10 @@ public class TeleOpTestLimelight extends RobotConfiguration implements TeamConst
             drawingUtility.send();
 
             telemetry.addLine("");
+
+            State[] states = limeVision.getFirstSequence();
+            telemetry.addData("States: ", spinStates.convertStatesToInitials(states));
+
             telemetry.update();
 
 

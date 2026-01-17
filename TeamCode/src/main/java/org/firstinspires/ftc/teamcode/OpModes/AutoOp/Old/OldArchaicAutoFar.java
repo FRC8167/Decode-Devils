@@ -5,7 +5,6 @@ import android.annotation.SuppressLint;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.Cogintilities.Color;
 import org.firstinspires.ftc.teamcode.Cogintilities.ConfigurableConstants;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
@@ -15,8 +14,8 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 
 //@Disabled
-@Autonomous(name="ArchaicAutoFar", group="Autonomous", preselectTeleOp = "MainTeleOp")
-public class ArchaicAutoFar extends RobotConfiguration implements TeamConstants {
+@Autonomous(name="OldArchaicAutoFar", group="Autonomous", preselectTeleOp = "MainTeleOp")
+public class OldArchaicAutoFar extends RobotConfiguration implements TeamConstants {
 
     @SuppressLint("DefaultLocale")
     @Override
@@ -52,13 +51,12 @@ public class ArchaicAutoFar extends RobotConfiguration implements TeamConstants 
             }
 
             if (limeVision != null) {
-
-                double adjustedBearing = limeVision.getMediatedGoalBearing();
-                telemetry.addLine("");
-                telemetry.addData("Bearing(Calculated & Adjusted): ", adjustedBearing);
-                if (Math.abs(adjustedBearing) <= 1) {
-                    telemetry.addLine("Position OK");
-                }
+                    double adjustedBearing = limeVision.getMediatedGoalBearing();
+                    telemetry.addLine("");
+                    telemetry.addData("Bearing(Calculated & Adjusted): ", adjustedBearing);
+                    if (Math.abs(adjustedBearing) <= 2) {
+                        telemetry.addLine("Position OK");
+                    }
             }
 
             telemetry.update();
@@ -81,55 +79,36 @@ public class ArchaicAutoFar extends RobotConfiguration implements TeamConstants 
             vision.disableAprilTagDetection();
         }
 
-//        double firstPos = 60;
-//        double firstOff = 0;
-//        double secondPos = -60;
-//        double secondOff = 0;
-//
-//        if (artifactSequence != null) {
-//            State firstState = artifactSequence[0];
-//            State secondState = artifactSequence[1];
-//            lightRGB.setColorState(firstState);
-//            if (firstState == State.GREEN || secondState == State.GREEN) {
-//                firstPos = -60;
-//                firstOff = 0;
-//                secondPos = 60;
-//                secondOff = 0;
-//            }
-//        }
+        double firstPos = 60;
+        double firstOff = 0;
+        double secondPos = -60;
+        double secondOff = 0;
+
+        if (artifactSequence != null) {
+            State firstState = artifactSequence[0];
+            State secondState = artifactSequence[1];
+            lightRGB.setColorState(firstState);
+            if (firstState == State.GREEN || secondState == State.GREEN) {
+                firstPos = -60;
+                firstOff = 0;
+                secondPos = 60;
+                secondOff = 0;
+            }
+        }
 
         shooter.setVelocityRPM(ConfigurableConstants.SHOOTER_VELOCITY_AUTO_FAR);
 
-        double position;
-
-        if (artifactSequence == STATES_PPG) {
-            position = 360;
-            spindexer.setCenteredPositionDegrees(0);
-        } else if (artifactSequence == STATES_PGP) {
-            position = 480;
-            spindexer.setCenteredPositionDegrees(120);
-        } else if (artifactSequence == STATES_GPP) {
-            position = -360;
-            spindexer.setCenteredPositionDegrees(0);
-        } else {
-            position = -360;
-            spindexer.setCenteredPositionDegrees(0);
-        }
-
-
-
         while (opModeIsActive()) {
             if (timer.isDone()) {
-                if (shooter.isCloseEnough(100) && spindexer.isSpinnerDone() && step == 0) {
-                    spindexer.drop();
+                if (shooter.isCloseEnough(100) && step == 0) {
                     step = 1;
-                    timer.startNewTimer(2);
                 }
 
                 else if (step == 1) {
                     spindexer.drop();
-                    if (spindexer.getCenteredPositionDegrees() != position) {
-                        spindexer.setCenteredPositionDegrees(position);
+                    if (spindexer.getCenteredPositionDegrees() != firstPos) {
+                        spindexer.setWiggleOffset(firstOff);
+                        spindexer.setCenteredPositionDegrees(firstPos);
                     }
                     if (spindexer.isSpinnerDone()) {
                         step = 2;
@@ -139,13 +118,13 @@ public class ArchaicAutoFar extends RobotConfiguration implements TeamConstants 
 
                 else if (step == 2) {
                     spindexer.drop();
-//                    if (spindexer.getCenteredPositionDegrees() != secondPos) {
-//                        spindexer.setWiggleOffset(secondOff);
-//                        spindexer.setCenteredPositionDegrees(secondPos);
-//                    }
+                    if (spindexer.getCenteredPositionDegrees() != secondPos) {
+                        spindexer.setWiggleOffset(secondOff);
+                        spindexer.setCenteredPositionDegrees(secondPos);
+                    }
                     if (spindexer.isSpinnerDone()) {
                         step = 3;
-//                        timer.startNewTimer(3);
+                        timer.startNewTimer(3);
                     }
                 }
 

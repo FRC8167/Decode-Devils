@@ -22,6 +22,7 @@ public class ArchaicAutoCloseRed extends RobotConfiguration implements TeamConst
     public void runOpMode() throws InterruptedException {
 
         initializeRobot(new Pose2d(0,0,0), true);
+        setAlliance(AllianceColor.BLUE);
 
         int step = 0;
 
@@ -33,7 +34,7 @@ public class ArchaicAutoCloseRed extends RobotConfiguration implements TeamConst
                 vision.scanForAprilTags();
                 AprilTagDetection tag = vision.getFirstTargetTag();
                 if (tag != null) {
-                    State[] states = vision.getTagStates(tag);
+                    State[] states = vision.getFirstSequence();
                     if (states != null) {
                         telemetry.addData("States: ", spinStates.convertStatesToInitials(states));
                         lightRGB.setColor(Color.AZURE);
@@ -61,32 +62,32 @@ public class ArchaicAutoCloseRed extends RobotConfiguration implements TeamConst
             vision.scanForAprilTags();
             AprilTagDetection tag = vision.getFirstTargetTag();
             if (tag != null) {
-                State[] states = vision.getFirstSequence();
+                State[] states = vision.getTagStates(tag);
                 if (states != null) {
-                    ArtifactSequence = states;
+                    artifactSequence = states;
                 }
             }
             vision.disableAprilTagDetection();
         }
 
-        double firstPos = 60;
-        double firstOff = 0;
-        double secondPos = -60;
-        double secondOff = 0;
+        shooter.setVelocityRPM(ConfigurableConstants.SHOOTER_VELOCITY_AUTO_CLOSE);
 
-        if (ArtifactSequence != null) {
-            State firstState = ArtifactSequence[0];
-            State secondState = ArtifactSequence[1];
-            lightRGB.setColorState(firstState);
-            if (firstState == State.GREEN || secondState == State.GREEN) {
-                firstPos = -60;
-                firstOff = 0;
-                secondPos = 60;
-                secondOff = 0;
-            }
+        double position;
+
+        if (artifactSequence == STATES_PPG) {
+            position = 360;
+            spindexer.setCenteredPositionDegrees(0);
+        } else if (artifactSequence == STATES_PGP) {
+            position = 480;
+            spindexer.setCenteredPositionDegrees(120);
+        } else if (artifactSequence == STATES_GPP) {
+            position = -360;
+            spindexer.setCenteredPositionDegrees(0);
+        } else {
+            position = -360;
+            spindexer.setCenteredPositionDegrees(0);
         }
 
-        shooter.setVelocityRPM(ConfigurableConstants.SHOOTER_VELOCITY_AUTO_CLOSE);
         drive.mecanumDrive(-1, 0, 0);
         timer.startNewTimer(1);
 
@@ -103,9 +104,9 @@ public class ArchaicAutoCloseRed extends RobotConfiguration implements TeamConst
 
                 else if (step == 1) {
                     spindexer.drop();
-                    if (spindexer.getCenteredPositionDegrees() != firstPos) {
-                        spindexer.setWiggleOffset(firstOff);
-                        spindexer.setCenteredPositionDegrees(firstPos);
+                    spindexer.drop();
+                    if (spindexer.getCenteredPositionDegrees() != position) {
+                        spindexer.setCenteredPositionDegrees(position);
                     }
                     if (spindexer.isSpinnerDone()) {
                         step = 2;
@@ -115,13 +116,13 @@ public class ArchaicAutoCloseRed extends RobotConfiguration implements TeamConst
 
                 else if (step == 2) {
                     spindexer.drop();
-                    if (spindexer.getCenteredPositionDegrees() != secondPos) {
-                        spindexer.setWiggleOffset(secondOff);
-                        spindexer.setCenteredPositionDegrees(secondPos);
-                    }
+//                    if (spindexer.getCenteredPositionDegrees() != secondPos) {
+//                        spindexer.setWiggleOffset(secondOff);
+//                        spindexer.setCenteredPositionDegrees(secondPos);
+//                    }
                     if (spindexer.isSpinnerDone()) {
                         step = 3;
-                        timer.startNewTimer(3);
+//                        timer.startNewTimer(3);
                     }
                 }
 

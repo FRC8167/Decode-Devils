@@ -34,15 +34,6 @@ public class LimeVision implements TeamConstants {
         pipeline = 0;
     }
 
-//    public LimeVision(Limelight3A limelight, IMU imu) {
-//        this(limelight);
-//        this.imu = imu;
-//    }
-
-//    public void setImu(IMU imu) {
-//        this.imu = imu;
-//    }
-
 
     public void setPipeline(int pipeline) {
         this.limelight.pipelineSwitch(pipeline);
@@ -105,7 +96,7 @@ public class LimeVision implements TeamConstants {
     public double getGoalBearing(LLResult result, Pose3D pose3D) {
         if (result == null) return Double.NaN;
         if (pose3D == null) return Double.NaN;
-        Position position = pose3D.getPosition();
+        Position position = pose3D.getPosition().toUnit(DistanceUnit.INCH);
         YawPitchRollAngles orientation = pose3D.getOrientation();
 
         List<LLResultTypes.FiducialResult> goalFiducials = getGoalFiducials(result);
@@ -114,7 +105,6 @@ public class LimeVision implements TeamConstants {
         if (goalFiducials.size() == 1) {
             goalFiducial = goalFiducials.get(0);
         } else {
-            goalFiducials.size();
             for (LLResultTypes.FiducialResult fiducialResult : goalFiducials) {
                 int id = fiducialResult.getFiducialId();
                 double angle = orientation.getYaw(AngleUnit.DEGREES);
@@ -135,9 +125,9 @@ public class LimeVision implements TeamConstants {
 
         int id = goalFiducial.getFiducialId();
         if (id == 20) {
-            rawAngle = PoseMath.poseArcTan(position, BLUE_GOAL_CENTER, AngleUnit.DEGREES);
+            rawAngle = PoseMath.poseArcTan(position, BLUE_GOAL_TARGET, AngleUnit.DEGREES);
         } else if (id == 24) {
-            rawAngle = PoseMath.poseArcTan(position, RED_GOAL_CENTER, AngleUnit.DEGREES);
+            rawAngle = PoseMath.poseArcTan(position, RED_GOAL_TARGET, AngleUnit.DEGREES);
         } else {
             return Double.NaN;
         }
@@ -158,6 +148,56 @@ public class LimeVision implements TeamConstants {
         return getGoalBearing(getResult(), getMediatiatedRobotPose3D());
     }
 
+    public double getGoalDistance(LLResult result, Pose3D pose3D) {
+        if (result == null) return Double.NaN;
+        if (pose3D == null) return Double.NaN;
+        Position position = pose3D.getPosition().toUnit(DistanceUnit.INCH);
+        YawPitchRollAngles orientation = pose3D.getOrientation();
+
+        List<LLResultTypes.FiducialResult> goalFiducials = getGoalFiducials(result);
+        if (goalFiducials == null || goalFiducials.isEmpty()) return Double.NaN;
+        LLResultTypes.FiducialResult goalFiducial = null;
+        if (goalFiducials.size() == 1) {
+            goalFiducial = goalFiducials.get(0);
+        } else {
+            for (LLResultTypes.FiducialResult fiducialResult : goalFiducials) {
+                int id = fiducialResult.getFiducialId();
+                double angle = orientation.getYaw(AngleUnit.DEGREES);
+                if (angle >= -180 && angle < 0 && id == 20) {
+                    goalFiducial = fiducialResult;
+                    break;
+                } else if (angle >= 0 && angle < 180 && id == 24) {
+                    goalFiducial = fiducialResult;
+                    break;
+                }
+
+            }
+        }
+
+        if (goalFiducial == null) return Double.NaN;
+
+        double distance;
+
+        int id = goalFiducial.getFiducialId();
+        if (id == 20) {
+            distance = PoseMath.poseFlattenedDistance(position, BLUE_GOAL_TARGET, DistanceUnit.INCH);
+        } else if (id == 24) {
+            distance = PoseMath.poseFlattenedDistance(position, RED_GOAL_TARGET, DistanceUnit.INCH);
+        } else {
+            return Double.NaN;
+        }
+
+        return distance;
+    }
+
+    public double getGoalDistance() {
+        return getGoalDistance(getResult(), getRobotPose3D());
+    }
+
+    public double getMediatedGoalDistance() {
+        return getGoalDistance(getResult(), getMediatiatedRobotPose3D());
+    }
+
     static public List<LLResultTypes.FiducialResult> getGoalFiducials(LLResult result) { //Note: O
         if (result == null || !result.isValid()) return null;
         List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
@@ -170,13 +210,55 @@ public class LimeVision implements TeamConstants {
             }
         }
         return goalResults;
-//        if (fiducialResults.size() == 1) {
-//            LLResultTypes.FiducialResult fiducialResult = fiducialResults.get(0);
-//            int id = fiducialResult.getFiducialId();
-//            if (id == 20 || id == 24) {
-//                return fiducialResult;
-//            } else return null;
-//        } else return null;
+    }
+
+    static public List<LLResultTypes.FiducialResult> getObeliskFiducials(LLResult result) { //Note: O
+        if (result == null || !result.isValid()) return null;
+        List<LLResultTypes.FiducialResult> fiducialResults = result.getFiducialResults();
+        if (fiducialResults == null || fiducialResults.isEmpty()) return null;
+        List<LLResultTypes.FiducialResult> obeliskResults = new ArrayList<>();
+        for (LLResultTypes.FiducialResult fiducialResult : fiducialResults) {
+            int id = fiducialResult.getFiducialId();
+            if (id == 21 || id == 22 || id == 23) {
+                obeliskResults.add(fiducialResult);
+            }
+        }
+        return obeliskResults;
+    }
+
+    static public List<Integer> getObeliskIDs(LLResult result) { //Note: O
+        List<LLResultTypes.FiducialResult> obeliskResults = getObeliskFiducials(result);
+        if (obeliskResults == null || obeliskResults.isEmpty()) return null;
+        List<Integer> idList = new ArrayList<>();
+        for (LLResultTypes.FiducialResult fiducialResult : obeliskResults) {
+            idList.add(fiducialResult.getFiducialId());
+        }
+        return idList;
+    }
+
+    public State[] getIdStates(int id) {
+        switch (id) {
+            case 21: return STATES_GPP;
+            case 22: return STATES_PGP;
+            case 23: return STATES_PPG;
+            default: return null;
+        }
+    }
+
+    public List<State[]> getSequences() {
+        List<Integer> obeliskIDs = getObeliskIDs(getResult());
+        if (obeliskIDs == null || obeliskIDs.isEmpty()) return null;
+        List<State[]> sequences = new ArrayList<>();
+        for (Integer ID : obeliskIDs) {
+            State[] states = getIdStates(ID);
+            if (states != null) sequences.add(states);
+        }
+        return sequences.isEmpty() ? null : sequences;
+    }
+
+    public State[] getFirstSequence() {
+        List<State[]> sequences = getSequences();
+        return (sequences == null || sequences.isEmpty()) ? null : sequences.get(0);
     }
 
     static public String tagIdLookup(int id) {

@@ -93,7 +93,11 @@ public interface TeamConstants {
     double LIME_VISION_POSE_MEDIATING_STALENESS_TOL = 0.5; //Staleness in seconds for which older poses will be removed
     double LIME_VISION_POSE_MEDIATING_MIN_POSES = 3;
 
-    Position BLUE_GOAL_CENTER = new Position(DistanceUnit.INCH, -63.607644, -63.638894, 38.75, 0);
-    Position RED_GOAL_CENTER = new Position(DistanceUnit.INCH, -63.607644, 63.638894, 38.75, 0);
+    Position BLUE_GOAL_TARGET = new Position(DistanceUnit.INCH, -60.699807, -57.531366, 38.75, 0);
+    Position RED_GOAL_TARGET = new Position(DistanceUnit.INCH, -60.699807, 57.531366, 38.75, 0);
+
+
+//    Position BLUE_GOAL_TARGET = new Position(DistanceUnit.INCH, -63.607644, -63.638894, 38.75, 0);
+//    Position RED_GOAL_TARGET = new Position(DistanceUnit.INCH, -63.607644, 63.638894, 38.75, 0);
     //Note: Coordinate system is looking from red side towards field with 0 deg to their right
 }
