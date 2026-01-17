@@ -26,7 +26,7 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
     @Override
     public void runOpMode() throws InterruptedException {
 
-        initializeRobot(new Pose2d(0,0,0), true);
+        initializeRobot(new Pose2d(0,0,0), false);
 
         artifactsOnRamp = 0;
 
