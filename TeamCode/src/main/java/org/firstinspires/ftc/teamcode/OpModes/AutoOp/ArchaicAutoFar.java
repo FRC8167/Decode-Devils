@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.OpModes.AutoOp.Old;
+package org.firstinspires.ftc.teamcode.OpModes.AutoOp;
 
 import android.annotation.SuppressLint;
 
@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.Cogintilities.Color;
 import org.firstinspires.ftc.teamcode.Cogintilities.ConfigurableConstants;
+import org.firstinspires.ftc.teamcode.Cogintilities.GamepadUtility;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 import org.firstinspires.ftc.teamcode.Cogintilities.TimedTimer;
 import org.firstinspires.ftc.teamcode.Robot.RobotConfiguration;
@@ -59,6 +60,18 @@ public class ArchaicAutoFar extends RobotConfiguration implements TeamConstants 
                 if (Math.abs(adjustedBearing) <= 1) {
                     telemetry.addLine("Position OK");
                 }
+
+                Pose3D pose = limeVision.getMediatiatedRobotPose3D();
+                if (pose != null){
+                    if (pose.getPosition().y > 2) {
+                        setAlliance(AllianceColor.RED);
+                    } else if (pose.getPosition().y < 2) {
+                        setAlliance(AllianceColor.BLUE);
+                    } else setAlliance(null);
+                } else setAlliance(null);
+                telemetry.addLine();
+                AllianceColor allianceColor = getAlliance();
+                telemetry.addData("Alliance: ", allianceColor != null ? allianceColor.name() : "null");
             }
 
             telemetry.update();

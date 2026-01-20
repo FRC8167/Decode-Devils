@@ -14,6 +14,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
+import org.firstinspires.ftc.teamcode.Cogintilities.Color;
+import org.firstinspires.ftc.teamcode.Cogintilities.GamepadUtility;
 import org.firstinspires.ftc.teamcode.SubSystems.LimeVision;
 import org.firstinspires.ftc.teamcode.Cogintilities.SpinnerSequencer;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
@@ -49,7 +51,16 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
 
 
     /*------------- Private Class Variables - Preferred -------------*/
-    protected enum AllianceColor { RED, BLUE }
+    public enum AllianceColor {
+        RED, BLUE;
+        public Color getColor() {
+            switch (this) {
+                case RED:  return Color.RED;
+                case BLUE: return Color.BLUE;
+                default:   return null;
+            }
+        }
+    }
     static private AllianceColor alliance;
     static List<LynxModule> ctrlHubs;
     static protected State[] artifactSequence = null;
@@ -195,7 +206,10 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
 
 
     /* ********* Setters, Getters, Utility and Helper Functions ********** */
-    protected void setAlliance(AllianceColor color){ alliance = color; }
+    protected void setAlliance(AllianceColor color) {
+        alliance = color;
+        GamepadUtility.setGamepadLED(alliance, gamepad1, gamepad2);
+    }
     protected static AllianceColor getAlliance(){ return alliance; }
 
 //    public String hubA() {

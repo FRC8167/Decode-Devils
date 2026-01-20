@@ -2,12 +2,16 @@ package org.firstinspires.ftc.teamcode.OpModes.TeleOp;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.Cogintilities.Color;
 import org.firstinspires.ftc.teamcode.Cogintilities.ConfigurableConstants;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 import org.firstinspires.ftc.teamcode.Cogintilities.TimedTimer;
+import org.firstinspires.ftc.teamcode.Cogintilities.VariableShooterLookup;
 import org.firstinspires.ftc.teamcode.Robot.RobotConfiguration;
+import org.firstinspires.ftc.teamcode.SubSystems.LimeVision;
+import org.firstinspires.ftc.teamcode.SubSystems.SpinStatesSingleton;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 //@Disabled
@@ -86,10 +90,10 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
             } else if (gamepad2.dpadDownWasPressed()) {
                 spinnerSequencer.stop();
                 spindexer.setCenteredPositionDegrees(0);
-            } else if (gamepad2.xWasPressed()) {
+            } else if (gamepad2.xWasPressed() || gamepad2.squareWasPressed()) {
                 spinnerSequencer.stop();
                 spindexer.rotateStateToDrop(State.PURPLE);
-            } else if (gamepad2.aWasPressed()) {
+            } else if (gamepad2.aWasPressed() || gamepad2.crossWasPressed()) {
                 spinnerSequencer.stop();
                 spindexer.rotateStateToDrop(State.GREEN);
             }
@@ -110,17 +114,29 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 ////                    )
 ////            );
             if (gamepad2.right_trigger > 0) {
-                shooter.setVelocityRPM(ConfigurableConstants.SHOOTER_VELOCITY_FAR * gamepad2.right_trigger);
+                double shootVel = ConfigurableConstants.SHOOTER_VELOCITY_FAR * gamepad2.right_trigger;
+                if (limeVision != null) {
+                    double distance = limeVision.getGoalDistance();
+                    if (!Double.isNaN(distance))
+                        shootVel = VariableShooterLookup.getVelocityByDistance(distance);
+                }
+                shooter.setVelocityRPM(shootVel);
             } else if (gamepad2.left_trigger > 0) {
-                shooter.setVelocityRPM(ConfigurableConstants.SHOOTER_VELOCITY_CLOSE * gamepad2.left_trigger);
+                double shootVel = ConfigurableConstants.SHOOTER_VELOCITY_CLOSE * gamepad2.left_trigger;
+                if (limeVision != null) {
+                    double distance = limeVision.getGoalDistance();
+                    if (!Double.isNaN(distance))
+                        shootVel = VariableShooterLookup.getVelocityByDistance(distance);
+                }
+                shooter.setVelocityRPM(shootVel);
             } else {
                 shooter.setVelocityRPM(0);
             }
 
-            if (gamepad1.a) {
-                double goalBearing = limeVision.getGoalBearing();
+            if (gamepad1.a || gamepad1.cross) {
+                double goalBearing = limeVision != null ? limeVision.getGoalBearing() : Double.NaN;
                 if (!Double.isNaN(goalBearing)) {
-                    drive.turnToHeadingError(goalBearing); //TODO: Test if integration is correct
+                    drive.turnToHeadingError(goalBearing - gamepad1.right_trigger + gamepad1.left_trigger ); //TODO: Test if integration is correct
                     skipNextDrive = true;
                 }
 //                if (!posTagValidityTimer.isDone()) {
@@ -128,6 +144,8 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 //                    skipNextDrive = true;
 //                }
             }
+
+
 
 //            if (gamepad2.dpad_up) {
 //                intake.setMotorPower(INTAKE_POWER_FORWARD);
@@ -152,7 +170,7 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 
             spindexer.setWiggleOffset(SPINNER_WIGGLE_MANUAL*gamepad2.right_stick_x);
 
-            if (gamepad1.backWasPressed()) {
+            if (gamepad1.backWasPressed() || gamepad1.shareWasPressed()) {
 //                if (ArtifactSequence != null) {
 ////                    spinnerSequencer.runStatesToDrop(ArtifactSequence);
 //                    spinnerSequencer.runDual(ArtifactSequence);
@@ -183,7 +201,7 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 //                spinnerSequencer.runScanAll();
 //            }
 
-            if (gamepad2.yWasPressed()) {
+            if (gamepad2.yWasPressed() || gamepad2.triangleWasPressed()) {
 //                ArtifactSequence = new State[]{State.PURPLE, State.PURPLE, State.PURPLE};
 //
                 if (artifactSequence == STATES_GPP) {
@@ -208,15 +226,15 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 //                }
             }
 
-            if (gamepad1.xWasPressed()) {
+            if (gamepad1.xWasPressed() || gamepad1.squareWasPressed()) {
                 artifactSequence = STATES_GPP;
-            } else if (gamepad1.yWasPressed()) {
+            } else if (gamepad1.yWasPressed() || gamepad1.triangleWasPressed()) {
                 artifactSequence = STATES_PGP;
-            } else if (gamepad1.bWasPressed()) {
+            } else if (gamepad1.bWasPressed() || gamepad1.circleWasPressed()) {
                 artifactSequence = STATES_PPG;
             }
 
-            if (gamepad2.b) {
+            if (gamepad2.b || gamepad2.circle) {
 //                shooter.resetMin();
 
             }
@@ -269,6 +287,10 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 //            telemetry.addData("RawPos: ", spindexer.getPosition());
             telemetry.addData("ActiveDrop: ", spindexer.getActiveSlotDrop());
             telemetry.addData("ActiveSensor: ", spindexer.getActiveSlotSensor());
+
+            telemetry.addData("G-Pad 1: ", gamepad1.type.toString());
+            telemetry.addData("G-Pad 2: ", gamepad2.type.toString());
+            telemetry.addData("Sequence: ", spinStates.convertStatesToInitials(artifactSequence));
 //            telemetry.addData("Slot0: ", spinStates.getSlot(0));
 //            telemetry.addData("Slot1: ", spinStates.getSlot(1));
 //            telemetry.addData("Slot2: ", spinStates.getSlot(2));
@@ -279,6 +301,8 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 //            telemetry.addData("SequenceActive: ", !spinnerSequencer.isDone());
             telemetry.addData("ArtifactSequence: ", spinStates.convertStatesToInitials(artifactSequence));
             telemetry.addData("ArtifactSequenceLength: ", artifactSequence == null ? "null": artifactSequence.length);
+            telemetry.addLine();
+            telemetry.addData("Bearing: ", limeVision.getMediatedGoalBearing());
 //            telemetry.addData("LF: ", drive.getLFpower());
 //            telemetry.addData("RF: ", drive.getRFpower());
 //            telemetry.addData("LR: ", drive.getLRpower());
@@ -288,7 +312,21 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 //            telemetry.addData("ColorVal", lightRGB.servoPos());
             telemetry.update();
 
+            if (shooter.getTargetVelocityRPM() != 0) {
+                double mediatedBearing = limeVision != null ? limeVision.getMediatedGoalBearing() : Double.NaN;
+                if (!Double.isNaN(mediatedBearing)) {
+                    if (Math.abs(mediatedBearing) <= 2) {
+                        gamepad2.stopRumble();
+                    } else {
+                        gamepad2.rumble(Gamepad.RUMBLE_DURATION_CONTINUOUS);
+                    }
+                } else {
+                    gamepad2.rumble(Gamepad.RUMBLE_DURATION_CONTINUOUS);
+                }
+            } else gamepad2.stopRumble();
+
             periodic();
+
         }
     }
 
@@ -302,24 +340,22 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 //        telemetry.addData("Vel: ", shooter.getVelocityRPM());
 //        telemetry.addData("TarVel: ", shooter.getTargetVelocityRPM());
 //        telemetry.addData("C-Enough: ", shooter.isCloseEnough(100));
-        if (buttonTimer.isDone() && shooter.getTargetVelocityRPM() == 0) {
-            lightRGB.setColorState(spinStates.get2ndNextToShoot(artifactsOnRamp, artifactSequence));
-        } else if (shooter.getTargetVelocityRPM() != 0) {
-//            if (!posTagValidityTimer.isDone()) {
-//                if (Math.abs(Math.toDegrees(Math.atan2(posTag.ftcPose.y + 5.5, posTag.ftcPose.x - 3.5)) - 90 + (gamepad1.left_trigger - gamepad1.right_trigger) * 3) <= 2) {
-//                    lightRGB.setColor(Color.AZURE);
-//                } else {
-//                    lightRGB.setColor(Color.ORANGE);
-//                }
-            double bearing = limeVision.getMediatedGoalBearing();
-            if (!Double.isNaN(bearing)) {
-                if (Math.abs(bearing) <= 2) {
-                    lightRGB.setColor(Color.AZURE); //TODO: Decide if color feedback is worth its drawbacks or come up with alternative (rumble?)
-                } else lightRGB.setColor(Color.ORANGE);
-            } else {
-                lightRGB.setOff();
-            }
+        if (buttonTimer.isDone()) {
+            lightRGB.setColorState(spinStates.getNextToShoot(artifactsOnRamp, artifactSequence));
         }
+
+        if (artifactSequence == null && limeVision != null) {
+            State[] statesL = limeVision.getFirstSequence();
+            if (statesL != null) artifactSequence = statesL;
+
+        }
+
+//        if (limeVision != null) {
+//            telemetry.addData("LimeSequence: ",  spinStates.convertStatesToInitials(limeVision.getFirstSequence()));
+//            telemetry.addData("ObeliskIDs: ",  LimeVision.getObeliskIDs(limeVision.getResult()));
+//        }
+
+
 //        if (shooter.isCloseEnough(100)) {
 //            double targetVel = shooter.getTargetVelocityRPM();
 //            if (targetVel == 0) {

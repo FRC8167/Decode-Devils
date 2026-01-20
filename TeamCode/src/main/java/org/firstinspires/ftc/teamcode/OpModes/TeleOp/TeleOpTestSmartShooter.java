@@ -3,10 +3,7 @@ package org.firstinspires.ftc.teamcode.OpModes.TeleOp;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.Cogintilities.Color;
-import org.firstinspires.ftc.teamcode.Cogintilities.ConfigurableConstants;
-import org.firstinspires.ftc.teamcode.Cogintilities.FileManagement;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 import org.firstinspires.ftc.teamcode.Cogintilities.TimedTimer;
 import org.firstinspires.ftc.teamcode.Cogintilities.VariableShooterLookup;

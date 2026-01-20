@@ -62,7 +62,7 @@ public class ArchaicAutoCloseRed extends RobotConfiguration implements TeamConst
             vision.scanForAprilTags();
             AprilTagDetection tag = vision.getFirstTargetTag();
             if (tag != null) {
-                State[] states = vision.getTagStates(tag);
+                State[] states = vision.getFirstSequence();
                 if (states != null) {
                     artifactSequence = states;
                 }
