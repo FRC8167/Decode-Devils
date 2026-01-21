@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Cogintilities.Color;
 import org.firstinspires.ftc.teamcode.Cogintilities.ConfigurableConstants;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
@@ -278,19 +279,11 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 
             telemetry.addData("ShooterVelocity: ", shooter.getVelocityRPM());
             telemetry.addData("ShooterTargetVelocity: ", shooter.getTargetVelocityRPM());
-//            telemetry.addData("CloseEnough: ", shooter.isCloseEnough(100));
-//            telemetry.addData("Color: ", colorDetection.getColor());
-//            telemetry.addData("H: ", colorDetection.getColorHSV()[0]);
-//            telemetry.addData("S: ", colorDetection.getColorHSV()[1]);
-//            telemetry.addData("V: ", colorDetection.getColorHSV()[2]);
             telemetry.addData("CenterPos: ", spindexer.getCenteredPositionDegrees());
 //            telemetry.addData("RawPos: ", spindexer.getPosition());
             telemetry.addData("ActiveDrop: ", spindexer.getActiveSlotDrop());
             telemetry.addData("ActiveSensor: ", spindexer.getActiveSlotSensor());
 
-            telemetry.addData("G-Pad 1: ", gamepad1.type.toString());
-            telemetry.addData("G-Pad 2: ", gamepad2.type.toString());
-            telemetry.addData("Sequence: ", spinStates.convertStatesToInitials(artifactSequence));
 //            telemetry.addData("Slot0: ", spinStates.getSlot(0));
 //            telemetry.addData("Slot1: ", spinStates.getSlot(1));
 //            telemetry.addData("Slot2: ", spinStates.getSlot(2));
@@ -299,17 +292,17 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 //            telemetry.addData("SpinnerTimer: ", spindexer.getSpinnerRemainingTime());
 //            telemetry.addData("DropPos: ", spindexer.getDropperPos());
 //            telemetry.addData("SequenceActive: ", !spinnerSequencer.isDone());
-            telemetry.addData("ArtifactSequence: ", spinStates.convertStatesToInitials(artifactSequence));
             telemetry.addData("ArtifactSequenceLength: ", artifactSequence == null ? "null": artifactSequence.length);
             telemetry.addLine();
             telemetry.addData("Bearing: ", limeVision.getMediatedGoalBearing());
-//            telemetry.addData("LF: ", drive.getLFpower());
-//            telemetry.addData("RF: ", drive.getRFpower());
-//            telemetry.addData("LR: ", drive.getLRpower());
-//            telemetry.addData("RR: ", drive.getRRpower());
-//            telemetry.addData("RT", gamepad2.right_trigger);
-//            telemetry.addData("LT", gamepad2.left_trigger);
-//            telemetry.addData("ColorVal", lightRGB.servoPos());
+
+            telemetry.addLine();
+            telemetry.addData("Color: ", colorDetection.getColor());
+            telemetry.addData("H: ", colorDetection.getColorHSV()[0]);
+            telemetry.addData("S: ", colorDetection.getColorHSV()[1]);
+            telemetry.addData("V: ", colorDetection.getColorHSV()[2]);
+            telemetry.addData("DistanceCM: ", colorDetection.getDistance(DistanceUnit.CM));
+
             telemetry.update();
 
             if (shooter.getTargetVelocityRPM() != 0) {

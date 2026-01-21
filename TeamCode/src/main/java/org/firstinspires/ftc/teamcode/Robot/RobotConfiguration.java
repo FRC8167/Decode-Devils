@@ -118,7 +118,7 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
         DcMotorEx shooterMotor = hardwareMap.get(DcMotorEx.class, "Shooter");
 //        DcMotorEx shooterMotor = new BetterMotor(hardwareMap, "Shooter");
 
-        CRServo intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
+//        CRServo intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
 
         RevColorSensorV3 colorSensor = hardwareMap.get(RevColorSensorV3.class, "colorSensor");
         Servo spinServo = hardwareMap.get(Servo.class, "spinServo");
@@ -135,7 +135,7 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
         drive            = new MecanumDriveBasic(driveMotorLF, driveMotorLR, driveMotorRF, driveMotorRR);
         autoDrive        = new MecanumDrive(hardwareMap, startPos);
         shooter          = new Shooter(shooterMotor);
-        intake           = new Intake(intakeServo);
+//        intake           = new Intake(intakeServo);
         colorDetection   = new ColorDetection(colorSensor);
         spinStates       = SpinStatesSingleton.getInstance();
         spinner          = new Spinner(spinServo, SPINNER_INIT_POS+SPINNER_OFFSET, SPINNER_MIN, SPINNER_MAX, moveServos);

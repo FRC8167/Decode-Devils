@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.Cogintilities.BetterMotor;
 import org.firstinspires.ftc.teamcode.Cogintilities.DefaultMotorInfo;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 
-@TeleOp(name="TeleOpTest", group="Competition")
+@TeleOp(name="TeleOpTest", group="Testing")
 public class TeleOpTest extends LinearOpMode implements TeamConstants {
 
     @Override

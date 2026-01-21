@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.RoadRunner.Drawing;
 import org.firstinspires.ftc.teamcode.Robot.RobotConfiguration;
 import org.firstinspires.ftc.teamcode.SubSystems.LimeVision;
 
-@TeleOp(name="TeleOpTestLimeLight", group="Competition")
+@TeleOp(name="TeleOpTestLimeLight", group="Testing")
 public class TeleOpTestLimelight extends RobotConfiguration implements TeamConstants {
 
     @Override

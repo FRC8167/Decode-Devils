@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Robot.RobotConfiguration;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 //@Disabled
-@TeleOp(name="TeleOpTestSmartShooter", group="Competition")
+@TeleOp(name="TeleOpTestSmartShooter", group="Testing")
 public class TeleOpTestSmartShooter extends RobotConfiguration implements TeamConstants{
 
     int artifactsOnRamp;

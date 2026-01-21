@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 import org.firstinspires.ftc.teamcode.SubSystems.Spinner;
 
-@TeleOp(name="TeleOpTestSpinner", group="Competition")
+@TeleOp(name="TeleOpTestSpinner", group="Testing")
 public class TeleOpTestSpinner extends LinearOpMode implements TeamConstants {
 
     @Override

@@ -108,29 +108,30 @@ public class Spindexer implements TeamConstants {
 
 
     public void rotateSlotToSensor(int slot) {
-        update();
-        double targetAngle;
-        switch (slot) {
-            case 0:
-                targetAngle = 120;
-                break;
-            case 1:
-                targetAngle = 0;
-                break;
-            case 2:
-                targetAngle = 240;
-                break;
-            default:
-                targetAngle = spinner.getCenteredPositionDegrees(); // No change if invalid slot
-        }
-        // Calculate the shortest path to the target angle
-        double delta = ((targetAngle - currentAngleNormalized + 540) % 360) - 180; // Calculate shortest path (-180 to 180)
-        if (currentAngleNormalized + delta > SPINNER_RANGE / 2)
-            delta -= 360;
-        else if (currentAngleNormalized + delta < -SPINNER_RANGE / 2)
-            delta += 360;
-        rotateBy(delta);
-        update();
+        rotateSlotToDrop(slot);
+//        update();
+//        double targetAngle;
+//        switch (slot) {
+//            case 0:
+//                targetAngle = 120;
+//                break;
+//            case 1:
+//                targetAngle = 0;
+//                break;
+//            case 2:
+//                targetAngle = 240;
+//                break;
+//            default:
+//                targetAngle = spinner.getCenteredPositionDegrees(); // No change if invalid slot
+//        }
+//        // Calculate the shortest path to the target angle
+//        double delta = ((targetAngle - currentAngleNormalized + 540) % 360) - 180; // Calculate shortest path (-180 to 180)
+//        if (currentAngleNormalized + delta > SPINNER_RANGE / 2)
+//            delta -= 360;
+//        else if (currentAngleNormalized + delta < -SPINNER_RANGE / 2)
+//            delta += 360;
+//        rotateBy(delta);
+//        update();
     }
 
     public void rotateStateToDrop(State state, int... excludedIndexes) {
@@ -324,7 +325,11 @@ public class Spindexer implements TeamConstants {
             default:
                 activeSlotSensor = -1;
                 break;
+
         }
+
+        activeSlotSensor = activeSlotDrop;
+        fractionalSlotSensor = fractionalSlotDrop;
 
         if (dropTimer.isDone()) {
             isOpen = false;
@@ -350,6 +355,7 @@ public class Spindexer implements TeamConstants {
 
     public void detectColor() { // TODO: Mount color sensor to spindexer & confirm positioning
         update();
+        //Note: Current Sensor mounting places it at the same position as drop and not at "sensor"
         if (activeSlotSensor != -1) {
             State state = spinStates.getSlot(activeSlotSensor);
             State newState = colorDetection.getState();
@@ -357,6 +363,15 @@ public class Spindexer implements TeamConstants {
                 spinStates.setSlot(activeSlotSensor, newState);
             }
         }
+
+        //Note: Old Sensor mounting placed it at "sensor" but was later changed
+//        if (activeSlotSensor != -1) {
+//            State state = spinStates.getSlot(activeSlotSensor);
+//            State newState = colorDetection.getState();
+//            if ((state == State.NONE || state == State.UNKNOWN) || (newState == State.GREEN || newState == State.PURPLE)) {
+//                spinStates.setSlot(activeSlotSensor, newState);
+//            }
+//        }
     }
 
     public void dropTimed() { // assumes successful drop

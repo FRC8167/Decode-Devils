@@ -4,6 +4,7 @@ import android.graphics.Color;
 
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 
 public class ColorDetection implements TeamConstants {
@@ -49,6 +50,10 @@ public class ColorDetection implements TeamConstants {
             case "Purple": return State.PURPLE;
             default: return State.UNKNOWN;
         }
+    }
+
+    public double getDistance(DistanceUnit distanceUnit) {
+        return colorSensor.getDistance(distanceUnit);
     }
 
     public float[] getColorHSV() {
