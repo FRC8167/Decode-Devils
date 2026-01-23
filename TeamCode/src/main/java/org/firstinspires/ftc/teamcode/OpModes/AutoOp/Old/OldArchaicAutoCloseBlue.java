@@ -36,7 +36,7 @@ public class OldArchaicAutoCloseBlue extends RobotConfiguration implements TeamC
                 if (tag != null) {
                     State[] states = vision.getFirstSequence();
                     if (states != null) {
-                        telemetry.addData("States: ", spinStates.convertStatesToInitials(states));
+                        telemetry.addData("States: ", State.convertStatesToInitials(states));
                         lightRGB.setColor(Color.AZURE);
                     } else {
                         telemetry.addLine("Invalid Tag");

@@ -35,7 +35,7 @@ public class OldArchaicAutoFar extends RobotConfiguration implements TeamConstan
                 if (tag != null) {
                     State[] states = vision.getFirstSequence();
                     if (states != null) {
-                        telemetry.addData("States: ", spinStates.convertStatesToInitials(states));
+                        telemetry.addData("States: ", State.convertStatesToInitials(states));
                         lightRGB.setColor(Color.AZURE);
                     } else {
                         telemetry.addLine("Invalid Tag");

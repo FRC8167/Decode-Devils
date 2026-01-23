@@ -31,6 +31,8 @@ public class SpinnerSequencer implements TeamConstants {
     private int currentScanSlot = -1;
     private int lastScanSlot = -1;
 
+    private double shootVel = ConfigurableConstants.SHOOTER_VELOCITY_FAR;
+
     private Mode mode;
     private DualMode dualMode;
 
@@ -58,12 +60,14 @@ public class SpinnerSequencer implements TeamConstants {
         update();
     }
 
-    public void runStatesToDrop(@NonNull State... states) {
+    public void runStatesToDrop(State... states) {
+        if (states == null || states.length == 0) return;
         stop();
         runStatesToDropInternal(states);
     }
 
-    public void runDual(@NonNull State... states) {
+    public void runDual(State... states) {
+        if (states == null || states.length == 0) return;
         dualModeStates = states;
         this.states = dualModeStates;
         dualMode = DualMode.INITIAL;
@@ -101,7 +105,7 @@ public class SpinnerSequencer implements TeamConstants {
         if (states == null || states.length == 0) stop();
     }
 
-    public boolean statesAreNotPresent(State[] states) {
+    public boolean statesAreNotPresent(@NonNull State[] states) {
         int countPurple = 0;
         int countGreen = 0;
         int countNone = 0;
@@ -115,14 +119,12 @@ public class SpinnerSequencer implements TeamConstants {
             if (!spinStates.isStateInStates(state)) {
                 return true;
             }
-            if (countPurple > spinStates.getCountOfStateInStates(State.PURPLE)
-                    || countGreen   > spinStates.getCountOfStateInStates(State.GREEN)
-                    || countNone    > spinStates.getCountOfStateInStates(State.NONE)
-                    || countUnknown > spinStates.getCountOfStateInStates(State.UNKNOWN)) {
-                return true;
-            }
+
         }
-        return false;
+        return countPurple > spinStates.getCountOfStateInStates(State.PURPLE)
+                || countGreen > spinStates.getCountOfStateInStates(State.GREEN)
+                || countNone > spinStates.getCountOfStateInStates(State.NONE)
+                || countUnknown > spinStates.getCountOfStateInStates(State.UNKNOWN);
     }
 
     public void update() {
@@ -177,6 +179,8 @@ public class SpinnerSequencer implements TeamConstants {
                     spindexer.continueRotatingBy(-SEQUENCER_WIGGLE_DEGREES);
                     wiggleActive = false;
                     mode = Mode.NONE;
+                    shooter.setVelocityRPM(0);
+                    spindexer.setCentered();
                 }
                 break;
 
@@ -247,9 +251,14 @@ public class SpinnerSequencer implements TeamConstants {
     }
 
     public void stop() {
+        if (!done && mode == Mode.DROP) shooter.setVelocityRPM(0);
         done = true;
         mode = Mode.NONE;
         dualMode = DualMode.NONE;
+    }
+
+    public void adjustShootVel(double velocity) {
+        shootVel = Double.isNaN(velocity) ? ConfigurableConstants.SHOOTER_VELOCITY_FAR : shootVel;
     }
 
     public boolean isDone() {
@@ -258,6 +267,9 @@ public class SpinnerSequencer implements TeamConstants {
 
     public Mode getMode() {
         return mode;
+    }
+    public DualMode getDualMode() {
+        return dualMode;
     }
 
     public int[] convertExcludedIndexes(@NonNull boolean... excludedIndexesBoolean) {

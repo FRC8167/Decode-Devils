@@ -26,6 +26,18 @@ public interface TeamConstants {
             return character;
         }
 
+        public static String convertStatesToInitials(State... states) {
+            if (states == null) {
+                return "";
+            } else {
+                StringBuilder string = new StringBuilder();
+                for (State state : states) {
+                    string.append(state.getCharacter());
+                }
+                return string.toString();
+            }
+        }
+
     } // Slot states for spindexer
 
     State[] STATES_GPP = {State.GREEN, State.PURPLE, State.PURPLE};

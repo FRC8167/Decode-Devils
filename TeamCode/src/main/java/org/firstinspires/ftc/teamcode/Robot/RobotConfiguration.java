@@ -71,7 +71,7 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
     static protected MecanumDriveBasic drive;
     static protected MecanumDrive autoDrive;
     static protected Shooter shooter;
-    static protected Intake intake;
+//    static protected Intake intake;
 //    static protected Fork fork;
     static protected SpinStatesSingleton spinStates;
     static protected ColorDetection colorDetection;

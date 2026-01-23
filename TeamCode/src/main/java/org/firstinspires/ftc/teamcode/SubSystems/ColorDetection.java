@@ -29,14 +29,14 @@ public class ColorDetection implements TeamConstants {
 
     public String getColor() {
         update();
-        if ((saturation == 0 && hue == 0) || (saturation == 1 && (hue == 120 || hue == 60))) // air is 120 and value !=0 for some reason
+        if ((saturation == 0 && hue == 0) || (saturation == 1 && (hue == 120 || hue == 60)) || getDistance(DistanceUnit.CM) > 3) // air is 120 and value !=0 for some reason
             return "Error";
-        else if (saturation < 0.5)
+        else if (saturation < 0.4)
             return "Invalid Color";
 
-        else if (70 < hue && hue < 160 && hue != 120) {
+        else if (70 <= hue && hue <= 165 && hue != 120) {
             return "Green";
-        } else if (220 < hue && hue < 300) {
+        } else if (220 <= hue && hue <= 315) {
             return "Purple";
         } else {
             return "Other";

@@ -86,19 +86,29 @@ public class SpinStatesSingleton implements TeamConstants {
         return Arrays.stream(excludedIndexes).noneMatch(element -> element == index);
     }
 
-    public String convertStatesToInitials(State... states) {
-        if (states == null) {
-            return "";
-        } else {
-            StringBuilder string = new StringBuilder();
-            for (State state : states) {
-                string.append(state.getCharacter());
-            }
-            return string.toString();
-        }
+//    public String convertStatesToInitials(State... states) {
+//        if (states == null) {
+//            return "";
+//        } else {
+//            StringBuilder string = new StringBuilder();
+//            for (State state : states) {
+//                string.append(state.getCharacter());
+//            }
+//            return string.toString();
+//        }
+//    }
+
+    public State[] getNextToShoot(int scored, State[] sequence) {
+        if (sequence == null)
+            return null;
+        int index1 = scored % 3;
+        int index2 = (scored+1) % 3;
+        int index3 = (scored+2) % 3;
+        return new State[]{sequence[index1], sequence[index2], sequence[index3]};
     }
 
-    public State getNextToShoot(int scored, State[] sequence) {
+
+    public State get1stNextToShoot(int scored, State[] sequence) {
         if (sequence == null)
             return State.NONE;
         int index = scored % 3;

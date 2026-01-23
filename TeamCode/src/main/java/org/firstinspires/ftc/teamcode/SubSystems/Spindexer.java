@@ -356,7 +356,7 @@ public class Spindexer implements TeamConstants {
     public void detectColor() { // TODO: Mount color sensor to spindexer & confirm positioning
         update();
         //Note: Current Sensor mounting places it at the same position as drop and not at "sensor"
-        if (activeSlotSensor != -1) {
+        if (activeSlotSensor != -1 && spinner.isDone()) {
             State state = spinStates.getSlot(activeSlotSensor);
             State newState = colorDetection.getState();
             if ((state == State.NONE || state == State.UNKNOWN) || (newState == State.GREEN || newState == State.PURPLE)) {

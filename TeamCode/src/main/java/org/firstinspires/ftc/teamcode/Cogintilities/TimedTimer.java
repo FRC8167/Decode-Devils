@@ -4,9 +4,6 @@ public class TimedTimer {
     private double initialTime;
     private double duration;
 
-    private double freezeTime;
-    private boolean frozen = false;
-
     public TimedTimer(double timeInSeconds) {
         initialTime = System.currentTimeMillis();
         duration = timeInSeconds*1000;
@@ -20,31 +17,14 @@ public class TimedTimer {
     public void startNewTimer(double timeInSeconds) {
         initialTime = System.currentTimeMillis();
         duration = timeInSeconds*1000;
-        frozen = false;
-        freezeTime = Double.NaN;
     }
 
     public void reset() {
         initialTime = System.currentTimeMillis();
-        frozen = false;
-        freezeTime = Double.NaN;
-    }
-
-    public void freeze() {
-        if (frozen) return;
-        frozen = true;
-        freezeTime = System.currentTimeMillis();
-    }
-
-    public void unfreeze() {
-        if (!frozen) return;
-        frozen = false;
-        initialTime += System.currentTimeMillis() - freezeTime;
-        freezeTime = Double.NaN;
     }
 
     private double time() {
-        return (frozen ? freezeTime : System.currentTimeMillis());
+        return System.currentTimeMillis();
     }
 
 
@@ -54,7 +34,7 @@ public class TimedTimer {
     }
 
     public double getRemainingTime() {
-        return Math.max(0, (initialTime + duration) - time());
+        return Math.max(0, (initialTime + duration) - time()) / 1000.0;
     }
 
     public double getProportionCompleted() {
@@ -63,7 +43,7 @@ public class TimedTimer {
     }
 
     public double getElapsedTime() {
-        return initialTime - time();
+        return (initialTime - time()) / 1000.0;
     }
 
 }

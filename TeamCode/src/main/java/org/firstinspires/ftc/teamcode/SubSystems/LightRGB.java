@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.SubSystems;
 
+import androidx.annotation.NonNull;
+
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
@@ -8,24 +10,15 @@ import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 
 public class LightRGB extends Servo1D implements TeamConstants {
 
-    private boolean isOn = true;
-    private double currentPosition = 1;
-
     public LightRGB(Servo servo, double initPos, double min, double max) {
         super(servo, initPos, min, max, true);
-        if (initPos != 0) setCurrentPosition(initPos);
-        else setOff();
+        setCurrentPosition(initPos);
     }
 
     public void setOff() {
-        isOn = false;
-        update();
+        setPosition(0);
     }
 
-    public void setOn() {
-        isOn = true;
-        update();
-    }
 
 //    public void setColor(String color) {
 //        setOn();
@@ -44,21 +37,16 @@ public class LightRGB extends Servo1D implements TeamConstants {
 //        update();
 //    }
 
-    public void setColor(Color color) {
-        setOn();
-        currentPosition = color.getServoValue();
-        update();
+    public void setColor(@NonNull Color color) {
+        setPosition(color.getServoValue());
     }
 
     public void setCurrentPosition(double currentPosition) {
-        this.currentPosition = currentPosition;
-        update();
+        setPosition(currentPosition);
     }
 
     public void setColorPosition(double colorPosition) {
-        setOn();
-        currentPosition = Range.scale(colorPosition,0,1,0.279,0.722);
-        update();
+        setPosition(Range.scale(colorPosition,0,1,0.279,0.722));
     }
 
     public void setColorState(State state) {
@@ -76,9 +64,9 @@ public class LightRGB extends Servo1D implements TeamConstants {
 //        }
     }
 
-    public void update() {
-        if (isOn) setPosition(currentPosition);
-        else setPosition(0);
-    }
+//    public void update() {
+//        if (isOn) setPosition(currentPosition);
+//        else setPosition(0);
+//    }
 
 }
