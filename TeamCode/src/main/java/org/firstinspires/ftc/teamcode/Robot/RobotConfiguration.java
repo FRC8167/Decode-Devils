@@ -7,7 +7,6 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -16,13 +15,14 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
 import org.firstinspires.ftc.teamcode.Cogintilities.Color;
 import org.firstinspires.ftc.teamcode.Cogintilities.GamepadUtility;
+import org.firstinspires.ftc.teamcode.Cogintilities.Prism.GoBildaPrismDriver;
 import org.firstinspires.ftc.teamcode.SubSystems.LimeVision;
 import org.firstinspires.ftc.teamcode.Cogintilities.SpinnerSequencer;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 import org.firstinspires.ftc.teamcode.RoadRunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.SubSystems.ColorDetection;
 import org.firstinspires.ftc.teamcode.SubSystems.Dropper;
-import org.firstinspires.ftc.teamcode.SubSystems.Intake;
+import org.firstinspires.ftc.teamcode.SubSystems.DataPrism;
 import org.firstinspires.ftc.teamcode.SubSystems.Shooter;
 import org.firstinspires.ftc.teamcode.SubSystems.LightRGB;
 import org.firstinspires.ftc.teamcode.SubSystems.MecanumDriveBasic;
@@ -63,7 +63,7 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
     }
     static private AllianceColor alliance;
     static List<LynxModule> ctrlHubs;
-    static protected State[] artifactSequence = null;
+    static private State[] artifactSequence = null;
     protected Telemetry telemetry;
 
 
@@ -77,7 +77,10 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
     static protected ColorDetection colorDetection;
     static protected Spindexer spindexer;
     static protected SpinnerSequencer spinnerSequencer;
-    static protected LightRGB lightRGB;
+    static protected LightRGB lightRGB_L;
+    static protected LightRGB lightRGB_M;
+    static protected LightRGB lightRGB_R;
+    static protected DataPrism dataPrism;
 
     static protected Vision vision;
 //    static protected Vision visionPos;
@@ -124,7 +127,10 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
         Servo spinServo = hardwareMap.get(Servo.class, "spinServo");
         Servo dropServo = hardwareMap.get(Servo.class, "dropServo");
 //        Servo forkServo = hardwareMap.get(Servo.class, "forkServo");
-        Servo servoRGB  = hardwareMap.get(Servo.class, "servoRGB");
+        Servo servoRGB_L = hardwareMap.get(Servo.class, "servoRGB-L");
+        Servo servoRGB_M = hardwareMap.get(Servo.class, "servoRGB-M");
+        Servo servoRGB_R = hardwareMap.get(Servo.class, "servoRGB-R");
+        GoBildaPrismDriver prism = hardwareMap.get(GoBildaPrismDriver.class,"prism");
 
         WebcamName webcam = hardwareMap.get(WebcamName.class, "Webcam1");
 //        WebcamName webcam2 = hardwareMap.get(WebcamName.class, "Webcam2");
@@ -141,7 +147,12 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
         spinner          = new Spinner(spinServo, SPINNER_INIT_POS+SPINNER_OFFSET, SPINNER_MIN, SPINNER_MAX, moveServos);
         dropper          = new Dropper(dropServo, DROPPER_INIT_POS, DROPPER_MIN, DROPPER_MAX, moveServos);
 //        fork             = new Fork   (forkServo, FORK_INIT_POS, FORK_MIN, FORK_MAX, moveServos);
-        lightRGB         = new LightRGB(servoRGB, LIGHT_INIT_POS, LIGHT_MIN, LIGHT_MAX);
+
+        lightRGB_L = new LightRGB(servoRGB_L, LIGHT_INIT_POS, LIGHT_MIN, LIGHT_MAX);
+        lightRGB_M = new LightRGB(servoRGB_M, LIGHT_INIT_POS, LIGHT_MIN, LIGHT_MAX);
+        lightRGB_R = new LightRGB(servoRGB_R, LIGHT_INIT_POS, LIGHT_MIN, LIGHT_MAX);
+        dataPrism  = new DataPrism(prism);
+
         spindexer        = new Spindexer(spinner, dropper, spinStates, colorDetection);
         spinnerSequencer = new SpinnerSequencer(spindexer, shooter, spinStates);
 
@@ -211,6 +222,13 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
         GamepadUtility.setGamepadLED(alliance, gamepad1, gamepad2);
     }
     protected static AllianceColor getAlliance(){ return alliance; }
+
+    protected void setArtifactSequence(State[] sequence) {
+        artifactSequence = sequence;
+    }
+    protected static State[] getArtifactSequence(){
+        return artifactSequence;
+    }
 
 //    public String hubA() {
 //        double currentmA = 0;

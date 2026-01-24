@@ -11,7 +11,7 @@ public interface TeamConstants {
         GREEN("Green", 'G'),
         PURPLE("Purple", 'P'),
         UNKNOWN("Unknown", 'U'),
-        NONE("None", 'U');
+        NONE("None", 'N');
         private final String color;
         private final char character;
 

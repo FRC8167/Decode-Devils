@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Cogintilities;
+package org.firstinspires.ftc.teamcode.Cogintilities.Other;
 // "borrowed" from com.seattlesolvers.solverslib.util
 
 import java.util.ArrayList;

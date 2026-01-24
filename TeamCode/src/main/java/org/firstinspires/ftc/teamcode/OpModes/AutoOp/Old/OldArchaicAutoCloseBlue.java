@@ -37,18 +37,18 @@ public class OldArchaicAutoCloseBlue extends RobotConfiguration implements TeamC
                     State[] states = vision.getFirstSequence();
                     if (states != null) {
                         telemetry.addData("States: ", State.convertStatesToInitials(states));
-                        lightRGB.setColor(Color.AZURE);
+                        lightRGB_M.setColor(Color.AZURE);
                     } else {
                         telemetry.addLine("Invalid Tag");
-                        lightRGB.setColor(Color.YELLOW);
+                        lightRGB_M.setColor(Color.YELLOW);
                     }
                 } else {
                     telemetry.addLine("No Tag Detected");
-                    lightRGB.setColor(Color.RED);
+                    lightRGB_M.setColor(Color.RED);
                 }
             } else {
                 telemetry.addLine("Vision Inactive");
-                lightRGB.setColor(Color.VIOLET);
+                lightRGB_M.setColor(Color.VIOLET);
             }
             telemetry.update();
         }
@@ -64,7 +64,7 @@ public class OldArchaicAutoCloseBlue extends RobotConfiguration implements TeamC
             if (tag != null) {
                 State[] states = vision.getTagStates(tag);
                 if (states != null) {
-                    artifactSequence = states;
+                    setArtifactSequence(states);
                 }
             }
             vision.disableAprilTagDetection();
@@ -75,10 +75,10 @@ public class OldArchaicAutoCloseBlue extends RobotConfiguration implements TeamC
         double secondPos = -60;
         double secondOff = 0;
 
-        if (artifactSequence != null) {
-            State firstState = artifactSequence[0];
-            State secondState = artifactSequence[1];
-            lightRGB.setColorState(firstState);
+        if (getArtifactSequence() != null) {
+            State firstState = getArtifactSequence()[0];
+            State secondState = getArtifactSequence()[1];
+            lightRGB_M.setColorState(firstState);
             if (firstState == State.GREEN || secondState == State.GREEN) {
                 firstPos = -60;
                 firstOff = 0;
@@ -140,7 +140,7 @@ public class OldArchaicAutoCloseBlue extends RobotConfiguration implements TeamC
 
                 } else if (step == 5) {
                     drive.mecanumDrive(0, 0, 0);
-                    lightRGB.setOff();
+                    lightRGB_M.setOff();
                     timer.startNewTimer(2);
                     step = 6;
                 } else if (step == 6) {

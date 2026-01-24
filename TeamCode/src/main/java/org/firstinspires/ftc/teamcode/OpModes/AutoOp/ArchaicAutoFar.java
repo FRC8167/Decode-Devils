@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.Cogintilities.Color;
 import org.firstinspires.ftc.teamcode.Cogintilities.ConfigurableConstants;
-import org.firstinspires.ftc.teamcode.Cogintilities.GamepadUtility;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 import org.firstinspires.ftc.teamcode.Cogintilities.TimedTimer;
 import org.firstinspires.ftc.teamcode.Robot.RobotConfiguration;
@@ -38,19 +37,19 @@ public class ArchaicAutoFar extends RobotConfiguration implements TeamConstants 
                     State[] states = vision.getFirstSequence();
                     if (states != null) {
                         telemetry.addData("States: ", State.convertStatesToInitials(states));
-                        artifactSequence = states;
-                        lightRGB.setColor(Color.AZURE);
+                        setArtifactSequence(states);
+                        lightRGB_M.setColor(Color.AZURE);
                     } else {
                         telemetry.addLine("Invalid Tag");
-                        lightRGB.setColor(Color.YELLOW);
+                        lightRGB_M.setColor(Color.YELLOW);
                     }
                 } else {
                     telemetry.addLine("No Tag Detected");
-                    lightRGB.setColor(Color.RED);
+                    lightRGB_M.setColor(Color.RED);
                 }
             } else {
                 telemetry.addLine("Vision Inactive");
-                lightRGB.setColor(Color.VIOLET);
+                lightRGB_M.setColor(Color.VIOLET);
             }
 
             if (limeVision != null) {
@@ -61,6 +60,9 @@ public class ArchaicAutoFar extends RobotConfiguration implements TeamConstants 
                 if (Math.abs(adjustedBearing) <= 1) {
                     telemetry.addLine("Position OK");
                 }
+                if (!Double.isNaN(adjustedBearing))
+                    dataPrism.bearingColors(adjustedBearing, 1);
+                else dataPrism.clear();
 
                 Pose3D pose = limeVision.getMediatiatedRobotPose3D();
                 if (pose != null){
@@ -80,6 +82,8 @@ public class ArchaicAutoFar extends RobotConfiguration implements TeamConstants 
 
         waitForStart();
 
+        dataPrism.clear();
+
         TimedTimer parkTimer = new TimedTimer(25);
 
         if (vision != null) {
@@ -89,7 +93,7 @@ public class ArchaicAutoFar extends RobotConfiguration implements TeamConstants 
             if (tag != null) {
                 State[] states = vision.getFirstSequence();
                 if (states != null) {
-                    artifactSequence = states;
+                    setArtifactSequence(states);
                 }
             }
             vision.disableAprilTagDetection();
@@ -116,13 +120,13 @@ public class ArchaicAutoFar extends RobotConfiguration implements TeamConstants 
 
         double position;
 
-        if (artifactSequence == STATES_PPG) {
+        if (getArtifactSequence() == STATES_PPG) {
             position = 360;
             spindexer.setCenteredPositionDegrees(0);
-        } else if (artifactSequence == STATES_PGP) {
+        } else if (getArtifactSequence() == STATES_PGP) {
             position = 480;
             spindexer.setCenteredPositionDegrees(120);
-        } else if (artifactSequence == STATES_GPP) {
+        } else if (getArtifactSequence() == STATES_GPP) {
             position = -360;
             spindexer.setCenteredPositionDegrees(0);
         } else {
@@ -177,7 +181,7 @@ public class ArchaicAutoFar extends RobotConfiguration implements TeamConstants 
 
                 } else if (step == 5) {
                     drive.mecanumDrive(0, 0, 0);
-                    lightRGB.setOff();
+                    lightRGB_M.setOff();
                     timer.startNewTimer(2);
                     step = 6;
                 } else if (step == 6) {

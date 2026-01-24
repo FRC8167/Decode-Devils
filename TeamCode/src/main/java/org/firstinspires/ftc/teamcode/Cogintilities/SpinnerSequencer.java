@@ -147,7 +147,7 @@ public class SpinnerSequencer implements TeamConstants {
         }
         switch (mode) {
             case DROP:
-                shooter.setVelocityRPM(ConfigurableConstants.SHOOTER_VELOCITY_FAR);
+                shooter.setVelocityRPM(shootVel);
                 if (!done) {
                     spindexer.dropWithoutStateUpdate();
                     if (timer.isDone()) {
@@ -258,7 +258,7 @@ public class SpinnerSequencer implements TeamConstants {
     }
 
     public void adjustShootVel(double velocity) {
-        shootVel = Double.isNaN(velocity) ? ConfigurableConstants.SHOOTER_VELOCITY_FAR : shootVel;
+        shootVel = Double.isNaN(velocity) ? ConfigurableConstants.SHOOTER_VELOCITY_FAR : velocity;
     }
 
     public boolean isDone() {

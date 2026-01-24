@@ -11,7 +11,8 @@ import java.util.Arrays;
 public class Spindexer implements TeamConstants {
 
     int activeSlotDrop; //
-    int activeSlotSensor;// assumes color sensor is opposite to drop
+    int activeSlotSensor;// assumes color sensor is same as drop
+    int activeSlotOldSensor;// assumes color sensor is opposite to drop
     double fractionalSlotDrop;
     double fractionalSlotSensor;
     double currentAngleNormalized; //(0-360)
@@ -327,7 +328,7 @@ public class Spindexer implements TeamConstants {
                 break;
 
         }
-
+        activeSlotOldSensor = activeSlotSensor;
         activeSlotSensor = activeSlotDrop;
         fractionalSlotSensor = fractionalSlotDrop;
 
@@ -346,6 +347,11 @@ public class Spindexer implements TeamConstants {
     public int getActiveSlotSensor() {
         update();
         return activeSlotSensor;
+    }
+
+    public int getActiveSlotOldSensor() {
+        update();
+        return activeSlotOldSensor;
     }
 
     public double getFractionalSlotDrop() {

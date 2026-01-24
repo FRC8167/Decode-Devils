@@ -37,9 +37,10 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 
         artifactsOnRamp = 0;
 
-        buttonTimer = new TimedTimer();
 
-        while (opModeInInit() && artifactSequence == null) {
+//        buttonTimer = new TimedTimer();
+
+        while (opModeInInit() && getArtifactSequence() == null) {
             if (vision != null) {
                 vision.enableAprilTagDetection();
                 vision.scanForAprilTags();
@@ -48,25 +49,29 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
                     State[] states = vision.getFirstSequence();
                     if (states != null) {
                         telemetry.addData("States: ", State.convertStatesToInitials(states));
-                        lightRGB.setColor(Color.AZURE);
-                        artifactSequence = states;
+                        lightRGB_M.setColor(Color.AZURE);
+                        setArtifactSequence(states);
                     } else {
                         telemetry.addLine("Invalid Tag");
-                        lightRGB.setColor(Color.YELLOW);
+                        lightRGB_M.setColor(Color.YELLOW);
                     }
                 } else {
                     telemetry.addLine("No Tag Detected");
-                    lightRGB.setColor(Color.RED);
+                    lightRGB_M.setColor(Color.RED);
                 }
             } else {
                 telemetry.addLine("Vision Inactive");
-                lightRGB.setColor(Color.VIOLET);
+                lightRGB_M.setColor(Color.VIOLET);
                 break;
             }
             telemetry.update();
         }
 
         waitForStart();
+
+        dataPrism.updateShootColors(artifactsOnRamp, getArtifactSequence());
+
+        vision.disableAprilTagDetection();
 
         while (opModeIsActive()) {
 
@@ -171,55 +176,62 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
             }
 
 
+            boolean rightBumper = gamepad2.right_bumper;
+            boolean rightBumperPressed = gamepad2.rightBumperWasPressed();
+            boolean leftBumper = gamepad2.left_bumper;
+            boolean leftBumperPressed = gamepad2.leftBumperWasPressed();
 
-            if (gamepad1.backWasPressed() || gamepad1.shareWasPressed()) {
-//                if (ArtifactSequence != null) {
-////                    spinnerSequencer.runStatesToDrop(ArtifactSequence);
-//                    spinnerSequencer.runDual(ArtifactSequence);
-//                }
-                artifactsOnRamp = 0;
 
-            }
-
-            if (gamepad1.dpadUpWasPressed() && buttonTimer.isDone()) {
+            if (rightBumperPressed && !leftBumper) {
                 artifactsOnRamp += 1;
                 if (artifactsOnRamp > 9) {
                     artifactsOnRamp = 9;
                 } else {
-                    lightRGB.setColor(Color.WHITE);
-                    buttonTimer.startNewTimer(0.2);
+                    dataPrism.updateShootColors(artifactsOnRamp, getArtifactSequence());
+//                    lightRGB_M.setColor(Color.WHITE);
+//                    buttonTimer.startNewTimer(0.2);
                 }
-            } else if (gamepad1.dpadDownWasPressed() && buttonTimer.isDone()) {
+            } else if (leftBumperPressed && !rightBumper) {
                 artifactsOnRamp -= 1;
                 if (artifactsOnRamp < 0) {
                     artifactsOnRamp = 0;
                 } else {
-                    lightRGB.setColor(Color.YELLOW);
-                    buttonTimer.startNewTimer(0.2);
+                    dataPrism.updateShootColors(artifactsOnRamp, getArtifactSequence());
+//                    lightRGB_M.setColor(Color.YELLOW);
+//                    buttonTimer.startNewTimer(0.2);
                 }
+            }
+
+            if (rightBumper && leftBumper && (leftBumperPressed || rightBumperPressed)) {
+                artifactsOnRamp = 0;
+                dataPrism.updateShootColors(artifactsOnRamp, getArtifactSequence());
             }
 
             if (gamepad2.startWasPressed() || gamepad2.optionsWasPressed()) {
                 spinnerSequencer.runScanAll();
             } else if (gamepad2.backWasPressed() || gamepad2.shareWasPressed()) {
 //                spinnerSequencer.runDual(spinStates.getNextToShoot(artifactsOnRamp, artifactSequence));
-                spinnerSequencer.runDual(spinStates.getNextToShoot(artifactsOnRamp, artifactSequence));
+                spinnerSequencer.runDual(spinStates.getNextToShoot(artifactsOnRamp, getArtifactSequence()));
             }
 
             if (gamepad2.yWasPressed() || gamepad2.triangleWasPressed()) {
 //                ArtifactSequence = new State[]{State.PURPLE, State.PURPLE, State.PURPLE};
 //
-                if (artifactSequence == STATES_GPP) {
-                    artifactSequence = STATES_PGP;
+                if (getArtifactSequence() == STATES_GPP) {
+                    setArtifactSequence(STATES_PGP);
+                    dataPrism.updateShootColors(artifactsOnRamp, getArtifactSequence());
                 }
-                else if (artifactSequence == STATES_PGP) {
-                    artifactSequence = STATES_PPG;
+                else if (getArtifactSequence() == STATES_PGP) {
+                    setArtifactSequence(STATES_PPG);
+                    dataPrism.updateShootColors(artifactsOnRamp, getArtifactSequence());
                 }
-                else if (artifactSequence == STATES_PPG) {
-                    artifactSequence = STATES_GPP;
+                else if (getArtifactSequence() == STATES_PPG) {
+                    setArtifactSequence(STATES_GPP);
+                    dataPrism.updateShootColors(artifactsOnRamp, getArtifactSequence());
                 }
                 else {
-                    artifactSequence = STATES_GPP;
+                    setArtifactSequence(STATES_GPP);
+                    dataPrism.updateShootColors(artifactsOnRamp, getArtifactSequence());
                 }
 //                vision.scanForAprilTags();
 //                AprilTagDetection tag = vision.getFirstTargetTag();
@@ -232,11 +244,14 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
             }
 
             if (gamepad1.xWasPressed() || gamepad1.squareWasPressed()) {
-                artifactSequence = STATES_GPP;
+                setArtifactSequence(STATES_GPP);
+                dataPrism.updateShootColors(artifactsOnRamp, getArtifactSequence());
             } else if (gamepad1.yWasPressed() || gamepad1.triangleWasPressed()) {
-                artifactSequence = STATES_PGP;
+                setArtifactSequence(STATES_PGP);
+                dataPrism.updateShootColors(artifactsOnRamp, getArtifactSequence());
             } else if (gamepad1.bWasPressed() || gamepad1.circleWasPressed()) {
-                artifactSequence = STATES_PPG;
+                setArtifactSequence(STATES_PPG);
+                dataPrism.updateShootColors(artifactsOnRamp, getArtifactSequence());
             }
 
 
@@ -258,6 +273,21 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
                 }
                 if (!spinStates.isStateInStates(State.UNKNOWN) && !spinStates.isStateInStates(State.NONE)) {
                     spindexer.setWiggleOffset(0);
+                    int dropIndex = spindexer.getActiveSlotDrop();
+                    int oldSensorIndex = spindexer.getActiveSlotOldSensor();
+                    if (dropIndex != -1) {
+                        lightRGB_R.setColorState(spinStates.getSlot((dropIndex + 1) % 3));
+                        State mState = spinStates.getSlot(dropIndex);
+                        if (mState == spinStates.get1stNextToShoot(artifactsOnRamp, getArtifactSequence()) && getArtifactSequence() != null)
+                            lightRGB_M.setColor(Color.AZURE);
+                        else lightRGB_M.setColorState(mState);
+                        lightRGB_L.setColorState(spinStates.getSlot((dropIndex - 1 + 3) % 3));
+                    } else if (oldSensorIndex != -1) {
+                        lightRGB_R.setColorState(spinStates.getSlot((oldSensorIndex - 1 + 3) % 3));
+                        lightRGB_M.setColorState(spinStates.getSlot(oldSensorIndex));
+                        lightRGB_L.setColorState(spinStates.getSlot((oldSensorIndex + 1) % 3));
+                    }
+                    spindexer.setCentered();
                 }
             } else {
                 spindexer.setWiggleOffset(SPINNER_WIGGLE_MANUAL*gamepad2.right_stick_x);
@@ -293,10 +323,10 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 
 
             telemetry.addData("ArtifactsOnRamp: ", artifactsOnRamp);
-            telemetry.addData("Sequence: ", State.convertStatesToInitials(artifactSequence));
-            telemetry.addData("Next",    spinStates.get1stNextToShoot(artifactsOnRamp, artifactSequence));
-            telemetry.addData("2ndNext", spinStates.get2ndNextToShoot(artifactsOnRamp, artifactSequence));
-            telemetry.addData("3rdNext", spinStates.get3rdNextToShoot(artifactsOnRamp, artifactSequence));
+            telemetry.addData("Sequence: ", State.convertStatesToInitials(getArtifactSequence()));
+            telemetry.addData("Next",    spinStates.get1stNextToShoot(artifactsOnRamp, getArtifactSequence()));
+            telemetry.addData("2ndNext", spinStates.get2ndNextToShoot(artifactsOnRamp, getArtifactSequence()));
+            telemetry.addData("3rdNext", spinStates.get3rdNextToShoot(artifactsOnRamp, getArtifactSequence()));
 
             telemetry.addLine("");
 
@@ -314,14 +344,14 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
             telemetry.addData("Mode: ", spinnerSequencer.getMode());
             telemetry.addData("DualMode: ", spinnerSequencer.getDualMode());
             telemetry.addData("Done?: ", spinnerSequencer.isDone());
-            telemetry.addData("Good?: ", artifactSequence != null ? !spinnerSequencer.statesAreNotPresent(spinStates.getNextToShoot(artifactsOnRamp, artifactSequence)) : null);
-            telemetry.addData("NextToShoot: ", Arrays.toString(spinStates.getNextToShoot(artifactsOnRamp, artifactSequence)));
+            telemetry.addData("Good?: ", getArtifactSequence() != null ? !spinnerSequencer.statesAreNotPresent(spinStates.getNextToShoot(artifactsOnRamp, getArtifactSequence())) : null);
+            telemetry.addData("NextToShoot: ", Arrays.toString(spinStates.getNextToShoot(artifactsOnRamp, getArtifactSequence())));
 //            telemetry.addData("IntakePower: ", intake.getPower());
 //            telemetry.addData("DropTimer: ", spindexer.getDropTimerRemainingTime());
 //            telemetry.addData("SpinnerTimer: ", spindexer.getSpinnerRemainingTime());
 //            telemetry.addData("DropPos: ", spindexer.getDropperPos());
 //            telemetry.addData("SequenceActive: ", !spinnerSequencer.isDone());
-            telemetry.addData("ArtifactSequenceLength: ", artifactSequence == null ? "null": artifactSequence.length);
+            telemetry.addData("ArtifactSequenceLength: ", getArtifactSequence() == null ? "null": getArtifactSequence().length);
             telemetry.addLine();
             telemetry.addData("Bearing: ", limeVision.getMediatedGoalBearing());
 
@@ -362,13 +392,31 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 //        telemetry.addData("Vel: ", shooter.getVelocityRPM());
 //        telemetry.addData("TarVel: ", shooter.getTargetVelocityRPM());
 //        telemetry.addData("C-Enough: ", shooter.isCloseEnough(100));
-        if (buttonTimer.isDone()) {
-            lightRGB.setColorState(spinStates.get1stNextToShoot(artifactsOnRamp, artifactSequence));
-        }
+//            lightRGB_M.setColorState(spinStates.get1stNextToShoot(artifactsOnRamp, artifactSequence));
+            int dropIndex = spindexer.getActiveSlotDrop();
+            int oldSensorIndex = spindexer.getActiveSlotOldSensor();
+            if (spindexer.isSpinnerDone()) {
+                if (dropIndex != -1) {
+                    lightRGB_R.setColorState(spinStates.getSlot((dropIndex + 1) % 3));
+                    State mState = spinStates.getSlot(dropIndex);
+                    if (mState == spinStates.get1stNextToShoot(artifactsOnRamp, getArtifactSequence()) && getArtifactSequence() != null)
+                        lightRGB_M.setColor(Color.AZURE);
+                    else lightRGB_M.setColorState(mState);
+                    lightRGB_L.setColorState(spinStates.getSlot((dropIndex - 1 + 3) % 3));
+                } else if (oldSensorIndex != -1) {
+                    lightRGB_R.setColorState(spinStates.getSlot((oldSensorIndex - 1 + 3) % 3));
+                    lightRGB_M.setColorState(spinStates.getSlot(oldSensorIndex));
+                    lightRGB_L.setColorState(spinStates.getSlot((oldSensorIndex + 1) % 3));
 
-        if (artifactSequence == null && limeVision != null) {
+                }
+            }
+
+        if (getArtifactSequence() == null && limeVision != null) {
             State[] statesL = limeVision.getFirstSequence();
-            if (statesL != null) artifactSequence = statesL;
+            if (statesL != null) {
+                setArtifactSequence(statesL);
+                dataPrism.updateShootColors(artifactsOnRamp, getArtifactSequence());
+            }
 
         }
 

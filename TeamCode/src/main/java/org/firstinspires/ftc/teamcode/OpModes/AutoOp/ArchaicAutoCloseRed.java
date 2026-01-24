@@ -37,19 +37,19 @@ public class ArchaicAutoCloseRed extends RobotConfiguration implements TeamConst
                     State[] states = vision.getFirstSequence();
                     if (states != null) {
                         telemetry.addData("States: ", State.convertStatesToInitials(states));
-                        artifactSequence = states;
-                        lightRGB.setColor(Color.AZURE);
+                        setArtifactSequence(states);
+                        lightRGB_M.setColor(Color.AZURE);
                     } else {
                         telemetry.addLine("Invalid Tag");
-                        lightRGB.setColor(Color.YELLOW);
+                        lightRGB_M.setColor(Color.YELLOW);
                     }
                 } else {
                     telemetry.addLine("No Tag Detected");
-                    lightRGB.setColor(Color.RED);
+                    lightRGB_M.setColor(Color.RED);
                 }
             } else {
                 telemetry.addLine("Vision Inactive");
-                lightRGB.setColor(Color.VIOLET);
+                lightRGB_M.setColor(Color.VIOLET);
             }
             telemetry.update();
         }
@@ -65,7 +65,7 @@ public class ArchaicAutoCloseRed extends RobotConfiguration implements TeamConst
             if (tag != null) {
                 State[] states = vision.getFirstSequence();
                 if (states != null) {
-                    artifactSequence = states;
+                    setArtifactSequence(states);
                 }
             }
             vision.disableAprilTagDetection();
@@ -75,13 +75,13 @@ public class ArchaicAutoCloseRed extends RobotConfiguration implements TeamConst
 
         double position;
 
-        if (artifactSequence == STATES_PPG) {
+        if (getArtifactSequence() == STATES_PPG) {
             position = 360;
             spindexer.setCenteredPositionDegrees(0);
-        } else if (artifactSequence == STATES_PGP) {
+        } else if (getArtifactSequence() == STATES_PGP) {
             position = 480;
             spindexer.setCenteredPositionDegrees(120);
-        } else if (artifactSequence == STATES_GPP) {
+        } else if (getArtifactSequence() == STATES_GPP) {
             position = -360;
             spindexer.setCenteredPositionDegrees(0);
         } else {
@@ -141,7 +141,7 @@ public class ArchaicAutoCloseRed extends RobotConfiguration implements TeamConst
 
                 } else if (step == 5) {
                     drive.mecanumDrive(0, 0, 0);
-                    lightRGB.setOff();
+                    lightRGB_M.setOff();
                     timer.startNewTimer(2);
                     step = 6;
                 } else if (step == 6) {

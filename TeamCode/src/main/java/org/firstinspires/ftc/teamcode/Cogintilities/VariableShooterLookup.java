@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.Cogintilities;
 
+import org.firstinspires.ftc.teamcode.Cogintilities.Other.InterpLUT;
+
 public final class VariableShooterLookup {
     private VariableShooterLookup() {}
 
