@@ -29,10 +29,14 @@ public final class VariableShooterLookup {
 
     }
 
-    public static double getVelocityByDistance(double distance) {
+    public static double getVelocityByLookupDistance(double distance) {
         if (distance < 48.5) return 3600;
         if (distance > 172) return 4900;
         return shooterILUT.get(distance);
+    }
+
+    public static double getVelocityByCubicDistance(double distance) {
+        return -0.00237692*Math.pow(distance,3) + 0.835932*Math.pow(distance,2) - 77.95287*distance+5669.57898;
     }
 
 }

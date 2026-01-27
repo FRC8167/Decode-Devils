@@ -118,24 +118,28 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
             if (limeVision != null) {
                 double distance = limeVision.getGoalDistance();
                 if (!Double.isNaN(distance))
-                    shootVel = VariableShooterLookup.getVelocityByDistance(distance);
+                    shootVel = VariableShooterLookup.getVelocityByCubicDistance(distance);
             }
 
             spinnerSequencer.adjustShootVel(shootVel);
 
             if (gamepad2.right_trigger > 0) {
-                spinnerSequencer.stop();
-                if (!Double.isNaN(shootVel))
-                    shooter.setVelocityRPM(shootVel);
-                else
-                    shooter.setVelocityRPM(ConfigurableConstants.SHOOTER_VELOCITY_FAR * gamepad2.left_trigger);
+//                spinnerSequencer.stop();
+                if (spinnerSequencer.isDone()) {
+                    if (!Double.isNaN(shootVel))
+                        shooter.setVelocityRPM(shootVel);
+                    else
+                        shooter.setVelocityRPM(ConfigurableConstants.SHOOTER_VELOCITY_FAR * gamepad2.right_trigger);
+                }
 
             } else if (gamepad2.left_trigger > 0) {
-                spinnerSequencer.stop();
-                if (!Double.isNaN(shootVel))
-                    shooter.setVelocityRPM(shootVel);
-                else
-                    shooter.setVelocityRPM(ConfigurableConstants.SHOOTER_VELOCITY_CLOSE * gamepad2.left_trigger);
+//                spinnerSequencer.stop();
+                if (spinnerSequencer.isDone()) {
+                    if (!Double.isNaN(shootVel))
+                        shooter.setVelocityRPM(shootVel);
+                    else
+                        shooter.setVelocityRPM(ConfigurableConstants.SHOOTER_VELOCITY_CLOSE * gamepad2.left_trigger);
+                }
             } else {
                 if (spinnerSequencer.isDone()) shooter.setVelocityRPM(0);
             }

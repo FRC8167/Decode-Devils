@@ -176,7 +176,7 @@ public class ArchaicAutoFar extends RobotConfiguration implements TeamConstants 
 
                 else if (step == 4 && parkTimer.isDone()) {
                     drive.mecanumDrive(1, 0, 0);
-                    timer.startNewTimer(0.3);
+                    timer.startNewTimer(0.4);
                     step = 5;
 
                 } else if (step == 5) {

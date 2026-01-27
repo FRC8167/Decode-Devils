@@ -69,7 +69,7 @@ public class MecanumDriveBasic {
 
     public void turnToHeadingError(double error) {
         double newTurnCmd;
-        double headingFineGain   = 0.008;
+        double headingFineGain   = 0.005;
 
         /* Need Angle Wrap calculation to ensure turning the shortest distance */
         if (Math.abs(error) > 0.5) {
