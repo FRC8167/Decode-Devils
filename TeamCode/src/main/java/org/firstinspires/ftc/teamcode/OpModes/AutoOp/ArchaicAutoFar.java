@@ -24,6 +24,9 @@ public class ArchaicAutoFar extends RobotConfiguration implements TeamConstants 
 
         initializeRobot(new Pose2d(0,0,0), true);
 
+        setArtifactSequence(null);
+        setAlliance(null);
+
         int step = 0;
 
         TimedTimer timer = new TimedTimer();

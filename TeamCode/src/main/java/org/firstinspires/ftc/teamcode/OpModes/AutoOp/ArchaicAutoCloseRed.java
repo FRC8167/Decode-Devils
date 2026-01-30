@@ -24,6 +24,8 @@ public class ArchaicAutoCloseRed extends RobotConfiguration implements TeamConst
         initializeRobot(new Pose2d(0,0,0), true);
         setAlliance(AllianceColor.BLUE);
 
+        setArtifactSequence(null);
+
         int step = 0;
 
         TimedTimer timer = new TimedTimer();

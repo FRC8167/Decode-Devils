@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.SubSystems;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.Cogintilities.ConfigurableConstants;
+import org.firstinspires.ftc.teamcode.Cogintilities.Other.controller.PIDFController;
 
 public class MecanumDriveBasic {
 
@@ -11,6 +14,8 @@ public class MecanumDriveBasic {
     private double drive, strafe, turn;
     boolean degradedMode;
     double degradedMultiplier = 0.45;
+
+    PIDFController headingPIDF = new PIDFController(0,0,0,0);
 
     // Static variable to hold a single_instance of type Singleton
 //    private static MecanumDrive single_instance = null;
@@ -67,18 +72,26 @@ public class MecanumDriveBasic {
         setMotorPower(frontLeftPower, frontRightPower, backLeftPower, backRightPower);
     }
 
+    public void resetHeadingPIDF() {
+        headingPIDF.setCoefficients(ConfigurableConstants.pidfCoefficients());
+        headingPIDF.setTolerance(0.5);
+        headingPIDF.reset();
+    }
+
     public void turnToHeadingError(double error) {
-        double newTurnCmd;
-        double headingFineGain   = 0.005;
-
-        /* Need Angle Wrap calculation to ensure turning the shortest distance */
-        if (Math.abs(error) > 0.5) {
-            newTurnCmd = Range.clip(headingFineGain * -error, -1.0, 1.0);
-            newTurnCmd += (newTurnCmd > 0) ? 0.08 : -0.08;
-        }
-        else newTurnCmd = 0;
-
+        double newTurnCmd = headingPIDF.calculate(error, 0);
         mecanumDrive(0, 0, newTurnCmd);
+//        double newTurnCmd;
+//        double headingFineGain   = 0.004;
+//
+//        /* Need Angle Wrap calculation to ensure turning the shortest distance */
+//        if (Math.abs(error) > 0.5) {
+//            newTurnCmd = Range.clip(headingFineGain * -error, -1.0, 1.0);
+//            newTurnCmd += (newTurnCmd > 0) ? 0.075 : -0.075;
+//        }
+//        else newTurnCmd = 0;
+//
+//        mecanumDrive(0, 0, newTurnCmd);
 
     }
 

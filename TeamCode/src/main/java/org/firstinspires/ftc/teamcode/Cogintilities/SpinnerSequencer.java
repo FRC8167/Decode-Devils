@@ -66,6 +66,57 @@ public class SpinnerSequencer implements TeamConstants {
         runStatesToDropInternal(states);
     }
 
+    public void runBestStatesToDrop(State... states) {
+        stop();
+        runBestStatesToDropInternal(states);
+    }
+
+    private void runBestStatesToDropInternal(State... states) {
+
+        runStatesToDropInternal(toBestStatesAvailable(states));
+    }
+
+    public State[] toBestStatesAvailable(State... states) {
+        List<State> stateList = new ArrayList<>();
+        int purples = spinStates.getCountOfStateInStates(State.PURPLE);
+        int greens = spinStates.getCountOfStateInStates(State.GREEN);
+        int unknowns = spinStates.getCountOfStateInStates(State.UNKNOWN);
+        for (int i = 0; i < 3; i++) {
+            if (states != null) {
+                if (states[i] == State.PURPLE && purples > 0) {
+                    purples--;
+                    stateList.add(states[i]);
+                } else if (states[i] == State.GREEN && greens > 0) {
+                    greens--;
+                    stateList.add(states[i]);
+                } else {
+                    if (unknowns > 0) {
+                        unknowns--;
+                        stateList.add(State.UNKNOWN);
+                    } else if (greens > 0) {
+                        greens--;
+                        stateList.add(State.GREEN);
+                    } else if (purples > 0) {
+                        purples--;
+                        stateList.add(State.PURPLE);
+                    }
+                }
+            } else {
+                if (unknowns > 0) {
+                    unknowns--;
+                    stateList.add(State.UNKNOWN);
+                } else if (greens > 0) {
+                    greens--;
+                    stateList.add(State.GREEN);
+                } else if (purples > 0) {
+                    purples--;
+                    stateList.add(State.PURPLE);
+                }
+            }
+        }
+        return stateList.toArray(new State[0]);
+    }
+
     public void runDual(State... states) {
         if (states == null || states.length == 0) return;
         dualModeStates = states;

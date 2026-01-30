@@ -91,7 +91,7 @@ public interface TeamConstants {
 
     double DROP_TIMER = 1; // time dropper stays open in seconds
 
-    double SEQUENCER_TIMER = 1.2; // time until next state ran in seconds (Original: 0.8)
+    double SEQUENCER_TIMER = 1.8; // time until next state ran in seconds (Original: 1.2)
     double SEQUENCER_TIMER_INITIAL = 1.8; // (Original: 1.2)
     double SEQUENCER_TIMER_WIGGLE = 0.4; // Used for both modes
     double SEQUENCER_TIMER_WIGGLE_BACK = 1; // Used for scan mode

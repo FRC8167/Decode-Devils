@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Cogintilities;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -31,6 +32,14 @@ public class ConfigurableConstants {
     public static double CAMERA_PITCH = 0;
     public static double CAMERA_ROLL = 0;
 
+    public static double kP = 0.012;
+    public static double kI = 0;
+    public static double kD = 0.00075;
+    public static double kF = 0.07;
+
+    public static PIDFCoefficients pidfCoefficients() {
+        return new PIDFCoefficients(kP,kI,kD,kF);
+    }
 
     public static Position cameraPosition() {
         return new Position(DistanceUnit.INCH, CAMERA_X, CAMERA_Y, CAMERA_Z, 0);
