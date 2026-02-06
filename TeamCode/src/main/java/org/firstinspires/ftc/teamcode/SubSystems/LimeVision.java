@@ -22,8 +22,6 @@ public class LimeVision implements TeamConstants {
     private int pipeline;
 
     private List<Pose3D> previousPoses = new ArrayList<>();
-    private LLResult previousResult = null;
-    private LLResult recentResult = null;
     private double previousTagID;
 
     public LimeVision(Limelight3A limelight) {

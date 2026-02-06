@@ -76,6 +76,16 @@ public interface TeamConstants {
             12.7
     );
 
+    MotorInformation LIFT_MOTOR_INFO = new GearedMotorInfo(
+            DefaultMotorInfo.GOBILDA_312RPM,
+            48/80.0,
+            true
+    );
+    double LIFT_MILLIS_PER_REV = 8;
+    //8mm of linear distance per rotation
+    double LIFT_MIN_INCHES = 0;
+    double LIFT_MAX_INCHES = 10;
+
     double INTAKE_POWER_FORWARD = 1;
     double INTAKE_POWER_NEUTRAL = 0;
     double INTAKE_POWER_BACKWARD = -0.5;
