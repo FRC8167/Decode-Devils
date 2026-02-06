@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.SubSystems;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.Range;
 
@@ -28,10 +29,10 @@ public class MecanumDriveBasic {
         this.back_right_drive  = rightRear;
 
         /* Assign Motor Directions */
-        this.front_left_drive.setDirection(DcMotorEx.Direction.FORWARD);
-        this.front_right_drive.setDirection(DcMotorEx.Direction.REVERSE);
-        this.back_left_drive.setDirection(DcMotorEx.Direction.FORWARD);
-        this.back_right_drive.setDirection(DcMotorEx.Direction.REVERSE);
+        this.front_left_drive.setDirection(DcMotorEx.Direction.REVERSE);
+        this.front_right_drive.setDirection(DcMotorEx.Direction.FORWARD);
+        this.back_left_drive.setDirection(DcMotorEx.Direction.REVERSE);
+        this.back_right_drive.setDirection(DcMotorEx.Direction.FORWARD);
 
         /* Initialize Motor Power to 0 */
         degradedMode = false;

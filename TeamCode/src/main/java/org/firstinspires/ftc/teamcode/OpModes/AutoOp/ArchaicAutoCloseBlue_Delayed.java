@@ -14,15 +14,15 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 
 //@Disabled
-@Autonomous(name="ArchaicAutoCloseRed", group="Autonomous", preselectTeleOp = "MainTeleOp")
-public class ArchaicAutoCloseRed extends RobotConfiguration implements TeamConstants {
+@Autonomous(name="ArchaicAutoCloseBlue_Delayed", group="Autonomous", preselectTeleOp = "MainTeleOp")
+public class ArchaicAutoCloseBlue_Delayed extends RobotConfiguration implements TeamConstants {
 
     @SuppressLint("DefaultLocale")
     @Override
     public void runOpMode() throws InterruptedException {
 
         initializeRobot(new Pose2d(0,0,0), true);
-        setAlliance(AllianceColor.RED);
+        setAlliance(AllianceColor.BLUE);
 
         setArtifactSequence(null);
 
@@ -60,6 +60,8 @@ public class ArchaicAutoCloseRed extends RobotConfiguration implements TeamConst
 
         TimedTimer parkTimer = new TimedTimer(25);
 
+        TimedTimer delayTimer = new TimedTimer(15);
+
         if (vision != null) {
             vision.enableAprilTagDetection();
             vision.scanForAprilTags();
@@ -72,8 +74,6 @@ public class ArchaicAutoCloseRed extends RobotConfiguration implements TeamConst
             }
             vision.disableAprilTagDetection();
         }
-
-        shooter.setVelocityRPM(ConfigurableConstants.SHOOTER_VELOCITY_AUTO_CLOSE);
 
         double position;
 
@@ -99,11 +99,15 @@ public class ArchaicAutoCloseRed extends RobotConfiguration implements TeamConst
                 if (step == 0) {
                     drive.mecanumDrive(0, 0, 0);
                 }
-
-                if (shooter.isCloseEnough(100) && step == 0) {
-                    step = 1;
-                    timer.startNewTimer(1);
+                if (delayTimer.isDone() && step == 0) {
+                    shooter.setVelocityRPM(ConfigurableConstants.SHOOTER_VELOCITY_AUTO_CLOSE);
+                    if (shooter.isCloseEnough(100)) {
+                        step = 1;
+                        timer.startNewTimer(1);
+                    }
                 }
+
+
 
                 else if (step == 1) {
                     spindexer.drop();
@@ -137,7 +141,7 @@ public class ArchaicAutoCloseRed extends RobotConfiguration implements TeamConst
                 }
 
                 else if (step == 4 && parkTimer.isDone()) {
-                    drive.mecanumDrive(0, 1, 0);
+                    drive.mecanumDrive(0, -1, 0);
                     timer.startNewTimer(0.4);
                     step = 5;
 

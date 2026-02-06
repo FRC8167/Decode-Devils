@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.Cogintilities.Color;
 import org.firstinspires.ftc.teamcode.Cogintilities.ConfigurableConstants;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
@@ -14,17 +15,17 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 
 //@Disabled
-@Autonomous(name="ArchaicAutoCloseRed", group="Autonomous", preselectTeleOp = "MainTeleOp")
-public class ArchaicAutoCloseRed extends RobotConfiguration implements TeamConstants {
+@Autonomous(name="ArchaicAutoFar_Delayed", group="Autonomous", preselectTeleOp = "MainTeleOp")
+public class ArchaicAutoFar_Delayed extends RobotConfiguration implements TeamConstants {
 
     @SuppressLint("DefaultLocale")
     @Override
     public void runOpMode() throws InterruptedException {
 
         initializeRobot(new Pose2d(0,0,0), true);
-        setAlliance(AllianceColor.RED);
 
         setArtifactSequence(null);
+        setAlliance(null);
 
         int step = 0;
 
@@ -53,12 +54,42 @@ public class ArchaicAutoCloseRed extends RobotConfiguration implements TeamConst
                 telemetry.addLine("Vision Inactive");
                 lightRGB_M.setColor(Color.VIOLET);
             }
+
+            if (limeVision != null) {
+
+                double adjustedBearing = limeVision.getMediatedGoalBearing();
+                telemetry.addLine("");
+                telemetry.addData("Bearing(Calculated & Adjusted): ", adjustedBearing);
+                if (Math.abs(adjustedBearing) <= 1) {
+                    telemetry.addLine("Position OK");
+                }
+                if (!Double.isNaN(adjustedBearing))
+                    dataPrism.bearingColors(adjustedBearing, 1);
+                else dataPrism.clear();
+
+                Pose3D pose = limeVision.getMediatiatedRobotPose3D();
+                if (pose != null){
+                    if (pose.getPosition().y > 2) {
+                        setAlliance(AllianceColor.RED);
+                    } else if (pose.getPosition().y < 2) {
+                        setAlliance(AllianceColor.BLUE);
+                    } else setAlliance(null);
+                } else setAlliance(null);
+                telemetry.addLine();
+                AllianceColor allianceColor = getAlliance();
+                telemetry.addData("Alliance: ", allianceColor != null ? allianceColor.name() : "null");
+            }
+
             telemetry.update();
         }
 
         waitForStart();
 
+        dataPrism.clear();
+
         TimedTimer parkTimer = new TimedTimer(25);
+
+        TimedTimer delayTimer = new TimedTimer(15);
 
         if (vision != null) {
             vision.enableAprilTagDetection();
@@ -73,7 +104,22 @@ public class ArchaicAutoCloseRed extends RobotConfiguration implements TeamConst
             vision.disableAprilTagDetection();
         }
 
-        shooter.setVelocityRPM(ConfigurableConstants.SHOOTER_VELOCITY_AUTO_CLOSE);
+//        double firstPos = 60;
+//        double firstOff = 0;
+//        double secondPos = -60;
+//        double secondOff = 0;
+//
+//        if (artifactSequence != null) {
+//            State firstState = artifactSequence[0];
+//            State secondState = artifactSequence[1];
+//            lightRGB.setColorState(firstState);
+//            if (firstState == State.GREEN || secondState == State.GREEN) {
+//                firstPos = -60;
+//                firstOff = 0;
+//                secondPos = 60;
+//                secondOff = 0;
+//            }
+//        }
 
         double position;
 
@@ -91,22 +137,20 @@ public class ArchaicAutoCloseRed extends RobotConfiguration implements TeamConst
             spindexer.setCenteredPositionDegrees(0);
         }
 
-        drive.mecanumDrive(-1, 0, 0);
-        timer.startNewTimer(1);
+
 
         while (opModeIsActive()) {
             if (timer.isDone()) {
-                if (step == 0) {
-                    drive.mecanumDrive(0, 0, 0);
-                }
-
-                if (shooter.isCloseEnough(100) && step == 0) {
-                    step = 1;
-                    timer.startNewTimer(1);
+                if (delayTimer.isDone() && step == 0) {
+                    shooter.setVelocityRPM(ConfigurableConstants.SHOOTER_VELOCITY_AUTO_FAR);
+                    if (shooter.isCloseEnough(100)) {
+                        spindexer.drop();
+                        step = 1;
+                        timer.startNewTimer(2);
+                    }
                 }
 
                 else if (step == 1) {
-                    spindexer.drop();
                     spindexer.drop();
                     if (spindexer.getCenteredPositionDegrees() != position) {
                         spindexer.setCenteredPositionDegrees(position);
@@ -137,7 +181,7 @@ public class ArchaicAutoCloseRed extends RobotConfiguration implements TeamConst
                 }
 
                 else if (step == 4 && parkTimer.isDone()) {
-                    drive.mecanumDrive(0, 1, 0);
+                    drive.mecanumDrive(1, 0, 0);
                     timer.startNewTimer(0.4);
                     step = 5;
 
