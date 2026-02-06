@@ -34,6 +34,7 @@ public class TeleOpTestLift extends LinearOpMode implements TeamConstants {
 
             telemetry.addData("TargetPos: ", lift.getTargetPositionInches());
             telemetry.addData("CurrentPos: ", lift.getCurrentPositionInches());
+            telemetry.update();
         }
     }
 }
