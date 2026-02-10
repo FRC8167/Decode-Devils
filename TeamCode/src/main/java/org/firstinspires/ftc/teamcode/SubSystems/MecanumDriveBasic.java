@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode.SubSystems;
 
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.Cogintilities.ConfigurableConstants;
 import org.firstinspires.ftc.teamcode.Cogintilities.Other.controller.PIDFController;
+import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 
 public class MecanumDriveBasic {
 
@@ -74,7 +72,7 @@ public class MecanumDriveBasic {
     }
 
     public void resetHeadingPIDF() {
-        headingPIDF.setCoefficients(ConfigurableConstants.pidfCoefficients());
+        headingPIDF.setCoefficients(TeamConstants.mecanumPIDF);
         headingPIDF.setTolerance(0.5);
         headingPIDF.reset();
     }

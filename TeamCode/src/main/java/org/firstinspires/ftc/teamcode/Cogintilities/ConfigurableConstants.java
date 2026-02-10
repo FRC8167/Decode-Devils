@@ -32,10 +32,14 @@ public class ConfigurableConstants {
     public static double CAMERA_PITCH = 0;
     public static double CAMERA_ROLL = 0;
 
-    public static double kP = 0.012;
+    public static double kP = 0;
     public static double kI = 0;
-    public static double kD = 0.00075;
-    public static double kF = 0.07;
+    public static double kD = 0;
+    public static double kF = 0;
+
+    public static double VEL_LOW_RPM = 0;
+    public static double VEL_HIGH_RPM = 9;
+    public static double ALTERNATION_PERIOD = 8;
 
     public static PIDFCoefficients pidfCoefficients() {
         return new PIDFCoefficients(kP,kI,kD,kF);

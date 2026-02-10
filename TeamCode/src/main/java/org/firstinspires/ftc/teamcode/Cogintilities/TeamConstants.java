@@ -44,6 +44,8 @@ public interface TeamConstants {
     State[] STATES_PGP = {State.PURPLE, State.GREEN, State.PURPLE};
     State[] STATES_PPG = {State.PURPLE, State.PURPLE, State.GREEN};
 
+    PIDFCoefficients mecanumPIDF = new PIDFCoefficients(0.012, 0, 0.00075, 0.07);
+
     double SPINNER_MIN = 0.0;
     double SPINNER_MAX = 1.0;
     double SPINNER_INIT_POS = 0.5;
@@ -81,10 +83,18 @@ public interface TeamConstants {
             48/80.0,
             true
     );
+    
+    PIDFCoefficients LIFT_VEL_PIDF = new PIDFCoefficients(
+            1,
+            0,
+            0,
+            12
+    );
+    double LIFT_POS_KP = 2.5;
     double LIFT_MILLIS_PER_REV = 8;
     //8mm of linear distance per rotation
     double LIFT_MIN_INCHES = 0;
-    double LIFT_MAX_INCHES = 10;
+    double LIFT_MAX_INCHES = 9;
 
     double INTAKE_POWER_FORWARD = 1;
     double INTAKE_POWER_NEUTRAL = 0;

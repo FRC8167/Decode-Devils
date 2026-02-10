@@ -29,8 +29,8 @@ public class TeleOpTestShooter extends LinearOpMode implements TeamConstants {
         double targetVel = 0;
 //        TimedTimer timer = new TimedTimer(ConfigurableConstants.ALTERNATION_PERIOD/2.0);
 
-        telemetry.addData("TargetVel: ", targetVel);
-        telemetry.addData("CurrentVel: ", motor.getVelocityRPM());
+        telemetry.addData("TargetPos: ", targetVel);
+        telemetry.addData("CurrentPos: ", motor.getVelocityRPM());
         telemetry.update(); //Note: Updating telemetry while using initializeRobot() will delete possible warnings
 
         waitForStart();

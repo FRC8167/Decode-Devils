@@ -1,14 +1,9 @@
 package org.firstinspires.ftc.teamcode.SubSystems;
 
-import androidx.annotation.NonNull;
-
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.Cogintilities.DefaultMotorInfo;
-import org.firstinspires.ftc.teamcode.Cogintilities.GearedMotorInfo;
-import org.firstinspires.ftc.teamcode.Cogintilities.MotorInformation;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 
 public class Lift extends Motor1D implements TeamConstants {
@@ -19,16 +14,20 @@ public class Lift extends Motor1D implements TeamConstants {
     public Lift(DcMotorEx motor, double minInches, double maxInches) {
         super(motor, Mode.POSITION_BASED, LIFT_MOTOR_INFO);
         setZeroPowerBehavior(ZeroPowerBehavior.BREAK);
+        setVelocityPIDFCoefficients(LIFT_VEL_PIDF);
+        setPositionPCoefficient(LIFT_POS_KP);
         this.minInches = minInches;
         this.maxInches = maxInches;
     }
 
     public void setPositionInches(double inches) {
         setTargetPosition(
-            Range.clip(
-                linearInToDeg(inches),
-                    minInches,
-                    maxInches
+            linearInToDeg(
+                Range.clip(
+                        inches,
+                        minInches,
+                        maxInches
+                )
             ),
             AngleUnit.DEGREES
         );
