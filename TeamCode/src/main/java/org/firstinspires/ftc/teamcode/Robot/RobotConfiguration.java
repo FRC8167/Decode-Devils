@@ -16,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VoltageUnit;
 import org.firstinspires.ftc.teamcode.Cogintilities.Color;
 import org.firstinspires.ftc.teamcode.Cogintilities.GamepadUtility;
 import org.firstinspires.ftc.teamcode.Cogintilities.Prism.GoBildaPrismDriver;
+import org.firstinspires.ftc.teamcode.SubSystems.CompositePositioning;
 import org.firstinspires.ftc.teamcode.SubSystems.LimeVision;
 import org.firstinspires.ftc.teamcode.Cogintilities.SpinnerSequencer;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
@@ -85,6 +86,7 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
     static protected Vision vision;
 //    static protected Vision visionPos;
     static protected LimeVision limeVision;
+    static protected CompositePositioning compositePositioning;
 
     static private Spinner spinner;
     static private Dropper dropper;
@@ -158,6 +160,11 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
 
         limeVision = new LimeVision(limelight);
 
+        compositePositioning = new CompositePositioning(limeVision, autoDrive);
+
+
+
+        GamepadUtility.setGamepadLED(Color.YELLOW, gamepad1, gamepad2);
 
 
         if (webcam.isAttached()) {

@@ -77,9 +77,8 @@ public class MecanumDriveBasic {
         headingPIDF.reset();
     }
 
-    public void turnToHeadingError(double error) {
-        double newTurnCmd = headingPIDF.calculate(error, 0);
-        mecanumDrive(0, 0, newTurnCmd);
+    public double getTurnToHeadingErrorCommand(double error) {
+        return headingPIDF.calculate(error, 0);
 //        double newTurnCmd;
 //        double headingFineGain   = 0.004;
 //

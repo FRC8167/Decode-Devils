@@ -1,19 +1,16 @@
 package org.firstinspires.ftc.teamcode.OpModes.TeleOp;
 
-import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Cogintilities.Color;
 import org.firstinspires.ftc.teamcode.Cogintilities.ConfigurableConstants;
+import org.firstinspires.ftc.teamcode.Cogintilities.DrawingUtility;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
 import org.firstinspires.ftc.teamcode.Cogintilities.TimedTimer;
 import org.firstinspires.ftc.teamcode.Cogintilities.VariableShooterLookup;
 import org.firstinspires.ftc.teamcode.Robot.RobotConfiguration;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-
-import java.util.Arrays;
 
 //@Disabled
 @TeleOp(name="MainTeleOp", group="Competition")
@@ -23,17 +20,19 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 //    AprilTagDetection posTag;
 //    TimedTimer posTagValidityTimer = new TimedTimer();
 
-    boolean skipNextDrive = false;
+    boolean autoAimDrive = false;
 
 
     TimedTimer buttonTimer;
 
     TimedTimer wobbleWaveTimer;
 
+    DrawingUtility drawingUtility = new DrawingUtility();
+
     @Override
     public void runOpMode() throws InterruptedException {
 
-        initializeRobot(new Pose2d(0,0,0), false);
+        initializeRobot(null, false);
 
         artifactsOnRamp = 0;
 
@@ -67,6 +66,8 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
             telemetry.update();
         }
 
+        double autoAimTurnCommand = 0;
+
         waitForStart();
 
         dataPrism.updateShootColors(artifactsOnRamp, getArtifactSequence());
@@ -74,11 +75,11 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
         vision.disableAprilTagDetection();
 
         while (opModeIsActive()) {
-
             drive.setDegradedDrive(gamepad1.right_bumper);
-            if (!skipNextDrive)
+            if (!autoAimDrive)
                 drive.mecanumDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
-            skipNextDrive = false;
+            else drive.mecanumDrive(-gamepad1.left_stick_y, gamepad1.left_stick_x, autoAimTurnCommand);
+            autoAimDrive = false;
 
 //            if (gamepad2.rightBumperWasPressed()) {
 //                spinnerSequencer.stop();
@@ -115,11 +116,9 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 //            }
 
             double shootVel = Double.NaN;
-            if (limeVision != null) {
-                double distance = limeVision.getGoalDistance();
-                if (!Double.isNaN(distance))
-                    shootVel = VariableShooterLookup.getVelocityByLookupDistance(distance);
-            }
+            double distance = compositePositioning.getAllianceGoalDistance();
+            if (!Double.isNaN(distance))
+                shootVel = VariableShooterLookup.getVelocityByLookupDistance(distance);
 
 
 
@@ -147,10 +146,11 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
             if (gamepad1.aWasPressed() || gamepad1.crossWasPressed())
                 drive.resetHeadingPIDF();
             if (gamepad1.a || gamepad1.cross) {
-                double goalBearing = limeVision != null ? limeVision.getGoalBearing() : Double.NaN;
+//                double goalBearing = limeVision != null ? limeVision.getGoalBearing() : Double.NaN;
+                double goalBearing = compositePositioning.getAllianceLocalizerGoalBearing();
                 if (!Double.isNaN(goalBearing)) {
-                    drive.turnToHeadingError(goalBearing - gamepad1.right_trigger + gamepad1.left_trigger ); //TODO: Test if integration is correct
-                    skipNextDrive = true;
+                    autoAimTurnCommand = drive.getTurnToHeadingErrorCommand(goalBearing - gamepad1.right_trigger + gamepad1.left_trigger ); //TODO: Test if integration is correct
+                    autoAimDrive = true;
                 }
 //                if (!posTagValidityTimer.isDone()) {
 //                    drive.turnToHeadingError(-(Math.toDegrees(Math.atan2(posTag.ftcPose.y + 5.5, posTag.ftcPose.x - 3.5)) - 90 + (gamepad1.left_trigger - gamepad1.right_trigger) * 3));
@@ -220,25 +220,39 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
                 spinnerSequencer.runBestStatesToDrop(spinStates.getNextToShoot(artifactsOnRamp, getArtifactSequence()));
             }
 
+            if (gamepad1.dpadLeftWasPressed()) {
+                setAlliance(AllianceColor.BLUE);
+            } else if (gamepad1.dpadRightWasPressed()) {
+                setAlliance(AllianceColor.RED);
+            }
+
             if (gamepad2.yWasPressed() || gamepad2.triangleWasPressed()) {
 //                ArtifactSequence = new State[]{State.PURPLE, State.PURPLE, State.PURPLE};
+//                AllianceColor allianceColor = getAlliance();
+//                if (allianceColor == null) setAlliance(AllianceColor.BLUE);
+//                else {
+//                    switch (allianceColor) {
+//                        case BLUE: setAlliance(AllianceColor.RED);
+//                        case RED: setAlliance(AllianceColor.BLUE);
+//                    }
+//                }
 //
-                if (getArtifactSequence() == STATES_GPP) {
-                    setArtifactSequence(STATES_PGP);
-                    dataPrism.updateShootColors(artifactsOnRamp, getArtifactSequence());
-                }
-                else if (getArtifactSequence() == STATES_PGP) {
-                    setArtifactSequence(STATES_PPG);
-                    dataPrism.updateShootColors(artifactsOnRamp, getArtifactSequence());
-                }
-                else if (getArtifactSequence() == STATES_PPG) {
-                    setArtifactSequence(STATES_GPP);
-                    dataPrism.updateShootColors(artifactsOnRamp, getArtifactSequence());
-                }
-                else {
-                    setArtifactSequence(STATES_GPP);
-                    dataPrism.updateShootColors(artifactsOnRamp, getArtifactSequence());
-                }
+//                if (getArtifactSequence() == STATES_GPP) {
+//                    setArtifactSequence(STATES_PGP);
+//                    dataPrism.updateShootColors(artifactsOnRamp, getArtifactSequence());
+//                }
+//                else if (getArtifactSequence() == STATES_PGP) {
+//                    setArtifactSequence(STATES_PPG);
+//                    dataPrism.updateShootColors(artifactsOnRamp, getArtifactSequence());
+//                }
+//                else if (getArtifactSequence() == STATES_PPG) {
+//                    setArtifactSequence(STATES_GPP);
+//                    dataPrism.updateShootColors(artifactsOnRamp, getArtifactSequence());
+//                }
+//                else {
+//                    setArtifactSequence(STATES_GPP);
+//                    dataPrism.updateShootColors(artifactsOnRamp, getArtifactSequence());
+//                }
 //                vision.scanForAprilTags();
 //                AprilTagDetection tag = vision.getFirstTargetTag();
 //                if (tag != null) {
@@ -343,6 +357,10 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
             telemetry.addData("ActiveDrop: ", spindexer.getActiveSlotDrop());
             telemetry.addData("ActiveSensor: ", spindexer.getActiveSlotSensor());
 
+            telemetry.addLine();
+
+            telemetry.addData("AllianceColor: ", getAlliance());
+
 //            telemetry.addData("Slot0: ", spinStates.getSlot(0));
 //            telemetry.addData("Slot1: ", spinStates.getSlot(1));
 //            telemetry.addData("Slot2: ", spinStates.getSlot(2));
@@ -359,8 +377,8 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 //            telemetry.addData("SequenceActive: ", !spinnerSequencer.isDone());
 //            telemetry.addData("ArtifactSequenceLength: ", getArtifactSequence() == null ? "null": getArtifactSequence().length);
             telemetry.addLine();
-            telemetry.addData("Bearing: ",  limeVision.getMediatedGoalBearing());
-            telemetry.addData("Distance: ", limeVision.getMediatedGoalDistance());
+            telemetry.addData("Bearing: ",  compositePositioning.getAllianceGoalBearing());
+            telemetry.addData("Distance: ", compositePositioning.getAllianceGoalDistance());
 
 //            telemetry.addLine();
 //            telemetry.addData("Color: ", colorDetection.getColor());
@@ -372,7 +390,8 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
             telemetry.update();
 
             if (shooter.getTargetVelocityRPM() != 0) {
-                double mediatedBearing = limeVision != null ? limeVision.getMediatedGoalBearing() : Double.NaN;
+//                double mediatedBearing = limeVision != null ? limeVision.getMediatedGoalBearing() : Double.NaN;
+                double mediatedBearing = compositePositioning.getAllianceGoalBearing();
                 if (!Double.isNaN(mediatedBearing)) {
                     if (Math.abs(mediatedBearing) <= 2) {
                         gamepad2.stopRumble();
@@ -389,6 +408,10 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
     }
 
     private void periodic() {
+        compositePositioning.update(getAlliance());
+        drawingUtility.drawRobot(Color.BLUE, compositePositioning.getCompositePos2d());
+        drawingUtility.send();
+
         spindexer.periodic();
         spinnerSequencer.update();
 //        shooter.update();

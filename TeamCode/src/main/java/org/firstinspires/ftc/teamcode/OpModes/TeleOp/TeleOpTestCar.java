@@ -20,7 +20,7 @@ public class TeleOpTestCar extends RobotConfiguration implements TeamConstants {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        initializeRobot(new Pose2d(0,0,0), true);
+        initializeRobot(null, true);
 
         waitForStart();
 //        limeVision.takePhoto("Test");

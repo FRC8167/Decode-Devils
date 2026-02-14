@@ -454,6 +454,11 @@ public final class MecanumDrive {
     }
 
     public PoseVelocity2d updatePoseEstimate() {
+        if (localizer instanceof PinpointLocalizer){
+            if (!((PinpointLocalizer) localizer).isValid()) {
+                return null;
+            }
+        }
         PoseVelocity2d vel = localizer.update();
         poseHistory.add(localizer.getPose());
         

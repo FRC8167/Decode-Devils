@@ -16,7 +16,9 @@ import java.util.Objects;
 @Config
 public final class PinpointLocalizer implements Localizer {
     public static class Params {
-        public double parYTicks = 0.0; // y position of the parallel encoder (in tick units)
+        //30.37318 mm, mm per tick 32 * Math.PI / 2000 = 2pi/125
+        // 4250/pi ticks
+        public double parYTicks = 30.37318 / (32 * Math.PI / 2000); // y position of the parallel encoder (in tick units)
         public double perpXTicks = 0.0; // x position of the perpendicular encoder (in tick units)
     }
 
@@ -27,6 +29,12 @@ public final class PinpointLocalizer implements Localizer {
 
     private Pose2d txWorldPinpoint;
     private Pose2d txPinpointRobot = new Pose2d(0, 0, 0);
+
+    private boolean isValid = false;
+
+    public boolean isValid() {
+        return isValid;
+    }
 
     public PinpointLocalizer(HardwareMap hardwareMap, double inPerTick, Pose2d initialPose) {
         // TODO: make sure your config has a Pinpoint device with this name
@@ -50,16 +58,20 @@ public final class PinpointLocalizer implements Localizer {
 
     @Override
     public void setPose(Pose2d pose) {
-        txWorldPinpoint = pose.times(txPinpointRobot.inverse());
+        isValid = (pose != null) ;
+        if (isValid)
+            txWorldPinpoint = pose.times(txPinpointRobot.inverse());
     }
 
     @Override
     public Pose2d getPose() {
+        if (!isValid) return null;
         return txWorldPinpoint.times(txPinpointRobot);
     }
 
     @Override
     public PoseVelocity2d update() {
+        if (!isValid) return null;
         driver.update();
         if (Objects.requireNonNull(driver.getDeviceStatus()) == GoBildaPinpointDriver.DeviceStatus.READY) {
             txPinpointRobot = new Pose2d(driver.getPosX(DistanceUnit.INCH), driver.getPosY(DistanceUnit.INCH), driver.getHeading(UnnormalizedAngleUnit.RADIANS));

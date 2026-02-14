@@ -211,6 +211,7 @@ public class SpinnerSequencer implements TeamConstants {
 
 
                         } else {
+                            //TODO: Add (is position valid) condition
                             if (nextState != 0) spindexer.stateUpdateForDrop();
 
                             spindexer.rotateStateToDrop(states[nextState]);

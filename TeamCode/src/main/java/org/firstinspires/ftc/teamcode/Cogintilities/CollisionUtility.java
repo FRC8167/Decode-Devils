@@ -5,6 +5,8 @@ import android.graphics.Path;
 import android.graphics.Region;
 import android.graphics.RectF;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.roadrunner.Pose2d;
 
 public class CollisionUtility {
@@ -66,6 +68,8 @@ public class CollisionUtility {
         float right = (float) (rectCenterX + width / 2.0);
         float bottom = (float) (rectCenterY + height / 2.0);
         rectPath.addRect(left, top, right, bottom, Path.Direction.CW);
+//        Path circlePath = new Path();
+//        circlePath.addCircle((float) rectCenterX, (float) rectCenterY, 9, Path.Direction.CW);
 
         Matrix matrix = new Matrix();
         matrix.postRotate((float) angle, (float) rectCenterX, (float) rectCenterY);
@@ -80,28 +84,76 @@ public class CollisionUtility {
         return checkCollision(rectPath, triPath);
     }
 
-    public static boolean checkRobotLaunchZoneCollision(Pose2d robotPose) {
-        double rectCenterX = robotPose.position.x;
-        double rectCenterY = robotPose.position.y;
+    public static boolean checkRobotLaunchZoneOverlap(@NonNull Pose2d robotPose) {
+        double rectCenterX = -robotPose.position.x + 144/2.0; //Note: For some reason x is backwards, no clue why
+        double rectCenterY = -robotPose.position.y + 144/2.0; //Note: Computer graphics flip y axis
         double width = TeamConstants.ROBOT_WIDTH;
         double height = TeamConstants.ROBOT_LENGTH;
-        double angle = Math.toDegrees(robotPose.heading.toDouble());
+        double angle = 360 - Math.toDegrees(robotPose.heading.toDouble()); //Note: Computer graphics angles are clockwise
 
-        float CloseX1 = (float) TeamConstants.CLOSE_LAUNCH_ZONE_1.x;
-        float CloseY1 = (float) TeamConstants.CLOSE_LAUNCH_ZONE_1.y;
-        float CloseX2 = (float) TeamConstants.CLOSE_LAUNCH_ZONE_2.x;
-        float CloseY2 = (float) TeamConstants.CLOSE_LAUNCH_ZONE_2.y;
-        float CloseX3 = (float) TeamConstants.CLOSE_LAUNCH_ZONE_3.x;
-        float CloseY3 = (float) TeamConstants.CLOSE_LAUNCH_ZONE_3.y;
+        float CloseX1 = (float) (TeamConstants.CLOSE_LAUNCH_ZONE_1.x + 144/2.0);
+        float CloseY1 = (float) (-TeamConstants.CLOSE_LAUNCH_ZONE_1.y + 144/2.0);
+        float CloseX2 = (float) (TeamConstants.CLOSE_LAUNCH_ZONE_2.x + 144/2.0);
+        float CloseY2 = (float) (-TeamConstants.CLOSE_LAUNCH_ZONE_2.y + 144/2.0);
+        float CloseX3 = (float) (TeamConstants.CLOSE_LAUNCH_ZONE_3.x + 144/2.0);
+        float CloseY3 = (float) (-TeamConstants.CLOSE_LAUNCH_ZONE_3.y + 144/2.0);
 
-        float FarX1 = (float) TeamConstants.FAR_LAUNCH_ZONE_1.x;
-        float FarY1 = (float) TeamConstants.FAR_LAUNCH_ZONE_1.y;
-        float FarX2 = (float) TeamConstants.FAR_LAUNCH_ZONE_2.x;
-        float FarY2 = (float) TeamConstants.FAR_LAUNCH_ZONE_2.y;
-        float FarX3 = (float) TeamConstants.FAR_LAUNCH_ZONE_3.x;
-        float FarY3 = (float) TeamConstants.FAR_LAUNCH_ZONE_3.y;
+        float FarX1 = (float) (TeamConstants.FAR_LAUNCH_ZONE_1.x + 144/2.0);
+        float FarY1 = (float) (-TeamConstants.FAR_LAUNCH_ZONE_1.y + 144/2.0);
+        float FarX2 = (float) (TeamConstants.FAR_LAUNCH_ZONE_2.x + 144/2.0);
+        float FarY2 = (float) (-TeamConstants.FAR_LAUNCH_ZONE_2.y + 144/2.0);
+        float FarX3 = (float) (TeamConstants.FAR_LAUNCH_ZONE_3.x + 144/2.0);
+        float FarY3 = (float) (-TeamConstants.FAR_LAUNCH_ZONE_3.y + 144/2.0);
 
         return checkRectTriangleCollision(rectCenterX, rectCenterY, width, height, angle, CloseX1, CloseY1, CloseX2, CloseY2, CloseX3, CloseY3) ||
                 checkRectTriangleCollision(rectCenterX, rectCenterY, width, height, angle, FarX1, FarY1, FarX2, FarY2, FarX3, FarY3);
+    }
+
+    public static boolean checkRobotLaunchZoneCloseOverlap(@NonNull Pose2d robotPose) {
+        double rectCenterX = -robotPose.position.x + 144/2.0; //Note: For some reason x is backwards, no clue why
+        double rectCenterY = -robotPose.position.y + 144/2.0; //Note: Computer graphics flip y axis
+        double width = TeamConstants.ROBOT_WIDTH;
+        double height = TeamConstants.ROBOT_LENGTH;
+        double angle = 360 - Math.toDegrees(robotPose.heading.toDouble()); //Note: Computer graphics angles are clockwise
+
+        float CloseX1 = (float) (TeamConstants.CLOSE_LAUNCH_ZONE_1.x + 144/2.0);
+        float CloseY1 = (float) (-TeamConstants.CLOSE_LAUNCH_ZONE_1.y + 144/2.0);
+        float CloseX2 = (float) (TeamConstants.CLOSE_LAUNCH_ZONE_2.x + 144/2.0);
+        float CloseY2 = (float) (-TeamConstants.CLOSE_LAUNCH_ZONE_2.y + 144/2.0);
+        float CloseX3 = (float) (TeamConstants.CLOSE_LAUNCH_ZONE_3.x + 144/2.0);
+        float CloseY3 = (float) (-TeamConstants.CLOSE_LAUNCH_ZONE_3.y + 144/2.0);
+
+        float FarX1 = (float) (TeamConstants.FAR_LAUNCH_ZONE_1.x + 144/2.0);
+        float FarY1 = (float) (-TeamConstants.FAR_LAUNCH_ZONE_1.y + 144/2.0);
+        float FarX2 = (float) (TeamConstants.FAR_LAUNCH_ZONE_2.x + 144/2.0);
+        float FarY2 = (float) (-TeamConstants.FAR_LAUNCH_ZONE_2.y + 144/2.0);
+        float FarX3 = (float) (TeamConstants.FAR_LAUNCH_ZONE_3.x + 144/2.0);
+        float FarY3 = (float) (-TeamConstants.FAR_LAUNCH_ZONE_3.y + 144/2.0);
+
+        return checkRectTriangleCollision(rectCenterX, rectCenterY, width, height, angle, CloseX1, CloseY1, CloseX2, CloseY2, CloseX3, CloseY3);
+    }
+
+    public static boolean checkRobotLaunchZoneFarOverlap(@NonNull Pose2d robotPose) {
+        double rectCenterX = -robotPose.position.x + 144/2.0; //Note: For some reason x is backwards, no clue why
+        double rectCenterY = -robotPose.position.y + 144/2.0; //Note: Computer graphics flip y axis
+        double width = TeamConstants.ROBOT_WIDTH;
+        double height = TeamConstants.ROBOT_LENGTH;
+        double angle = 360 - Math.toDegrees(robotPose.heading.toDouble()); //Note: Computer graphics angles are clockwise
+
+        float CloseX1 = (float) (TeamConstants.CLOSE_LAUNCH_ZONE_1.x + 144/2.0);
+        float CloseY1 = (float) (-TeamConstants.CLOSE_LAUNCH_ZONE_1.y + 144/2.0);
+        float CloseX2 = (float) (TeamConstants.CLOSE_LAUNCH_ZONE_2.x + 144/2.0);
+        float CloseY2 = (float) (-TeamConstants.CLOSE_LAUNCH_ZONE_2.y + 144/2.0);
+        float CloseX3 = (float) (TeamConstants.CLOSE_LAUNCH_ZONE_3.x + 144/2.0);
+        float CloseY3 = (float) (-TeamConstants.CLOSE_LAUNCH_ZONE_3.y + 144/2.0);
+
+        float FarX1 = (float) (TeamConstants.FAR_LAUNCH_ZONE_1.x + 144/2.0);
+        float FarY1 = (float) (-TeamConstants.FAR_LAUNCH_ZONE_1.y + 144/2.0);
+        float FarX2 = (float) (TeamConstants.FAR_LAUNCH_ZONE_2.x + 144/2.0);
+        float FarY2 = (float) (-TeamConstants.FAR_LAUNCH_ZONE_2.y + 144/2.0);
+        float FarX3 = (float) (TeamConstants.FAR_LAUNCH_ZONE_3.x + 144/2.0);
+        float FarY3 = (float) (-TeamConstants.FAR_LAUNCH_ZONE_3.y + 144/2.0);
+
+        return checkRectTriangleCollision(rectCenterX, rectCenterY, width, height, angle, FarX1, FarY1, FarX2, FarY2, FarX3, FarY3);
     }
 }

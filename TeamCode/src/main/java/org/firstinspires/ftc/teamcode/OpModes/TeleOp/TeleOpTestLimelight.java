@@ -24,7 +24,7 @@ public class TeleOpTestLimelight extends RobotConfiguration implements TeamConst
     @Override
     public void runOpMode() throws InterruptedException {
 
-        initializeRobot(new Pose2d(0,0,0), true);
+        initializeRobot(null, true);
 
         Pose3D poseMT1 = null;
         Pose3D poseMediated = null;

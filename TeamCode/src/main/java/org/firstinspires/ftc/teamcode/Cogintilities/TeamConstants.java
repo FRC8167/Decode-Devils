@@ -127,6 +127,7 @@ public interface TeamConstants {
 
     Position BLUE_GOAL_TARGET = new Position(DistanceUnit.INCH, -60.699807, -57.531366, 38.75, 0);
     Position RED_GOAL_TARGET = new Position(DistanceUnit.INCH, -60.699807, 57.531366, 38.75, 0);
+    //Note: Coordinate system is looking from red side towards field with 0 deg to the right
 
     double FIELD_TILE_LENGTH = 23.562500;
     double FIELD_BACK_EDGE_DISTANCE = FIELD_TILE_LENGTH *3;
@@ -138,12 +139,11 @@ public interface TeamConstants {
     Position CLOSE_LAUNCH_ZONE_3 = new Position(DistanceUnit.INCH, 0, 0, 0 ,0);
 
     //TODO: Verify these values
-    double ROBOT_WIDTH = 18;
-    double ROBOT_LENGTH = 18;
+    double ROBOT_WIDTH = 16.5;
+    double ROBOT_LENGTH = 16.5;
+
+    double DISTANCE_SENSOR_CLEAR_SPACE_NEEDED = 10; //Space needed to shoot in Inches TODO: Determine Actual Value
+    double DISTANCE_SENSOR_FWD_OFFSET = 6; //Distance of sensor from center of rotation in Inches TODO: Determine Actual Value
 
 
-
-//    Position BLUE_GOAL_TARGET = new Position(DistanceUnit.INCH, -63.607644, -63.638894, 38.75, 0);
-//    Position RED_GOAL_TARGET = new Position(DistanceUnit.INCH, -63.607644, 63.638894, 38.75, 0);
-    //Note: Coordinate system is looking from red side towards field with 0 deg to their right
 }
