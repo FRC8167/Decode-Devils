@@ -84,11 +84,11 @@ public class LimeVision implements TeamConstants {
     }
 
     public Pose2d getRobotPose2d() {
-        return PoseMath.Pose3DtoPose2d(getRobotPose3D());
+        return PoseMath.pose3DtoPose2d(getRobotPose3D());
     }
 
     public Pose2d getMediatedRobotPose2d() {
-        return PoseMath.Pose3DtoPose2d(getMediatiatedRobotPose3D());
+        return PoseMath.pose3DtoPose2d(getMediatiatedRobotPose3D());
     }
 
     public double getGoalBearing(LLResult result, Pose3D pose3D) {
@@ -186,6 +186,10 @@ public class LimeVision implements TeamConstants {
         }
 
         return distance;
+    }
+
+    public double getGoalDistance(Pose3D pose3D) {
+        return getGoalDistance(getResult(), pose3D);
     }
 
     public double getGoalDistance() {

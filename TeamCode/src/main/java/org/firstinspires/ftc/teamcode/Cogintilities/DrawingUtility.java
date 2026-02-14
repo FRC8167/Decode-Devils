@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Pose2d;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.RoadRunner.Drawing;
 
@@ -24,7 +23,7 @@ public final class DrawingUtility {
     public void drawRobot(String hexColor, Pose3D robotPos) {
         if (robotPos == null) return;
         packet.fieldOverlay().setStroke(hexColor);
-        Drawing.drawRobot(packet.fieldOverlay(), PoseMath.Pose3DtoPose2d(robotPos));
+        Drawing.drawRobot(packet.fieldOverlay(), PoseMath.pose3DtoPose2d(robotPos));
     }
 
     public void drawRobot(Color color, Pose2d robotPos) {
@@ -36,7 +35,7 @@ public final class DrawingUtility {
     public void drawRobot(Color color, Pose3D robotPos) {
         if (robotPos == null) return;
         packet.fieldOverlay().setStroke(color.getHexValue());
-        Drawing.drawRobot(packet.fieldOverlay(), PoseMath.Pose3DtoPose2d(robotPos));
+        Drawing.drawRobot(packet.fieldOverlay(), PoseMath.pose3DtoPose2d(robotPos));
     }
 
     public void send() {

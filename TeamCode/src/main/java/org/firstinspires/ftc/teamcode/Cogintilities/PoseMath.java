@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.Cogintilities;
 import androidx.annotation.NonNull;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Rotation2d;
+import com.acmerobotics.roadrunner.Vector2d;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -16,12 +18,23 @@ import java.util.List;
 public class PoseMath {
     private PoseMath() {}
 
-    public static Pose2d Pose3DtoPose2d(Pose3D pose3D) {
+    public static Pose2d pose3DtoPose2d(Pose3D pose3D) {
         if (pose3D == null) return null;
         Position position = pose3D.getPosition().toUnit(DistanceUnit.INCH);
         YawPitchRollAngles orientation = pose3D.getOrientation();
 
         return new Pose2d(position.x, position.y, orientation.getYaw(AngleUnit.RADIANS));
+    }
+
+    public static Pose3D pose2dtoPose3D(Pose2d pose2d) {
+        if (pose2d == null) return null;
+        Vector2d position = pose2d.position;
+        Rotation2d heading = pose2d.heading;
+
+        Position newPosition = new Position(DistanceUnit.INCH, position.x, position.y, 0, 0);
+        YawPitchRollAngles newOrientation = new YawPitchRollAngles(AngleUnit.RADIANS, heading.toDouble(), 0, 0, 0);
+
+        return new Pose3D(newPosition, newOrientation);
     }
 
     static public <T,T2> double pose3DDistance(T firstPose, T2 secondPose) {
@@ -57,6 +70,7 @@ public class PoseMath {
         if (pose == null) return null;
         else if (pose instanceof Pose3D) return ((Pose3D) pose).getPosition();
         else if (pose instanceof Position) return (Position) pose;
+        else if (pose instanceof Pose2d) return pose2dtoPose3D((Pose2d) pose).getPosition();
         else return null;
     }
 
