@@ -57,7 +57,7 @@ public class SpinnerSequencer implements TeamConstants {
         wiggleActive = false;
         testStatesValidity();
         testStatesArePresent();
-        update();
+        update(false);
     }
 
     public void runStatesToDrop(State... states) {
@@ -124,7 +124,7 @@ public class SpinnerSequencer implements TeamConstants {
         dualMode = DualMode.INITIAL;
         done = true;
         testStatesValidity();
-        update();
+        update(false);
 
     }
 
@@ -139,7 +139,7 @@ public class SpinnerSequencer implements TeamConstants {
         excludedIndexes = convertExcludedIndexes(excludedIndexesBoolean);
         currentScanSlot = -1;
         lastScanSlot = -1;
-        update();
+        update(false);
     }
 
     public void runScanAll() {
@@ -178,7 +178,7 @@ public class SpinnerSequencer implements TeamConstants {
                 || countUnknown > spinStates.getCountOfStateInStates(State.UNKNOWN);
     }
 
-    public void update() {
+    public void update(boolean isValid) {
         if (done && timer.isDone()) {
             if (dualMode == DualMode.INITIAL) {
                 if (statesAreNotPresent(states)) {
@@ -211,15 +211,15 @@ public class SpinnerSequencer implements TeamConstants {
 
 
                         } else {
-                            //TODO: Add (is position valid) condition
-                            if (nextState != 0) spindexer.stateUpdateForDrop();
+                            if (isValid) {
+                                if (nextState != 0) spindexer.stateUpdateForDrop();
 
-                            spindexer.rotateStateToDrop(states[nextState]);
-                            nextState++;
+                                spindexer.rotateStateToDrop(states[nextState]);
+                                nextState++;
 
-                            if (nextState == 1) timer = new TimedTimer(SEQUENCER_TIMER_INITIAL);
-                            else timer = new TimedTimer(SEQUENCER_TIMER);
-
+                                if (nextState == 1) timer = new TimedTimer(SEQUENCER_TIMER_INITIAL);
+                                else timer = new TimedTimer(SEQUENCER_TIMER);
+                            }
 
                         }
                     }

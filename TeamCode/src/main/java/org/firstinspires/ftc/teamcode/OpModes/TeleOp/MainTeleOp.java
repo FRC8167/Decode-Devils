@@ -413,7 +413,7 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
         drawingUtility.send();
 
         spindexer.periodic();
-        spinnerSequencer.update();
+        spinnerSequencer.update(compositePositioning.checkOverallReadiness()); //TODO: Fix to insure limelight detects validity as well & robot is stationary
 //        shooter.update();
 //        lightRGB.setColor(spindexer.isSpinnerDone() ? "Blue":"Orange");
 //        if (spindexer.getActiveSlotDrop() != -1) lightRGB.setColorState(spinStates.getSlot(spindexer.getActiveSlotDrop()));
