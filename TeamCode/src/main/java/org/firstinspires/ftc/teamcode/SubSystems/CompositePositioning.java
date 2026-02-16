@@ -18,7 +18,7 @@ public class CompositePositioning implements TeamConstants {
 
     private final LimeVision limeVision;
     private final MecanumDrive autoDrive;
-    private RobotConfiguration.AllianceColor allianceColor; //TODO: Confirm that this updates with alliance color change
+    private RobotConfiguration.AllianceColor allianceColor;
 
     private Pose2d limePos2d = null;
     private Pose2d rawLimePos2d = null;
@@ -54,7 +54,7 @@ public class CompositePositioning implements TeamConstants {
         if (limeVision != null) {
             limePos2d = limeVision.getMediatedRobotPose2d();
             rawLimePos2d = limeVision.getRobotPose2d();
-        } else  limePos2d = null;
+        } else limePos2d = null;
 
         autoDrivePos2d = autoDrive.localizer.getPose();
 
@@ -64,13 +64,17 @@ public class CompositePositioning implements TeamConstants {
             }
         } else {
             compositePos2d = limePos2d;
-            if (isStationary() || autoDrivePos2d == null)
+            if (isStationary() || autoDrivePos2d == null || PoseMath.poseAngularYawDifference(rawLimePos2d, autoDrivePos2d, AngleUnit.DEGREES) > 5) //TODO: Adjust/Confirm tolerance & logic
                 autoDrive.localizer.setPose(limePos2d);
         }
     }
 
     public boolean isStationary() {
         return (poseVel != null && poseVel.linearVel.x == 0 && poseVel.linearVel.y == 0 && poseVel.angVel == 0);
+    }
+
+    public boolean isStationaryEnough() {
+        return (poseVel != null && poseVel.linearVel.x == 0 && poseVel.linearVel.y == 0 && poseVel.angVel == 0); //TODO: Adjust 0's to reasonable values
     }
 
     public Position getAllianceGoalPosition() {
@@ -98,7 +102,7 @@ public class CompositePositioning implements TeamConstants {
         return AngleUnit.normalizeDegrees(robotBearing);
     }
 
-    public double getAllianceLocalizerGoalBearing() {
+    public double getAllianceGoalBearing_LocalizerPreferred() {
         if (compositePos2d == null) return Double.NaN;
         if (allianceColor == null) {
             if (autoDrivePos2d != null)
@@ -122,7 +126,22 @@ public class CompositePositioning implements TeamConstants {
         }
     }
 
-    public double getAllianceRawGoalBearing() {
+    public double getAllianceGoalBearing_Lime() {
+        if (limePos2d == null) return Double.NaN;
+        if (allianceColor == null) {
+            return limeVision.getGoalBearing(PoseMath.pose2dtoPose3D(limePos2d));
+        }
+
+        Position targetPos = getAllianceGoalPosition();
+        if (targetPos == null) return Double.NaN;
+
+        double rawAngle = PoseMath.poseArcTan(limePos2d, targetPos, AngleUnit.DEGREES);
+        double robotBearing = rawAngle - Math.toDegrees(limePos2d.heading.toDouble());
+
+        return AngleUnit.normalizeDegrees(robotBearing);
+    }
+
+    public double getAllianceGoalBearing_RawLime() {
         if (compositePos2d == null) return Double.NaN;
         if (allianceColor == null) {
             if (rawLimePos2d != null) return limeVision.getGoalBearing(PoseMath.pose2dtoPose3D(rawLimePos2d));
@@ -175,11 +194,11 @@ public class CompositePositioning implements TeamConstants {
     }
 
     public boolean checkRobotGoalAlignment() {
-        return Math.abs(getAllianceGoalBearing()) <= 2;
+        return (Math.abs(getAllianceGoalBearing_Lime()) <= 2); //Requires tag to be visible. Note: may prove to cause future issues
     }
 
     public boolean checkOverallReadiness() {
-        return checkRobotLaunchZoneOverlap() && checkRobotGoalAlignment(); //TODO: Add dist. sensor when attached & implemented
+        return checkRobotLaunchZoneOverlap() && checkRobotGoalAlignment() && isStationaryEnough(); //TODO: Add dist. sensor when attached & implemented
     }
 
 }

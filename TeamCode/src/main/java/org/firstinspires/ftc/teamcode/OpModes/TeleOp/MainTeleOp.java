@@ -147,9 +147,10 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
                 drive.resetHeadingPIDF();
             if (gamepad1.a || gamepad1.cross) {
 //                double goalBearing = limeVision != null ? limeVision.getGoalBearing() : Double.NaN;
-                double goalBearing = compositePositioning.getAllianceLocalizerGoalBearing();
+//                double goalBearing = compositePositioning.getAllianceGoalBearing_LocalizerPreferred();
+                double goalBearing = compositePositioning.getAllianceGoalBearing_RawLime(); //TODO: Test if better than localizer
                 if (!Double.isNaN(goalBearing)) {
-                    autoAimTurnCommand = drive.getTurnToHeadingErrorCommand(goalBearing - gamepad1.right_trigger + gamepad1.left_trigger ); //TODO: Test if integration is correct
+                    autoAimTurnCommand = drive.getTurnToHeadingErrorCommand(goalBearing - gamepad1.right_trigger + gamepad1.left_trigger );
                     autoAimDrive = true;
                 }
 //                if (!posTagValidityTimer.isDone()) {

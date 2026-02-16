@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.Vector2d;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
@@ -66,11 +67,30 @@ public class PoseMath {
         return pose3DDistance(originPosition, pose);
     }
 
+    static public <T,T2> double poseAngularYawDifference(T firstPose, T2 secondPose, AngleUnit angleUnit) {
+        YawPitchRollAngles firstOrientation = normalizeToOrientation(firstPose);
+        YawPitchRollAngles secondOrientation = normalizeToOrientation(secondPose);
+        if (firstOrientation == null || secondOrientation == null) return Double.NaN;
+        double yaw1 = firstOrientation.getYaw(angleUnit);
+        double yaw2 = secondOrientation.getYaw(angleUnit);
+        return Math.abs(AngleUnit.normalizeDegrees(yaw2-yaw1));
+    }
+
+
+
     static public <T> Position normalizeToPosition(T pose) {
         if (pose == null) return null;
         else if (pose instanceof Pose3D) return ((Pose3D) pose).getPosition();
         else if (pose instanceof Position) return (Position) pose;
         else if (pose instanceof Pose2d) return pose2dtoPose3D((Pose2d) pose).getPosition();
+        else return null;
+    }
+
+    static public <T> YawPitchRollAngles normalizeToOrientation(T pose) {
+        if (pose == null) return null;
+        else if (pose instanceof Pose3D) return ((Pose3D) pose).getOrientation();
+        else if (pose instanceof YawPitchRollAngles) return (YawPitchRollAngles) pose;
+        else if (pose instanceof Pose2d) return pose2dtoPose3D((Pose2d) pose).getOrientation();
         else return null;
     }
 
