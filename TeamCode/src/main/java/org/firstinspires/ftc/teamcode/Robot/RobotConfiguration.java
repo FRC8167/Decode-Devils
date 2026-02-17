@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.rev.Rev2mDistanceSensor;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -17,6 +18,7 @@ import org.firstinspires.ftc.teamcode.Cogintilities.Color;
 import org.firstinspires.ftc.teamcode.Cogintilities.GamepadUtility;
 import org.firstinspires.ftc.teamcode.Cogintilities.Prism.GoBildaPrismDriver;
 import org.firstinspires.ftc.teamcode.SubSystems.CompositePositioning;
+import org.firstinspires.ftc.teamcode.SubSystems.DistanceDetection;
 import org.firstinspires.ftc.teamcode.SubSystems.LimeVision;
 import org.firstinspires.ftc.teamcode.Cogintilities.SpinnerSequencer;
 import org.firstinspires.ftc.teamcode.Cogintilities.TeamConstants;
@@ -76,6 +78,7 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
 //    static protected Fork fork;
     static protected SpinStatesSingleton spinStates;
     static protected ColorDetection colorDetection;
+    static protected DistanceDetection distanceDetection;
     static protected Spindexer spindexer;
     static protected SpinnerSequencer spinnerSequencer;
     static protected LightRGB lightRGB_L;
@@ -126,6 +129,7 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
 //        CRServo intakeServo = hardwareMap.get(CRServo.class, "intakeServo");
 
         RevColorSensorV3 colorSensor = hardwareMap.get(RevColorSensorV3.class, "colorSensor");
+        Rev2mDistanceSensor distSensor = hardwareMap.get(Rev2mDistanceSensor.class, "distSensor");
         Servo spinServo = hardwareMap.get(Servo.class, "spinServo");
         Servo dropServo = hardwareMap.get(Servo.class, "dropServo");
 //        Servo forkServo = hardwareMap.get(Servo.class, "forkServo");
@@ -140,15 +144,16 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
         Limelight3A limelight = hardwareMap.get(Limelight3A.class, "limelight");
 
         /* Create an object of every module/subsystem needed for both autonomous and teleOp modes. */
-        drive            = new MecanumDriveBasic(driveMotorLF, driveMotorLR, driveMotorRF, driveMotorRR);
-        autoDrive        = new MecanumDrive(hardwareMap, startPos);
-        shooter          = new Shooter(shooterMotor);
-//        intake           = new Intake(intakeServo);
-        colorDetection   = new ColorDetection(colorSensor);
-        spinStates       = SpinStatesSingleton.getInstance();
-        spinner          = new Spinner(spinServo, SPINNER_INIT_POS+SPINNER_OFFSET, SPINNER_MIN, SPINNER_MAX, moveServos);
-        dropper          = new Dropper(dropServo, DROPPER_INIT_POS, DROPPER_MIN, DROPPER_MAX, moveServos);
-//        fork             = new Fork   (forkServo, FORK_INIT_POS, FORK_MIN, FORK_MAX, moveServos);
+        drive             = new MecanumDriveBasic(driveMotorLF, driveMotorLR, driveMotorRF, driveMotorRR);
+        autoDrive         = new MecanumDrive(hardwareMap, startPos);
+        shooter           = new Shooter(shooterMotor);
+//        intake            = new Intake(intakeServo);
+        colorDetection    = new ColorDetection(colorSensor);
+        distanceDetection = new DistanceDetection(distSensor);
+        spinStates        = SpinStatesSingleton.getInstance();
+        spinner           = new Spinner(spinServo, SPINNER_INIT_POS+SPINNER_OFFSET, SPINNER_MIN, SPINNER_MAX, moveServos);
+        dropper           = new Dropper(dropServo, DROPPER_INIT_POS, DROPPER_MIN, DROPPER_MAX, moveServos);
+//        fork              = new Fork   (forkServo, FORK_INIT_POS, FORK_MIN, FORK_MAX, moveServos);
 
         lightRGB_L = new LightRGB(servoRGB_L, LIGHT_INIT_POS, LIGHT_MIN, LIGHT_MAX);
         lightRGB_M = new LightRGB(servoRGB_M, LIGHT_INIT_POS, LIGHT_MIN, LIGHT_MAX);
@@ -160,11 +165,11 @@ public abstract class RobotConfiguration extends LinearOpMode implements TeamCon
 
         limeVision = new LimeVision(limelight);
 
-        compositePositioning = new CompositePositioning(limeVision, autoDrive);
+        compositePositioning = new CompositePositioning(limeVision, distanceDetection, autoDrive);
 
 
 
-        GamepadUtility.setGamepadLED(Color.YELLOW, gamepad1, gamepad2);
+        GamepadUtility.setGamepadLED(alliance, gamepad1, gamepad2);
 
 
         if (webcam.isAttached()) {

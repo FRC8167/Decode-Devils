@@ -31,6 +31,24 @@ public class Servo1D {
         return servo.getPosition();
     }
 
+    public void disable() {
+        if (servo instanceof ServoImplEx) {
+            ((ServoImplEx) servo).setPwmDisable();
+        }
+    }
+
+    public void enable() {
+        if (servo instanceof ServoImplEx) {
+            ((ServoImplEx) servo).setPwmEnable();
+        }
+    }
+
+    public boolean isEnabled() {
+        if (servo instanceof ServoImplEx) {
+            return ((ServoImplEx) servo).isPwmEnabled();
+        } else return false;
+    }
+
 //    public void setPulseRange(int customMinPulse, int customMaxPulse) {
 //        if (servo instanceof ServoImplEx) {
 //            ((ServoImplEx) servo).setPwmRange(new ServoImplEx.PwmRange(customMinPulse, customMaxPulse));

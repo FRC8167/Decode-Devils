@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.Robot.RobotConfiguration;
 public class CompositePositioning implements TeamConstants {
 
     private final LimeVision limeVision;
+    private final DistanceDetection distanceDetection;
     private final MecanumDrive autoDrive;
     private RobotConfiguration.AllianceColor allianceColor;
 
@@ -28,8 +29,9 @@ public class CompositePositioning implements TeamConstants {
     private Pose2d compositePos2d = null;
 
 
-    public CompositePositioning(LimeVision limeVision, MecanumDrive autoDrive) {
+    public CompositePositioning(LimeVision limeVision, DistanceDetection distanceDetection, MecanumDrive autoDrive) {
         this.limeVision = limeVision;
+        this.distanceDetection = distanceDetection;
         this.autoDrive = autoDrive;
     }
 
@@ -74,8 +76,8 @@ public class CompositePositioning implements TeamConstants {
     }
 
     public boolean isStationaryEnough() {
-        return (poseVel != null && poseVel.linearVel.x == 0 && poseVel.linearVel.y == 0 && poseVel.angVel == 0); //TODO: Adjust 0's to reasonable values
-    }
+        return (poseVel != null && Math.abs(poseVel.linearVel.x) <= 5 && Math.abs(poseVel.linearVel.y) <= 5 && Math.abs(poseVel.angVel) <= Math.toDegrees(5));
+    } //I believe units are in/s & rad/s (ccw positive)
 
     public Position getAllianceGoalPosition() {
         if (compositePos2d == null) return null;
@@ -198,7 +200,7 @@ public class CompositePositioning implements TeamConstants {
     }
 
     public boolean checkOverallReadiness() {
-        return checkRobotLaunchZoneOverlap() && checkRobotGoalAlignment() && isStationaryEnough(); //TODO: Add dist. sensor when attached & implemented
+        return checkRobotLaunchZoneOverlap() && checkRobotGoalAlignment() && isStationaryEnough() && distanceDetection.isClear(); //TODO: Add dist. sensor when attached & implemented
     }
 
 }

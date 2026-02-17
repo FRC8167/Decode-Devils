@@ -4,6 +4,9 @@ public class TimedTimer {
     private double initialTime;
     private double duration;
 
+    private boolean frozen = false;
+    private double frozenTime = Double.NaN;
+
     public TimedTimer(double timeInSeconds) {
         initialTime = System.currentTimeMillis();
         duration = timeInSeconds*1000;
@@ -17,15 +20,35 @@ public class TimedTimer {
     public void startNewTimer(double timeInSeconds) {
         initialTime = System.currentTimeMillis();
         duration = timeInSeconds*1000;
+        frozen = false;
     }
 
-    public void reset() {
+    public void restart() {
         initialTime = System.currentTimeMillis();
+        frozen = false;
     }
 
     private double time() {
-        return System.currentTimeMillis();
+        if (!frozen)
+            return System.currentTimeMillis();
+        else return frozenTime;
     }
+
+    public void freeze() {
+        if (!frozen) {
+            frozenTime = System.currentTimeMillis();
+            frozen = true;
+        }
+    }
+
+    public void unfreeze() {
+        if (frozen) {
+            initialTime += System.currentTimeMillis() - frozenTime;
+            frozenTime = Double.NaN;
+            frozen = false;
+        }
+    }
+
 
 
 
@@ -43,7 +66,11 @@ public class TimedTimer {
     }
 
     public double getElapsedTime() {
-        return (initialTime - time()) / 1000.0;
+        return (time() - initialTime) / 1000.0;
+    }
+
+    public boolean isFrozen() {
+        return frozen;
     }
 
 }

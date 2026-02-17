@@ -349,7 +349,7 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
             telemetry.addData("2ndNext", spinStates.get2ndNextToShoot(artifactsOnRamp, getArtifactSequence()));
             telemetry.addData("3rdNext", spinStates.get3rdNextToShoot(artifactsOnRamp, getArtifactSequence()));
 
-            telemetry.addLine("");
+            telemetry.addLine();
 
             telemetry.addData("ShooterVelocity: ", shooter.getVelocityRPM());
             telemetry.addData("ShooterTargetVelocity: ", shooter.getTargetVelocityRPM());
@@ -380,6 +380,7 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
             telemetry.addLine();
             telemetry.addData("Bearing: ",  compositePositioning.getAllianceGoalBearing());
             telemetry.addData("Distance: ", compositePositioning.getAllianceGoalDistance());
+            telemetry.addData("Validity: ", compositePositioning.checkOverallReadiness());
 
 //            telemetry.addLine();
 //            telemetry.addData("Color: ", colorDetection.getColor());

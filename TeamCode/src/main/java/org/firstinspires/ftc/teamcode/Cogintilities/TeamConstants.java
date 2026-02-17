@@ -142,7 +142,7 @@ public interface TeamConstants {
     double ROBOT_WIDTH = 16.5;
     double ROBOT_LENGTH = 16.5;
 
-    double DISTANCE_SENSOR_CLEAR_SPACE_NEEDED = 10; //Space needed to shoot in Inches TODO: Determine Actual Value
+    double DISTANCE_SENSOR_CLEAR_SPACE_NEEDED = 6; //Space needed to shoot in Inches
     double DISTANCE_SENSOR_FWD_OFFSET = 6; //Distance of sensor from center of rotation in Inches TODO: Determine Actual Value
 
 

@@ -57,7 +57,7 @@ public class SpinnerSequencer implements TeamConstants {
         wiggleActive = false;
         testStatesValidity();
         testStatesArePresent();
-        update(false);
+//        update(false);
     }
 
     public void runStatesToDrop(State... states) {
@@ -124,7 +124,7 @@ public class SpinnerSequencer implements TeamConstants {
         dualMode = DualMode.INITIAL;
         done = true;
         testStatesValidity();
-        update(false);
+//        update(false);
 
     }
 
@@ -139,7 +139,7 @@ public class SpinnerSequencer implements TeamConstants {
         excludedIndexes = convertExcludedIndexes(excludedIndexesBoolean);
         currentScanSlot = -1;
         lastScanSlot = -1;
-        update(false);
+//        update(false);
     }
 
     public void runScanAll() {
@@ -179,6 +179,7 @@ public class SpinnerSequencer implements TeamConstants {
     }
 
     public void update(boolean isValid) {
+
         if (done && timer.isDone()) {
             if (dualMode == DualMode.INITIAL) {
                 if (statesAreNotPresent(states)) {
@@ -201,7 +202,21 @@ public class SpinnerSequencer implements TeamConstants {
                 shooter.setVelocityRPM(shootVel);
                 if (!done) {
                     spindexer.dropWithoutStateUpdate();
-                    if (timer.isDone()) {
+
+                    if (!isValid) {
+                        timer.freeze();
+                        if (!spindexer.isSpinnerDone() && spindexer.isSpinnerEnabled())
+                            spindexer.disableSpinner();
+                    } else {
+                        if (timer.isFrozen()) {
+                            timer.unfreeze();
+                        }
+                        if (!spindexer.isSpinnerEnabled()) {
+                            spindexer.enableSpinner();
+                        }
+                    }
+
+                    if (timer.isDone() && !timer.isFrozen()) {
                         if (nextState >= numStates) {
                             spindexer.stateUpdateForDrop();
                             done = true;
@@ -259,7 +274,6 @@ public class SpinnerSequencer implements TeamConstants {
                                                 excludedIndexes = convertExcludedIndexes(excludedIndexesBoolean);
                                             }
                                         }
-                                         //TODO: Test if this works
                                         spindexer.rotateTowardsCenteredBy(150);
                                         //Note: Position is intentionally invalid (no indexes over drop and sensor) to throw error if code runs unexpectedly
                                         timer = new TimedTimer(SEQUENCER_TIMER_WIGGLE);

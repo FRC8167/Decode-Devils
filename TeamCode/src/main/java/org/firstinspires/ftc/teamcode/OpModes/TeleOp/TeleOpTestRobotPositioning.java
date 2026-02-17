@@ -100,10 +100,15 @@ public class TeleOpTestRobotPositioning extends RobotConfiguration implements Te
 
             drawingUtility.send();
 
-            telemetry.addLine("");
+            telemetry.addLine();
 
             State[] states = limeVision.getFirstSequence();
             telemetry.addData("States: ", State.convertStatesToInitials(states));
+
+            telemetry.addLine();
+
+            telemetry.addData("Distance: ", distanceDetection.getInches());
+            telemetry.addData("IsClear: ", distanceDetection.isClear());
 
             telemetry.update();
 

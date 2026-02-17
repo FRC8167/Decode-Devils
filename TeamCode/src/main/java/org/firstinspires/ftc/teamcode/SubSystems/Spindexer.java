@@ -285,6 +285,18 @@ public class Spindexer implements TeamConstants {
 
     }
 
+    public void disableSpinner() {
+        spinner.disable();
+    }
+
+    public void enableSpinner() {
+        spinner.enable();
+    }
+
+    public boolean isSpinnerEnabled() {
+        return spinner.isEnabled();
+    }
+
     public void update() {
         currentAngleNormalized = ((spinner.getCenteredPositionDegrees() % 360 + 360) % 360);
         switch ((int) currentAngleNormalized) {
