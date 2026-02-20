@@ -248,6 +248,7 @@ public class SpinnerSequencer implements TeamConstants {
                     mode = Mode.NONE;
                     shooter.setVelocityRPM(0);
                     spindexer.setCentered();
+                    spinStates.clear();
                 }
                 break;
 

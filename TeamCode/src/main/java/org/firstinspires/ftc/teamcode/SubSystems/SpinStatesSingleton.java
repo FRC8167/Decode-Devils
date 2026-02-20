@@ -128,4 +128,10 @@ public class SpinStatesSingleton implements TeamConstants {
         int index = (scored+2) % 3;
         return sequence[index];
     }
+
+    public void clear() {
+        slot0 = State.NONE;
+        slot1 = State.NONE;
+        slot2 = State.NONE;
+    }
 }
