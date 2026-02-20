@@ -279,6 +279,7 @@ public class MainTeleOp extends RobotConfiguration implements TeamConstants{
 
             if (gamepad2.bWasPressed() || gamepad2.circleWasPressed()) {
                 wobbleWaveTimer = new TimedTimer();
+                spinnerSequencer.stop();
             }
             if (gamepad2.b || gamepad2.circle) {
 
