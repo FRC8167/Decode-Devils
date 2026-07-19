@@ -26,4 +26,7 @@ android {
 dependencies {
     implementation project(':FtcRobotController')
     implementation 'org.jetbrains:annotations:15.0'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'com.badlogicgames.jamepad:jamepad:2.0.14.1'
+    testImplementation 'com.badlogicgames.gdx:gdx-jnigen-loader:2.3.1'
 }
